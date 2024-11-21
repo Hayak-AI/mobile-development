@@ -20,4 +20,10 @@
     <string name="onboarding_with_google">Lanjutkan dengan Google</string>
     <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
     <string name="onboarding_image_decoration">Hiasan gambar</string>
+    <string name="hint_image_decoration">hiasan_gambar</string>
+    <string name="title_send_token">Kirim token</string>
+    <string name="title_update_password">Perbarui kata sandi</string>
+    <string name="hint_token">Masukkan token dari email</string>
+    <string name="hint_confirm_password">Konfirmasi password\n</string>
+    <string name="hint_new_password">Masukkan kata sandi baru</string>
 </resources>
