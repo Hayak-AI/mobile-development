@@ -4,7 +4,6 @@
     <string name="title_map">Peta</string>
     <string name="title_community">Komunitas</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
     <string name="title_login">Masuk</string>
     <string name="headline_login">Senang melihatmu kembali!</string>
     <string name="hint_email">Masukkan email kamu</string>
@@ -12,4 +11,13 @@
     <string name="title_forgot_password">Lupa kata sandi?</string>
     <string name="title_dont_have_account">Belum punya akun?</string>
     <string name="title_create_account">Buat akun</string>
+    <string name="onboarding_title">Selamat datang di Hayak.AI</string>
+    <string name="onboarding_description">Sebagai pengingat kerabat terdekat ketika Anda sedang dalam bahaya.</string>
+    <string name="onboarding_title_login">Masuk</string>
+    <string name="onboarding_title_create_account">Buat akun baru</string>
+    <string name="onboarding_line_decoration">hiasan garis</string>
+    <string name="onboarding_otherways">Atau coba dengan</string>
+    <string name="onboarding_with_google">Lanjutkan dengan Google</string>
+    <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
+    <string name="onboarding_image_decoration">Hiasan gambar</string>
 </resources>
