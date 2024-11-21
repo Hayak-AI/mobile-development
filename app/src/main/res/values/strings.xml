@@ -4,4 +4,5 @@
     <string name="title_map">Peta</string>
     <string name="title_community">Komunitas</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
 </resources>
