@@ -28,4 +28,17 @@
     <string name="headline_create_account">Yuk bergabung untuk ciptakan lingkungan yang aman</string>
     <string name="title_have_account">Sudah punya akun?</string>
     <string name="hint_confirm_password">Konfirmasi kata sandi</string>
+    <string name="bell_icon">Bell Icon</string>
+    <string name="icon_map_safety">Icon map safety</string>
+    <string name="title_safety_score">Safety Score</string>
+    <string name="title_score">%d</string>
+    <string name="title_say_name">Halo, %s!</string>
+    <string name="home_description">Jangan lupa tetap menjaga kesalamatan dimanapun Anda berada, karena saya hanya asisten pemberitahuan bahaya kepada kerabat terdekat:)</string>
+    <string name="title_high">High</string>
+    <string name="title_medium">Medium</string>
+    <string name="title_low">Low</string>
+    <string name="title_voice_detection_on">Sedang aktif mendengarkan respon pengguna...</string>
+    <string name="title_emergency_contact">Daftar Kontak Darurat</string>
+    <string name="title_add_contact">Tambah</string>
+    <string name="title_img_recorder">Gambar deteksi suara</string>
 </resources>
