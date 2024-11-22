@@ -26,4 +26,7 @@
     <string name="hint_token">Masukkan token dari email</string>
     <string name="hint_confirm_password">Konfirmasi password\n</string>
     <string name="hint_new_password">Masukkan kata sandi baru</string>
+    <string name="headline_create_account">Yuk bergabung untuk ciptakan lingkungan yang aman</string>
+    <string name="title_have_account">Sudah punya akun?</string>
+    <string name="hint_confirm_password">Konfirmasi kata sandi</string>
 </resources>
