@@ -20,4 +20,7 @@
     <string name="onboarding_with_google">Lanjutkan dengan Google</string>
     <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
     <string name="onboarding_image_decoration">Hiasan gambar</string>
+    <string name="headline_create_account">Yuk bergabung untuk ciptakan lingkungan yang aman</string>
+    <string name="title_have_account">Sudah punya akun?</string>
+    <string name="hint_confirm_password">Konfirmasi kata sandi</string>
 </resources>
