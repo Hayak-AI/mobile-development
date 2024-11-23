@@ -78,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Berita"
+        android:text="@string/title_news"
         app:layout_constraintStart_toStartOf="@+id/top_panel"
         app:layout_constraintTop_toBottomOf="@+id/top_panel" />
 
@@ -88,7 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Laporan"
+        android:text="@string/title_list_report"
         app:layout_constraintStart_toEndOf="@+id/btn_news"
         app:layout_constraintTop_toBottomOf="@+id/top_panel" />
 
@@ -100,7 +100,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Laporkan"
+        android:text="@string/title_report"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_list_report"
         app:layout_constraintTop_toBottomOf="@+id/top_panel" />
@@ -119,14 +119,33 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_news"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Card.Media">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            tools:context=".ui.maps.MapsActivity" />
+            android:layout_height="match_parent">
+
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+                tools:context=".ui.maps.MapsActivity" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="RtlSymmetry"
+                tools:listitem="@layout/item_news"
+                tools:visibility="visible" />
+
+        </FrameLayout>
 
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

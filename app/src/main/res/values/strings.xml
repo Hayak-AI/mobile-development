@@ -68,4 +68,8 @@
     <string name="title_edit_contact">Edit kontak</string>
     <string name="title_notify">Beritahu kontak?</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="news_image">a news</string>
+    <string name="title_news">Berita</string>
+    <string name="title_list_report">Laporan</string>
+    <string name="title_report">Laporkan</string>
 </resources>
