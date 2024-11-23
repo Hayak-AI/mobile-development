@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.hayakai.R
 import com.hayakai.databinding.FragmentHomeBinding
+import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.profile.ProfileActivity
 
 class HomeFragment : Fragment(), View.OnClickListener {
@@ -31,6 +32,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private fun setupAction() {
         binding.btnProfile.setOnClickListener(this)
+        binding.btnAddContact.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -42,6 +44,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.btn_profile -> {
                 val intent = Intent(requireContext(), ProfileActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.btn_add_contact -> {
+                val intent = Intent(requireContext(), NewContactActivity::class.java)
                 startActivity(intent)
             }
         }
