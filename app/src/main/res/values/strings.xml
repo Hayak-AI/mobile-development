@@ -59,4 +59,8 @@
     <string name="hint_full_name">Nama lengkap</string>
     <string name="hint_phone_number">Nomor HP</string>
     <string name="title_save">Simpan</string>
+    <string name="title_settings_email_password">Email dan kata sandi</string>
+    <string name="hint_email_short">Email</string>
+    <string name="hint_old_password">Kata sandi lama</string>
+    <string name="hint_new_password_short">Kata sandi baru</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.hayakai.R
 import com.hayakai.databinding.ActivityProfileBinding
 import com.hayakai.ui.editprofile.EditProfileActivity
+import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordActivity
 
 class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityProfileBinding
@@ -32,6 +33,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupAction() {
         binding.backButton.setOnClickListener(this)
         binding.settingsPersonalInformation.setOnClickListener(this)
+        binding.settingsEmailPassword.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -42,6 +44,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.settings_personal_information -> {
                 val intent = Intent(this, EditProfileActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.settings_email_password -> {
+                val intent = Intent(this, SettingsEmailPasswordActivity::class.java)
                 startActivity(intent)
             }
         }
