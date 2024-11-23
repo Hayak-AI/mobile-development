@@ -65,4 +65,6 @@
     <string name="hint_new_password_short">Kata sandi baru</string>
     <string name="title_new_contact">Tambah kontak</string>
     <string name="hint_message">Pesan</string>
+    <string name="title_edit_contact">Edit kontak</string>
+    <string name="title_notify">Beritahu kontak?</string>
 </resources>
