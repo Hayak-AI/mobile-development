@@ -67,4 +67,5 @@
     <string name="hint_message">Pesan</string>
     <string name="title_edit_contact">Edit kontak</string>
     <string name="title_notify">Beritahu kontak?</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
