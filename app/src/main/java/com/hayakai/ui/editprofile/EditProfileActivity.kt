@@ -1,21 +1,20 @@
-package com.hayakai.ui.profile
+package com.hayakai.ui.editprofile
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.hayakai.R
-import com.hayakai.databinding.ActivityProfileBinding
-import com.hayakai.ui.editprofile.EditProfileActivity
+import com.hayakai.databinding.ActivityEditProfileBinding
 
-class ProfileActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var binding: ActivityProfileBinding
+class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
+    private lateinit var binding: ActivityEditProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityProfileBinding.inflate(layoutInflater)
+        binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()
@@ -31,7 +30,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupAction() {
         binding.backButton.setOnClickListener(this)
-        binding.settingsPersonalInformation.setOnClickListener(this)
+        binding.btnSave.setOnClickListener(this)
+        binding.userImage.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -40,10 +40,15 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             }
 
-            R.id.settings_personal_information -> {
-                val intent = Intent(this, EditProfileActivity::class.java)
-                startActivity(intent)
+            R.id.btn_save -> {
+                Toast.makeText(this, "Save", Toast.LENGTH_SHORT).show()
+            }
+
+            R.id.user_image -> {
+                Toast.makeText(this, "Upload User Image", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+
 }

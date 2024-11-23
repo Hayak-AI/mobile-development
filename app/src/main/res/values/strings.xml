@@ -54,4 +54,9 @@
     <string name="title_other">Lainnya</string>
     <string name="title_faq">FAQ</string>
     <string name="title_help">Bantuan</string>
+    <string name="title_edit_profil">Edit Profil</string>
+    <string name="title_upload_photo_profile">Upload foto profilmu agar terlihat menarik</string>
+    <string name="hint_full_name">Nama lengkap</string>
+    <string name="hint_phone_number">Nomor HP</string>
+    <string name="title_save">Simpan</string>
 </resources>
