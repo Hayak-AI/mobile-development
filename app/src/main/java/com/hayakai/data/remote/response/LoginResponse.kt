@@ -1,13 +1,18 @@
+package com.hayakai.data.remote.response
+
 import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
-    @SerializedName("status")
-    val status: String,
-    @SerializedName("data")
-    val data: LoginData?
+
+	@field:SerializedName("data")
+	val data: Data? = null,
+
+	@field:SerializedName("status")
+	val status: String? = null
 )
 
-data class LoginData(
-    @SerializedName("token")
-    val token: String
+data class Data(
+
+	@field:SerializedName("token")
+	val token: String? = null
 )
