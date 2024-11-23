@@ -41,4 +41,17 @@
     <string name="title_emergency_contact">Daftar Kontak Darurat</string>
     <string name="title_add_contact">Tambah</string>
     <string name="title_img_recorder">Gambar deteksi suara</string>
+    <string name="title_my_profile">Profil saya</string>
+    <string name="title_account_settings">Pengaturan akun</string>
+    <string name="common_icon_description">A icon</string>
+    <string name="title_personal_information">Informasi pribadi</string>
+    <string name="title_password_email">Email dan kata sandi</string>
+    <string name="title_retrain_model">Latih ulang model suara</string>
+    <string name="title_accessibility">Aksebilitas</string>
+    <string name="title_dark_mode">Mode gelap</string>
+    <string name="title_track_my_location">Lacak lokasi saya</string>
+    <string name="title_voice_detection">Deteksi suara</string>
+    <string name="title_other">Lainnya</string>
+    <string name="title_faq">FAQ</string>
+    <string name="title_help">Bantuan</string>
 </resources>

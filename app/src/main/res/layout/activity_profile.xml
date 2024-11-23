@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Profil saya"
+        android:text="@string/title_my_profile"
         android:textAppearance="@style/TextAppearance.Material3.ActionBar.Subtitle"
         android:textFontWeight="500"
         app:layout_constraintBottom_toBottomOf="@+id/back_button"
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Pengaturan akun"
+                android:text="@string/title_account_settings"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
 
 
@@ -112,6 +112,7 @@
                     android:id="@+id/ic_user"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/mdi_user_outline"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="Informasi pribadi"
+                    android:text="@string/title_personal_information"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -133,6 +134,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/ic_round_arrow_back_ios"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -152,6 +154,7 @@
                 android:padding="8dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_shield"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -165,7 +168,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Email dan kata sandi"
+                    android:text="@string/title_password_email"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -174,6 +177,7 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_shield" />
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_round_arrow_back_ios"
@@ -195,6 +199,7 @@
                 android:padding="8dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_ai_voice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -208,7 +213,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Latih ulang model suara"
+                    android:text="@string/title_retrain_model"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -217,6 +222,7 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_ai_voice" />
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_round_arrow_back_ios"
@@ -232,7 +238,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Aksebilitas"
+                android:text="@string/title_accessibility"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -249,6 +255,7 @@
                     android:id="@+id/ic_dark_mode"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/material_symbols_dark_mode_outline_rounded"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -259,7 +266,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Mode gelap"
+                    android:text="@string/title_dark_mode"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -289,6 +296,7 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_track_my_location"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -302,7 +310,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Lacak lokasi saya"
+                    android:text="@string/title_track_my_location"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -332,6 +340,7 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_voice_detection"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -345,7 +354,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Mode gelap"
+                    android:text="@string/title_voice_detection"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -368,7 +377,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:text="Lainnya"
+                android:text="@string/title_other"
                 android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -382,6 +391,7 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_faq"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -395,7 +405,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="FAQ"
+                    android:text="@string/title_faq"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
@@ -417,6 +427,7 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
+                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_help"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -430,7 +441,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="Bantuan"
+                    android:text="@string/title_help"
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                     android:textColor="@color/md_theme_onSurface"
                     android:textFontWeight="500"
