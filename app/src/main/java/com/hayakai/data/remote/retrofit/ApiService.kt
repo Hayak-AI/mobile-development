@@ -1,10 +1,47 @@
 package com.hayakai.data.remote.retrofit
 
-import com.hayakai.data.remote.response.*
+import com.hayakai.data.remote.response.AddContactsResponse
+import com.hayakai.data.remote.response.AddUserToEmergencyResponse
+import com.hayakai.data.remote.response.CommunityCommentsForPostResponse
+import com.hayakai.data.remote.response.CommunityCommentsForRepostResponse
+import com.hayakai.data.remote.response.CreatePostResponse
+import com.hayakai.data.remote.response.DeleteCommentsResponse
+import com.hayakai.data.remote.response.DeleteContactsResponse
+import com.hayakai.data.remote.response.DeletePostResponse
+import com.hayakai.data.remote.response.DeleteReportMapsResponse
+import com.hayakai.data.remote.response.ForgotPasswordResponse
+import com.hayakai.data.remote.response.GetAllCommentsPostResponse
+import com.hayakai.data.remote.response.GetAllCommentsRepostResponse
+import com.hayakai.data.remote.response.GetAllPostResponse
+import com.hayakai.data.remote.response.GetContactsResponse
+import com.hayakai.data.remote.response.GetEmergencyResponse
+import com.hayakai.data.remote.response.GetMyProfileResponse
+import com.hayakai.data.remote.response.GetPostResponse
+import com.hayakai.data.remote.response.GetReportMapsResponse
+import com.hayakai.data.remote.response.GetUserPreferencesResponse
+import com.hayakai.data.remote.response.LoginResponse
+import com.hayakai.data.remote.response.PostUserPreferencesResponse
+import com.hayakai.data.remote.response.RegisterResponse
+import com.hayakai.data.remote.response.ReportMapsResponse
+import com.hayakai.data.remote.response.ResetPasswordResponse
+import com.hayakai.data.remote.response.UpdateContactsResponse
+import com.hayakai.data.remote.response.UpdatePostResponse
+import com.hayakai.data.remote.response.UpdateProfileResponse
+import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -177,4 +214,39 @@ interface ApiService {
         @Path("post_id") postId: Int,
         @Header("Authorization") token: String
     ): Call<DeletePostResponse>
+
+    // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Post
+    @GET("community/posts/comments")
+    fun getCommunityCommentsForPost(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: Int
+    ): Call<CommunityCommentsForPostResponse>
+
+    // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Report
+    @GET("community/reports/comments")
+    fun getCommunityCommentsForRepost(
+        @Header("Authorization") token: String,
+        @Query("report_id") reportId: Int
+    ): Call<CommunityCommentsForRepostResponse>
+
+    // Endpoint untuk mendapatkan semua komentar pada post
+    @GET("community/posts/comments")
+    fun getAllCommentsForPost(
+        @Header("Authorization") token: String,
+        @Query("post_id") postId: Int
+    ): Call<GetAllCommentsPostResponse>
+
+    // Endpoint untuk mendapatkan semua komentar pada repost
+    @GET("community/reports/comments")
+    fun getAllCommentsForRepost(
+        @Header("Authorization") token: String,
+        @Query("report_id") reportId: Int
+    ): Call<GetAllCommentsRepostResponse>
+
+    // Endpoint untuk menghapus komentar berdasarkan ID Comment
+    @DELETE("comments/{comment_id}")
+    fun deleteComment(
+        @Header("Authorization") token: String,
+        @Path("comment_id") commentId: Int
+    ): Call<DeleteCommentsResponse>
 }
