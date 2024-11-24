@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -56,4 +57,7 @@ dependencies {
 
     // data store
     implementation(libs.androidx.datastore.preferences)
+
+    // maps
+    implementation(libs.play.services.maps)
 }
