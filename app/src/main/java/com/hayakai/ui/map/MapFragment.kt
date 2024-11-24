@@ -1,5 +1,6 @@
 package com.hayakai.ui.map
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
@@ -16,8 +17,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.hayakai.R
 import com.hayakai.databinding.FragmentMapBinding
+import com.hayakai.ui.newmapreport.NewMapReportActivity
 
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener {
 
     private lateinit var mMap: GoogleMap
     private var _binding: FragmentMapBinding? = null
@@ -49,8 +51,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        setupAction()
 
         return root
+    }
+
+    private fun setupAction() {
+        binding.btnReport.setOnClickListener(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -103,5 +110,14 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     companion object {
         private const val TAG = "MapsFragment"
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.btn_report -> {
+                val intent = Intent(context, NewMapReportActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 }
