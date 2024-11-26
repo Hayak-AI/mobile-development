@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="post_categories">
+        <item>General</item>
+        <item>Alert</item>
+        <item>Information</item>
+    </string-array>
+</resources>
