@@ -37,7 +37,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD9eMqgaYYn4J-1jdDiMo5vP9q6NMTGU6A" />
+            android:value="${MAPS_API_KEY}" />
 
         <activity
             android:name=".ui.detailcontact.DetailContactActivity"
