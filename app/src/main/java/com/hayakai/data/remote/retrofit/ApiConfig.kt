@@ -1,12 +1,12 @@
 package com.hayakai.data.remote.retrofit
 
+import com.hayakai.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
-    private const val BASE_URL = "http://localhost:3000/"
 
     fun getApiService(): ApiService {
         val loggingInterceptor =
@@ -16,7 +16,7 @@ object ApiConfig {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

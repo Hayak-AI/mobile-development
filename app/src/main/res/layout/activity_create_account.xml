@@ -41,11 +41,11 @@
         app:layout_constraintTop_toBottomOf="@+id/back_button" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_email"
+        android:id="@+id/til_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="42dp"
-        android:hint="@string/hint_email"
+        android:hint="@string/hint_name"
         app:boxCornerRadiusBottomEnd="100dp"
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
@@ -54,6 +54,27 @@
         app:layout_constraintTop_toBottomOf="@+id/main_title">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_email"
+        app:boxCornerRadiusBottomEnd="100dp"
+        app:boxCornerRadiusBottomStart="100dp"
+        app:boxCornerRadiusTopEnd="100dp"
+        app:boxCornerRadiusTopStart="100dp"
+        app:errorEnabled="true"
+        app:layout_constraintTop_toBottomOf="@+id/til_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress" />
@@ -75,6 +96,7 @@
         tools:layout_editor_absoluteX="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
@@ -96,6 +118,7 @@
         tools:layout_editor_absoluteX="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />

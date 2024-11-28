@@ -5,23 +5,23 @@ import com.google.gson.annotations.SerializedName
 data class GetMyProfileResponse(
 
     @field:SerializedName("data")
-    val data: ProfileData? = null,
+    val data: ProfileData,
 
     @field:SerializedName("status")
-    val status: String? = null
+    val status: String
 )
 
 data class ProfileData(
 
-    @field:SerializedName("image_url")
-    val imageUrl: String? = null,
+    @field:SerializedName("profile_photo")
+    val profilePhoto: String,
 
     @field:SerializedName("name")
-    val name: String? = null,
+    val name: String,
 
     @field:SerializedName("phone_number")
-    val phoneNumber: String? = null,
+    val phoneNumber: String,
 
     @field:SerializedName("email")
-    val email: String? = null
+    val email: String
 )

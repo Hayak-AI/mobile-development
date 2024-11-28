@@ -8,6 +8,14 @@
     android:background="@color/md_theme_surfaceContainer"
     tools:context=".ui.profile.ProfileActivity">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
     <Button
         android:id="@+id/back_button"
         style="?attr/materialIconButtonOutlinedStyle"
@@ -154,10 +162,10 @@
                 android:padding="8dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_shield"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/material_symbols_security_rounded"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -177,9 +185,9 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_shield" />
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/ic_round_arrow_back_ios"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -199,10 +207,10 @@
                 android:padding="8dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_ai_voice"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/ri_voice_ai_line"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -222,9 +230,9 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_ai_voice" />
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/ic_round_arrow_back_ios"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -275,6 +283,7 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_dark_mode" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/dark_mode_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:minHeight="32dp"
@@ -296,10 +305,10 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_track_my_location"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/mdi_my_location"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -319,6 +328,7 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_track_my_location" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/track_my_location_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:minHeight="32dp"
@@ -340,10 +350,10 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_voice_detection"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/mdi_account_voice"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -363,6 +373,7 @@
                     app:layout_constraintTop_toTopOf="@+id/ic_voice_detection" />
 
                 <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/voice_detection_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:minHeight="32dp"
@@ -391,10 +402,10 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_faq"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/mdi_chat_question_outline"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -427,10 +438,10 @@
                 android:paddingVertical="4dp">
 
                 <ImageView
-                    android:contentDescription="@string/common_icon_description"
                     android:id="@+id/ic_help"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
                     android:src="@drawable/zondicons_exclamation_outline"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -448,6 +459,42 @@
                     app:layout_constraintBottom_toBottomOf="@+id/ic_help"
                     app:layout_constraintStart_toEndOf="@+id/ic_help"
                     app:layout_constraintTop_toTopOf="@+id/ic_help" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/settings_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:id="@+id/ic_logout"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:contentDescription="@string/common_icon_description"
+                    android:src="@drawable/baseline_logout_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/md_theme_error" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/title_logout"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                    android:textColor="@color/md_theme_error"
+                    android:textFontWeight="500"
+                    app:layout_constraintBottom_toBottomOf="@+id/ic_logout"
+                    app:layout_constraintStart_toEndOf="@+id/ic_logout"
+                    app:layout_constraintTop_toTopOf="@+id/ic_logout" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
