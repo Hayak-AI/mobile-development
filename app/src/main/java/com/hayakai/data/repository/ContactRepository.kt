@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.hayakai.data.local.dao.ContactDao
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
@@ -41,6 +42,24 @@ class ContactRepository(
             val localData: LiveData<MyResult<List<Contact>>> =
                 contactDao.getAllContacts().map { MyResult.Success(it) }
             emitSource(localData)
+        }
+    }
+
+    fun deleteContact(deleteContactDto: DeleteContactDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.deleteContact(
+                    deleteContactDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
         }
     }
 

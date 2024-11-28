@@ -1,5 +1,6 @@
 package com.hayakai.data.remote.retrofit
 
+import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
 import com.hayakai.data.remote.response.CommunityCommentsForPostResponse
@@ -31,10 +32,12 @@ import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -156,11 +159,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<UpdateContactsResponse>
 
-    @DELETE("/contacts")
-    fun deleteContact(
-        @Path("contact_id") contactId: Int,
+    @HTTP(method = "DELETE", path = "/contacts", hasBody = true)
+    suspend fun deleteContact(
+        @Body deleteContactDto: DeleteContactDto,
         @Header("Authorization") token: String
-    ): Call<DeleteContactsResponse>
+    ): DeleteContactsResponse
 
     @FormUrlEncoded
     @POST("/emergencies")

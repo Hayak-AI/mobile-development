@@ -87,4 +87,9 @@
     <string name="hint_name">Masukkan nama kamu</string>
     <string name="ed_name_error_msg_is_empty">Nama tidak boleh kosong</string>
     <string name="register_success">Pendaftan akun berhasil!</string>
+    <string name="title_delete_contact">Hapus Kontak</string>
+    <string name="content_delete_contact">Apakah Anda serius ingin menghapus kontak ini?</string>
+    <string name="yes">Iya</string>
+    <string name="cancel">Batal</string>
+    <string name="success_delete_contact">Berhasil menghapus kontak</string>
 </resources>

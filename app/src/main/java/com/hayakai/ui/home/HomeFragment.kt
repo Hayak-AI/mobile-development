@@ -47,6 +47,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
+    }
+
 
     private fun setupViewModel() {
         viewModel.getProfile().observe(viewLifecycleOwner) { profile ->

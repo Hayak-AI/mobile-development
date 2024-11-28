@@ -10,6 +10,7 @@ import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.createaccount.RegisterViewModel
+import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
@@ -52,6 +53,10 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> {
                 RegisterViewModel(authRepository) as T
+            }
+
+            modelClass.isAssignableFrom(DetailContactViewModel::class.java) -> {
+                DetailContactViewModel(contactRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
