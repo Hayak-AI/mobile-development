@@ -83,4 +83,8 @@
     <string name="ed_password_error_msg_is_empty">Password tidak boleh kosong</string>
     <string name="ed_password_error_msg_invalid_length">Password minimal 8 karakter</string>
     <string name="title_logout">Keluar</string>
+    <string name="ed_password_error_msg_not_match">Password tidak sama</string>
+    <string name="hint_name">Masukkan nama kamu</string>
+    <string name="ed_name_error_msg_is_empty">Nama tidak boleh kosong</string>
+    <string name="register_success">Pendaftan akun berhasil!</string>
 </resources>

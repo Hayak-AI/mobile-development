@@ -42,6 +42,20 @@ class AuthRepository private constructor(
 
     }
 
+    fun register(name: String, email: String, password: String) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.register(name, email, password)
+            emit(MyResult.Success(response))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: AuthRepository? = null
