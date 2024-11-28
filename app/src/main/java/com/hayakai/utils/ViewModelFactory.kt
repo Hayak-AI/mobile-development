@@ -4,21 +4,25 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.createaccount.RegisterViewModel
+import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
+import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.profile.ProfileViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
 class ViewModelFactory(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val contactRepository: ContactRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -29,11 +33,11 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(userRepository, settingsRepository) as T
+                HomeViewModel(userRepository, settingsRepository, contactRepository) as T
             }
 
             modelClass.isAssignableFrom(SessionViewModel::class.java) -> {
-                SessionViewModel(authRepository) as T
+                SessionViewModel(authRepository, contactRepository) as T
             }
 
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
@@ -52,6 +56,14 @@ class ViewModelFactory(
                 RegisterViewModel(authRepository) as T
             }
 
+            modelClass.isAssignableFrom(DetailContactViewModel::class.java) -> {
+                DetailContactViewModel(contactRepository) as T
+            }
+
+            modelClass.isAssignableFrom(NewContactViewModel::class.java) -> {
+                NewContactViewModel(contactRepository) as T
+            }
+
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
         }
     }
@@ -65,7 +77,8 @@ class ViewModelFactory(
                 val instance = ViewModelFactory(
                     Injection.provideAuthRepository(context),
                     Injection.provideUserRepository(context),
-                    Injection.provideSettingsRepository(context)
+                    Injection.provideSettingsRepository(context),
+                    Injection.provideContactRepository(context)
                 )
                 INSTANCE = instance
                 instance

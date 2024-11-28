@@ -1,10 +1,12 @@
 package com.hayakai.di
 
 import android.content.Context
+import com.hayakai.data.local.room.ContactRoomDatabase
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.pref.dataStore
 import com.hayakai.data.remote.retrofit.ApiConfig
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 
@@ -25,5 +27,12 @@ object Injection {
         val apiService = ApiConfig.getApiService()
         val userPreference = UserPreference.getInstance(context.dataStore)
         return SettingsRepository.getInstance(apiService, userPreference)
+    }
+
+    fun provideContactRepository(context: Context): ContactRepository {
+        val contactDao = ContactRoomDatabase.getDatabase(context).contactDao()
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return ContactRepository.getInstance(contactDao, apiService, userPreference)
     }
 }

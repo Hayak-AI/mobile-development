@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
 import com.hayakai.databinding.FragmentHomeBinding
 import com.hayakai.ui.common.SessionViewModel
+import com.hayakai.ui.detailcontact.DetailContactActivity
 import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
@@ -43,6 +45,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 setupViewModel()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
     }
 
 
@@ -83,6 +90,33 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        viewModel.getContacts().observe(viewLifecycleOwner) { contacts ->
+            when (contacts) {
+                is MyResult.Loading -> {
+                }
+
+                is MyResult.Success -> {
+                    binding.tvNotFound.visibility =
+                        if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
+                    val layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    binding.recyclerView.layoutManager = layoutManager
+                    val adapter = ContactListAdapter(
+                        onClick = { contact ->
+                            val intent = Intent(requireContext(), DetailContactActivity::class.java)
+                            intent.putExtra(DetailContactActivity.EXTRA_CONTACT, contact)
+                            startActivity(intent)
+                        }
+                    )
+                    adapter.submitList(contacts.data)
+                    binding.recyclerView.adapter = adapter
+                }
+
+                is MyResult.Error -> {
+                    Toast.makeText(requireContext(), contacts.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 

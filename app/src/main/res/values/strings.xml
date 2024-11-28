@@ -87,4 +87,15 @@
     <string name="hint_name">Masukkan nama kamu</string>
     <string name="ed_name_error_msg_is_empty">Nama tidak boleh kosong</string>
     <string name="register_success">Pendaftan akun berhasil!</string>
+    <string name="title_delete_contact">Hapus Kontak</string>
+    <string name="content_delete_contact">Apakah Anda serius ingin menghapus kontak ini?</string>
+    <string name="yes">Iya</string>
+    <string name="cancel">Batal</string>
+    <string name="success_delete_contact">Berhasil menghapus kontak</string>
+    <string name="ed_phone_error_msg_is_empty">Nomor HP tidak boleh kosong</string>
+    <string name="ed_phone_error_msg_is_invalid">Nomor HP tidak valid</string>
+    <string name="ed_message_error_msg_is_empty">Pesan tidak boleh kosong</string>
+    <string name="success_update_contact">Berhasil memperbarui kontak</string>
+    <string name="contact_added_successfully">Kontak berhasil ditambahkan</string>
+    <string name="title_not_found">Tidak ada data</string>
 </resources>
