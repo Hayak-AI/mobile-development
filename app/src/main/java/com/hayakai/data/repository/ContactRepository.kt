@@ -101,6 +101,10 @@ class ContactRepository(
         }
     }
 
+    suspend fun clearLocalData() {
+        contactDao.deleteAll()
+    }
+
 
     companion object {
         @Volatile
@@ -118,21 +122,4 @@ class ContactRepository(
             }
         }
     }
-
-
-//    fun getAllContacts() = mContactDao.getAllContacts()
-//
-//
-//    suspend fun insert(contact: Contact) {
-//        mContactDao.insert(contact)
-//    }
-//
-//    suspend fun delete(contact: Contact) {
-//        mContactDao.delete(contact)
-//    }
-//
-//    suspend fun update(contact: Contact) {
-//        mContactDao.update(contact)
-//    }
-
 }

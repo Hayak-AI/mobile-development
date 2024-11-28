@@ -37,7 +37,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(SessionViewModel::class.java) -> {
-                SessionViewModel(authRepository) as T
+                SessionViewModel(authRepository, contactRepository) as T
             }
 
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
