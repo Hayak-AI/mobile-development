@@ -1,14 +1,15 @@
-package com.hayakai.ui.home
+package com.hayakai.ui.profile
 
 import androidx.lifecycle.ViewModel
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 
-class HomeViewModel(
-    private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository
+class ProfileViewModel(
+    private val settingsRepository: SettingsRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
-    fun getProfile() = userRepository.getProfile()
 
     fun getSettings() = settingsRepository.getSettings()
+
+    fun getProfile() = userRepository.getProfile()
 }

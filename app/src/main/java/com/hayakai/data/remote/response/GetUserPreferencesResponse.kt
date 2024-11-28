@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class GetUserPreferencesResponse(
 
     @field:SerializedName("data")
-    val data: UserPreferencesData? = null,
+    val data: UserPreferencesData,
 
     @field:SerializedName("status")
     val status: String? = null
@@ -14,11 +14,11 @@ data class GetUserPreferencesResponse(
 data class UserPreferencesData(
 
     @field:SerializedName("dark_mode")
-    val darkMode: Boolean? = null,
+    val darkMode: Boolean,
 
     @field:SerializedName("voice_detection")
-    val voiceDetection: Boolean? = null,
+    val voiceDetection: Boolean,
 
     @field:SerializedName("location_tracking")
-    val locationTracking: Boolean? = null
+    val locationTracking: Boolean
 )

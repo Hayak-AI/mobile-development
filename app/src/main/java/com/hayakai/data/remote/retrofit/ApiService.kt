@@ -47,11 +47,10 @@ interface ApiService {
 
     @FormUrlEncoded
     @POST("login")
-    fun login(
+    suspend fun login(
         @Field("email") email: String,
-        @Field("password") password: String,
-        @Header("Authorization") token: String? = null
-    ): Call<LoginResponse>
+        @Field("password") password: String
+    ): LoginResponse
 
     @FormUrlEncoded
     @POST("register")
@@ -92,14 +91,14 @@ interface ApiService {
     ): Call<UpdateProfileResponse>
 
     @GET("users/me")
-    fun getProfile(
+    suspend fun getProfile(
         @Header("Authorization") token: String
-    ): Call<GetMyProfileResponse>
+    ): GetMyProfileResponse
 
     @GET("preferences")
-    fun getUserPreferences(
+    suspend fun getUserPreferences(
         @Header("Authorization") token: String
-    ): Call<GetUserPreferencesResponse>
+    ): GetUserPreferencesResponse
 
     @FormUrlEncoded
     @POST("preferences")
