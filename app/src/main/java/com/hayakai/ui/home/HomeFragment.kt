@@ -96,6 +96,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
 
                 is MyResult.Success -> {
+                    binding.tvNotFound.visibility =
+                        if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
                     val layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                     binding.recyclerView.layoutManager = layoutManager

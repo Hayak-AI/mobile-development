@@ -55,6 +55,7 @@ class ContactRepository(
                     deleteContactDto,
                     userPreference.getSession().first().token.asJWT()
                 )
+            contactDao.delete(Contact(deleteContactDto.contact_id))
             emit(MyResult.Success(response.status))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
