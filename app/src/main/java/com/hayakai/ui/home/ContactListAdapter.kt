@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.databinding.ItemContactBinding
 
-class ContactListAdapter : ListAdapter<Contact, ContactListAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ContactListAdapter(
+    private val onClick: (Contact) -> Unit
+) : ListAdapter<Contact, ContactListAdapter.ViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemContactBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
@@ -26,6 +28,7 @@ class ContactListAdapter : ListAdapter<Contact, ContactListAdapter.ViewHolder>(D
             binding.contactName.text = contact.name
             binding.contactPhone.text = contact.phone
             binding.contactEmail.text = contact.email
+            binding.root.setOnClickListener { onClick(contact) }
         }
     }
 

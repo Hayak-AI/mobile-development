@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
 import com.hayakai.databinding.FragmentHomeBinding
 import com.hayakai.ui.common.SessionViewModel
+import com.hayakai.ui.detailcontact.DetailContactActivity
 import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
@@ -93,7 +94,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     val layoutManager =
                         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                     binding.recyclerView.layoutManager = layoutManager
-                    val adapter = ContactListAdapter()
+                    val adapter = ContactListAdapter(
+                        onClick = { contact ->
+                            val intent = Intent(requireContext(), DetailContactActivity::class.java)
+                            intent.putExtra(DetailContactActivity.EXTRA_CONTACT, contact)
+                            startActivity(intent)
+                        }
+                    )
                     adapter.submitList(contacts.data)
                     binding.recyclerView.adapter = adapter
                 }
