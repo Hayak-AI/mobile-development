@@ -14,6 +14,7 @@ import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
+import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.profile.ProfileViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
@@ -57,6 +58,10 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(DetailContactViewModel::class.java) -> {
                 DetailContactViewModel(contactRepository) as T
+            }
+
+            modelClass.isAssignableFrom(NewContactViewModel::class.java) -> {
+                NewContactViewModel(contactRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")

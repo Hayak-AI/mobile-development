@@ -8,6 +8,7 @@ import com.hayakai.data.local.dao.ContactDao
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.NewContactDto
 import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
@@ -70,6 +71,24 @@ class ContactRepository(
             val response =
                 apiService.updateContact(
                     updateContactDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun newContact(newContactDto: NewContactDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.addContact(
+                    newContactDto,
                     userPreference.getSession().first().token.asJWT()
                 )
             emit(MyResult.Success(response.status))
