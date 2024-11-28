@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class GetContactsResponse(
 
     @field:SerializedName("data")
-    val data: List<DataItem?>? = null,
+    val data: List<DataItem>,
 
     @field:SerializedName("status")
     val status: String? = null
@@ -14,20 +14,20 @@ data class GetContactsResponse(
 data class DataItem(
 
     @field:SerializedName("phone")
-    val phone: String? = null,
+    val phone: String,
 
     @field:SerializedName("name")
-    val name: String? = null,
+    val name: String,
 
     @field:SerializedName("contact_id")
-    val contactId: Int? = null,
+    val contactId: Int,
 
     @field:SerializedName("message")
-    val message: String? = null,
+    val message: String,
 
     @field:SerializedName("email")
-    val email: String? = null,
+    val email: String,
 
     @field:SerializedName("notify")
-    val notify: Boolean? = null
+    val notify: Boolean
 )

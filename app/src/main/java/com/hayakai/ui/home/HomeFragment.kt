@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
 import com.hayakai.databinding.FragmentHomeBinding
 import com.hayakai.ui.common.SessionViewModel
@@ -83,6 +84,25 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        viewModel.getContacts().observe(viewLifecycleOwner) { contacts ->
+            when (contacts) {
+                is MyResult.Loading -> {
+                }
+
+                is MyResult.Success -> {
+                    val layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    binding.recyclerView.layoutManager = layoutManager
+                    val adapter = ContactListAdapter()
+                    adapter.submitList(contacts.data)
+                    binding.recyclerView.adapter = adapter
+                }
+
+                is MyResult.Error -> {
+                    Toast.makeText(requireContext(), contacts.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 

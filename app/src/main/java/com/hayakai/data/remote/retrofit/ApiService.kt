@@ -129,9 +129,9 @@ interface ApiService {
     ): Call<DeleteReportMapsResponse>
 
     @GET("contacts")
-    fun getAllContacts(
+    suspend fun getAllContacts(
         @Header("Authorization") token: String
-    ): Call<GetContactsResponse>
+    ): GetContactsResponse
 
     @FormUrlEncoded
     @POST("contacts")

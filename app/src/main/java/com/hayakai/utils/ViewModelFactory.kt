@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
@@ -18,7 +19,8 @@ import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 class ViewModelFactory(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val contactRepository: ContactRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -29,7 +31,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(userRepository, settingsRepository) as T
+                HomeViewModel(userRepository, settingsRepository, contactRepository) as T
             }
 
             modelClass.isAssignableFrom(SessionViewModel::class.java) -> {
@@ -65,7 +67,8 @@ class ViewModelFactory(
                 val instance = ViewModelFactory(
                     Injection.provideAuthRepository(context),
                     Injection.provideUserRepository(context),
-                    Injection.provideSettingsRepository(context)
+                    Injection.provideSettingsRepository(context),
+                    Injection.provideContactRepository(context)
                 )
                 INSTANCE = instance
                 instance
