@@ -1,6 +1,7 @@
 package com.hayakai.data.remote.retrofit
 
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
 import com.hayakai.data.remote.response.CommunityCommentsForPostResponse
@@ -147,17 +148,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<AddContactsResponse>
 
-    @FormUrlEncoded
-    @POST("/contacts")
-    fun updateContact(
-        @Path("contact_id") contactId: Int,
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("phone") phone: String,
-        @Field("notify") notify: Boolean,
-        @Field("message") message: String,
+    @PUT("/contacts")
+    suspend fun updateContact(
+        @Body updateContactDto: UpdateContactDto,
         @Header("Authorization") token: String
-    ): Call<UpdateContactsResponse>
+    ): UpdateContactsResponse
 
     @HTTP(method = "DELETE", path = "/contacts", hasBody = true)
     suspend fun deleteContact(
