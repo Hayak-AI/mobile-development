@@ -3,6 +3,7 @@ package com.hayakai.data.remote.retrofit
 import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.dto.NewContactDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
 import com.hayakai.data.remote.response.CommunityCommentsForPostResponse
@@ -32,7 +33,6 @@ import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
 import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -80,20 +80,16 @@ interface ApiService {
 
     @Multipart
     @POST("users/upload-profile-photo")
-    fun uploadProfilePhoto(
-        @Part photo: MultipartBody.Part,
-        @Part("description") description: RequestBody? = null,
+    suspend fun uploadProfilePhoto(
+        @Part file: MultipartBody.Part,
         @Header("Authorization") token: String
-    ): Call<UploadProfilePhotoResponse>
+    ): UploadProfilePhotoResponse
 
-    @FormUrlEncoded
-    @POST("users")
-    fun updateProfile(
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
+    @PUT("users")
+    suspend fun updateProfile(
+        @Body updateProfileDto: UpdateProfileDto,
         @Header("Authorization") token: String
-    ): Call<UpdateProfileResponse>
+    ): UpdateProfileResponse
 
     @GET("users/me")
     suspend fun getProfile(
