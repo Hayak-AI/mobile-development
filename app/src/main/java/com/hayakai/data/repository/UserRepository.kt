@@ -4,11 +4,13 @@ import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.hayakai.data.pref.UserModel
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.asJWT
 import kotlinx.coroutines.flow.first
+import okhttp3.MultipartBody
 import retrofit2.HttpException
 
 class UserRepository private constructor(
@@ -39,6 +41,40 @@ class UserRepository private constructor(
             emit(MyResult.Error(e.message ?: "An error occurred"))
         } finally {
             emit(MyResult.Success(getUser().first()))
+        }
+    }
+
+    fun updateProfile(updateProfileDto: UpdateProfileDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.updateProfile(
+                updateProfileDto,
+                userPreference.getSession().first().token.asJWT()
+            )
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun uploadProfilePhoto(photo: MultipartBody.Part) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.uploadProfilePhoto(
+                photo,
+                userPreference.getSession().first().token.asJWT()
+            )
+            emit(MyResult.Success(response.data))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
         }
     }
 
