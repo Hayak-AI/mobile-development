@@ -118,9 +118,10 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/comments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/til_create_comment"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description"
@@ -128,7 +129,7 @@
             tools:listitem="@layout/item_comment" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_full_name"
+            android:id="@+id/til_create_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
@@ -139,11 +140,14 @@
             app:boxCornerRadiusBottomStart="100dp"
             app:boxCornerRadiusTopEnd="100dp"
             app:boxCornerRadiusTopStart="100dp"
+            app:endIconDrawable="@drawable/ic_send"
+            app:endIconMode="custom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_create_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text" />

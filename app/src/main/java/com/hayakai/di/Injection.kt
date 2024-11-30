@@ -1,12 +1,14 @@
 package com.hayakai.di
 
 import android.content.Context
+import com.hayakai.data.local.room.CommentReportRoomDatabase
 import com.hayakai.data.local.room.ContactRoomDatabase
 import com.hayakai.data.local.room.MapReportRoomDatabase
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.pref.dataStore
 import com.hayakai.data.remote.retrofit.ApiConfig
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
@@ -43,5 +45,12 @@ object Injection {
         val apiService = ApiConfig.getApiService()
         val userPreference = UserPreference.getInstance(context.dataStore)
         return MapReportRepository.getInstance(mapReportDao, apiService, userPreference)
+    }
+
+    fun provideCommentRepository(context: Context): CommentRepository {
+        val commentReportDao = CommentReportRoomDatabase.getDatabase(context).commentReportDao()
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return CommentRepository.getInstance(commentReportDao, apiService, userPreference)
     }
 }

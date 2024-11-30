@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
@@ -27,7 +28,8 @@ class ViewModelFactory(
     private val userRepository: UserRepository,
     private val settingsRepository: SettingsRepository,
     private val contactRepository: ContactRepository,
-    private val mapReportRepository: MapReportRepository
+    private val mapReportRepository: MapReportRepository,
+    private val commentRepository: CommentRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -74,7 +76,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(MapReportPostFragmentViewModel::class.java) -> {
-                MapReportPostFragmentViewModel(mapReportRepository) as T
+                MapReportPostFragmentViewModel(mapReportRepository, commentRepository) as T
             }
 
             modelClass.isAssignableFrom(NewMapReportViewModel::class.java) -> {
@@ -96,7 +98,8 @@ class ViewModelFactory(
                     Injection.provideUserRepository(context),
                     Injection.provideSettingsRepository(context),
                     Injection.provideContactRepository(context),
-                    Injection.provideMapReportRepository(context)
+                    Injection.provideMapReportRepository(context),
+                    Injection.provideCommentRepository(context)
                 )
                 INSTANCE = instance
                 instance
