@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -79,6 +80,12 @@ dependencies {
 
     // glide
     implementation(libs.glide)
+    ksp(libs.compiler)
+
+    // coil
+    implementation("io.coil-kt.coil3:coil:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+
 
     // room
     implementation(libs.androidx.room.runtime)

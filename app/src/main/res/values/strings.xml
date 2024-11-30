@@ -99,4 +99,5 @@
     <string name="contact_added_successfully">Kontak berhasil ditambahkan</string>
     <string name="title_not_found">Tidak ada data</string>
     <string name="photo_profile_updated">Berhasil mengunggah foto profil</string>
+    <string name="evidence_uploaded">Berhasil mengupload bukti laporan</string>
 </resources>

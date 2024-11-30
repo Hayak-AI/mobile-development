@@ -79,6 +79,7 @@
             tools:text="Terverifikasi" />
 
         <Button
+            android:id="@+id/btn_delete"
             style="?attr/materialIconButtonFilledTonalStyle"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -92,8 +93,8 @@
             app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:id="@+id/name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:paddingHorizontal="8dp"
@@ -101,6 +102,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/author_image"
+            tools:text="Kawanan Begal Sadis di Medan Ditangkap, Satu Pelaku Ditembak Mati" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="Kawanan Begal Sadis di Medan Ditangkap, Satu Pelaku Ditembak Mati" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -111,7 +123,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/description"
             tools:ignore="RtlSymmetry"
             tools:listitem="@layout/item_comment" />
 

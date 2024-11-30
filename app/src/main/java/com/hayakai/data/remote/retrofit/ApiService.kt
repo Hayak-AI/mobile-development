@@ -1,7 +1,9 @@
 package com.hayakai.data.remote.retrofit
 
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewContactDto
+import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
@@ -31,6 +33,7 @@ import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
+import com.hayakai.data.remote.response.UploadEvidence
 import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -110,24 +113,29 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<PostUserPreferencesResponse>
 
-    @FormUrlEncoded
     @POST("/maps-report")
-    fun reportMaps(
-        @Field("map_id") mapId: String,
-        @Field("description") description: String,
+    suspend fun reportMaps(
+        @Body newReportMapDto: NewReportMapDto,
         @Header("Authorization") token: String
-    ): Call<ReportMapsResponse>
+    ): ReportMapsResponse
 
     @GET("/maps-report")
-    fun getReportedMaps(
+    suspend fun getReportedMaps(
         @Header("Authorization") token: String
-    ): Call<GetReportMapsResponse>
+    ): GetReportMapsResponse
 
-    @DELETE("v")
-    fun deleteReportMap(
-        @Path("report_id") reportId: Int,
+    @HTTP(method = "DELETE", path = "/maps-report", hasBody = true)
+    suspend fun deleteReportMap(
+        @Body deleteReportMapDto: DeleteReportMapDto,
         @Header("Authorization") token: String
-    ): Call<DeleteReportMapsResponse>
+    ): DeleteReportMapsResponse
+
+    @Multipart
+    @POST("maps-report/upload-evidence")
+    suspend fun uploadEvidence(
+        @Part file: MultipartBody.Part,
+        @Header("Authorization") token: String
+    ): UploadEvidence
 
     @GET("contacts")
     suspend fun getAllContacts(

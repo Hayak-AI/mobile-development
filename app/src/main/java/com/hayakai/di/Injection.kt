@@ -2,11 +2,13 @@ package com.hayakai.di
 
 import android.content.Context
 import com.hayakai.data.local.room.ContactRoomDatabase
+import com.hayakai.data.local.room.MapReportRoomDatabase
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.pref.dataStore
 import com.hayakai.data.remote.retrofit.ApiConfig
 import com.hayakai.data.repository.AuthRepository
 import com.hayakai.data.repository.ContactRepository
+import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 
@@ -34,5 +36,12 @@ object Injection {
         val apiService = ApiConfig.getApiService()
         val userPreference = UserPreference.getInstance(context.dataStore)
         return ContactRepository.getInstance(contactDao, apiService, userPreference)
+    }
+
+    fun provideMapReportRepository(context: Context): MapReportRepository {
+        val mapReportDao = MapReportRoomDatabase.getDatabase(context).mapReportDao()
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return MapReportRepository.getInstance(mapReportDao, apiService, userPreference)
     }
 }
