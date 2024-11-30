@@ -43,6 +43,7 @@
         tools:text="Iya kaasd as a d a sa asa sd asdas d asd as dasd as dsasd asd h?" />
 
     <Button
+        android:id="@+id/btn_delete"
         style="?attr/materialIconButtonStyle"
         android:layout_width="32dp"
         android:layout_height="32dp"

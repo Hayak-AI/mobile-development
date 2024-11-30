@@ -1,7 +1,11 @@
 package com.hayakai.data.remote.retrofit
 
+import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.DeleteReportMapDto
+import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
+import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
@@ -21,9 +25,11 @@ import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
 import com.hayakai.data.remote.response.GetMyProfileResponse
 import com.hayakai.data.remote.response.GetPostResponse
+import com.hayakai.data.remote.response.GetReportMapCommentsResponse
 import com.hayakai.data.remote.response.GetReportMapsResponse
 import com.hayakai.data.remote.response.GetUserPreferencesResponse
 import com.hayakai.data.remote.response.LoginResponse
+import com.hayakai.data.remote.response.NewCommentResponse
 import com.hayakai.data.remote.response.PostUserPreferencesResponse
 import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
@@ -31,6 +37,7 @@ import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
+import com.hayakai.data.remote.response.UploadEvidence
 import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -110,24 +117,47 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<PostUserPreferencesResponse>
 
-    @FormUrlEncoded
     @POST("/maps-report")
-    fun reportMaps(
-        @Field("map_id") mapId: String,
-        @Field("description") description: String,
+    suspend fun reportMaps(
+        @Body newReportMapDto: NewReportMapDto,
         @Header("Authorization") token: String
-    ): Call<ReportMapsResponse>
+    ): ReportMapsResponse
 
     @GET("/maps-report")
-    fun getReportedMaps(
+    suspend fun getReportedMaps(
         @Header("Authorization") token: String
-    ): Call<GetReportMapsResponse>
+    ): GetReportMapsResponse
 
-    @DELETE("v")
-    fun deleteReportMap(
-        @Path("report_id") reportId: Int,
+    @HTTP(method = "DELETE", path = "/maps-report", hasBody = true)
+    suspend fun deleteReportMap(
+        @Body deleteReportMapDto: DeleteReportMapDto,
         @Header("Authorization") token: String
-    ): Call<DeleteReportMapsResponse>
+    ): DeleteReportMapsResponse
+
+    @GET("report/{report_id}/comments")
+    suspend fun getReportComments(
+        @Path("report_id") reportId: Int,
+        @Header("Authorization") token: String,
+    ): GetReportMapCommentsResponse
+
+    @HTTP(method = "DELETE", path = "/comments", hasBody = true)
+    suspend fun deleteReportMap(
+        @Body deleteCommentDto: DeleteCommentDto,
+        @Header("Authorization") token: String
+    ): DeleteCommentsResponse
+
+    @POST("comments")
+    suspend fun newCommentReport(
+        @Body newCommentReportDto: NewCommentReportDto,
+        @Header("Authorization") token: String
+    ): NewCommentResponse
+
+    @Multipart
+    @POST("maps-report/upload-evidence")
+    suspend fun uploadEvidence(
+        @Part file: MultipartBody.Part,
+        @Header("Authorization") token: String
+    ): UploadEvidence
 
     @GET("contacts")
     suspend fun getAllContacts(
@@ -231,11 +261,4 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("report_id") reportId: Int
     ): Call<GetAllCommentsRepostResponse>
-
-    // Endpoint untuk menghapus komentar berdasarkan ID Comment
-    @DELETE("comments/{comment_id}")
-    fun deleteComment(
-        @Header("Authorization") token: String,
-        @Path("comment_id") commentId: Int
-    ): Call<DeleteCommentsResponse>
 }

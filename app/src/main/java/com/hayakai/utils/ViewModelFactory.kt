@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hayakai.data.repository.AuthRepository
+import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.ContactRepository
+import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
@@ -14,7 +16,10 @@ import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
+import com.hayakai.ui.map.MapViewModel
+import com.hayakai.ui.mapreportpost.MapReportPostFragmentViewModel
 import com.hayakai.ui.newcontact.NewContactViewModel
+import com.hayakai.ui.newmapreport.NewMapReportViewModel
 import com.hayakai.ui.profile.ProfileViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
@@ -22,7 +27,9 @@ class ViewModelFactory(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val settingsRepository: SettingsRepository,
-    private val contactRepository: ContactRepository
+    private val contactRepository: ContactRepository,
+    private val mapReportRepository: MapReportRepository,
+    private val commentRepository: CommentRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -64,6 +71,18 @@ class ViewModelFactory(
                 NewContactViewModel(contactRepository) as T
             }
 
+            modelClass.isAssignableFrom(MapViewModel::class.java) -> {
+                MapViewModel(mapReportRepository) as T
+            }
+
+            modelClass.isAssignableFrom(MapReportPostFragmentViewModel::class.java) -> {
+                MapReportPostFragmentViewModel(mapReportRepository, commentRepository) as T
+            }
+
+            modelClass.isAssignableFrom(NewMapReportViewModel::class.java) -> {
+                NewMapReportViewModel(mapReportRepository) as T
+            }
+
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
         }
     }
@@ -78,7 +97,9 @@ class ViewModelFactory(
                     Injection.provideAuthRepository(context),
                     Injection.provideUserRepository(context),
                     Injection.provideSettingsRepository(context),
-                    Injection.provideContactRepository(context)
+                    Injection.provideContactRepository(context),
+                    Injection.provideMapReportRepository(context),
+                    Injection.provideCommentRepository(context)
                 )
                 INSTANCE = instance
                 instance
