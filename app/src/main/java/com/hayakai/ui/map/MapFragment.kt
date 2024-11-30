@@ -38,6 +38,7 @@ import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.mapreportpost.MapReportPostFragment
 import com.hayakai.ui.newmapreport.NewMapReportActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
+import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
 
@@ -282,6 +283,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     private fun setupAction() {
         binding.btnReport.setOnClickListener(this)
         binding.btnListReport.setOnClickListener(this)
+        binding.btnProfile.setOnClickListener(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -376,6 +378,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 setupViewModel()
 
                 btnToggleMyReport = !btnToggleMyReport
+            }
+
+            R.id.btn_profile -> {
+                val intent = Intent(requireContext(), ProfileActivity::class.java)
+                startActivity(intent)
             }
         }
     }
