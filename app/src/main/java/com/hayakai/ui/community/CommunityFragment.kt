@@ -13,6 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.hayakai.R
 import com.hayakai.databinding.FragmentCommunityBinding
 import com.hayakai.ui.newpost.NewPostActivity
+import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.ViewModelFactory
 
 class CommunityFragment : Fragment(), View.OnClickListener {
@@ -50,6 +51,7 @@ class CommunityFragment : Fragment(), View.OnClickListener {
 
     private fun setupAction() {
         binding.floatingActionButton.setOnClickListener(this)
+        binding.btnProfile.setOnClickListener(this)
     }
 
 
@@ -62,6 +64,11 @@ class CommunityFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             binding.floatingActionButton.id -> {
                 val intent = Intent(requireContext(), NewPostActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.btn_profile -> {
+                val intent = Intent(requireContext(), ProfileActivity::class.java)
                 startActivity(intent)
             }
         }
