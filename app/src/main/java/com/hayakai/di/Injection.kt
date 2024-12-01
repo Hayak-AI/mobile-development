@@ -1,6 +1,7 @@
 package com.hayakai.di
 
 import android.content.Context
+import com.hayakai.data.local.room.CommentPostRoomDatabase
 import com.hayakai.data.local.room.CommentReportRoomDatabase
 import com.hayakai.data.local.room.CommunityPostRoomDatabase
 import com.hayakai.data.local.room.ContactRoomDatabase
@@ -51,9 +52,15 @@ object Injection {
 
     fun provideCommentRepository(context: Context): CommentRepository {
         val commentReportDao = CommentReportRoomDatabase.getDatabase(context).commentReportDao()
+        val commentPostDao = CommentPostRoomDatabase.getDatabase(context).commentPostDao()
         val apiService = ApiConfig.getApiService()
         val userPreference = UserPreference.getInstance(context.dataStore)
-        return CommentRepository.getInstance(commentReportDao, apiService, userPreference)
+        return CommentRepository.getInstance(
+            commentReportDao,
+            commentPostDao,
+            apiService,
+            userPreference
+        )
     }
 
     fun provideCommunityPostRepository(context: Context): CommunityPostRepository {

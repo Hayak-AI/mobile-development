@@ -6,6 +6,7 @@ import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
+import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
@@ -27,6 +28,7 @@ import com.hayakai.data.remote.response.GetAllPostResponse
 import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
 import com.hayakai.data.remote.response.GetMyProfileResponse
+import com.hayakai.data.remote.response.GetPostCommentsResponse
 import com.hayakai.data.remote.response.GetPostResponse
 import com.hayakai.data.remote.response.GetReportMapCommentsResponse
 import com.hayakai.data.remote.response.GetReportMapsResponse
@@ -233,6 +235,24 @@ interface ApiService {
         @Body deletePostDto: DeletePostDto,
         @Header("Authorization") token: String
     ): DeletePostResponse
+
+    @GET("post/{post_id}/comments")
+    suspend fun getPostComments(
+        @Path("post_id") reportId: Int,
+        @Header("Authorization") token: String,
+    ): GetPostCommentsResponse
+
+    @HTTP(method = "DELETE", path = "/comments", hasBody = true)
+    suspend fun deletePostComment(
+        @Body deleteCommentDto: DeleteCommentDto,
+        @Header("Authorization") token: String
+    ): DeleteCommentsResponse
+
+    @POST("comments")
+    suspend fun newPostComment(
+        @Body newPostCommentDto: NewPostCommentDto,
+        @Header("Authorization") token: String
+    ): NewCommentResponse
 
     // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Post
     @GET("community/posts/comments")

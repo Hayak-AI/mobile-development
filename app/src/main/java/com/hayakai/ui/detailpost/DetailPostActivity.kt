@@ -1,5 +1,6 @@
 package com.hayakai.ui.detailpost
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,10 +12,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommunityPost
+import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeletePostDto
+import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.databinding.ActivityDetailPostBinding
 import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.editpost.EditPostActivity
@@ -25,6 +30,9 @@ import com.hayakai.utils.ViewModelFactory
 class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityDetailPostBinding
     private val communityViewModel: CommunityViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
+    }
+    private val detailPostViewModel: DetailPostViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var communityPost: CommunityPost
@@ -43,6 +51,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                     result.data?.getParcelableExtra(EditPostActivity.EXTRA_POST)
                 } ?: CommunityPost()
                 setupView()
+                setupViewModel()
             }
         }
 
@@ -55,6 +64,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         setupAction()
         setupData()
         setupView()
+        setupViewModel()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -65,6 +75,13 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setupAction() {
         binding.backButton.setOnClickListener(this)
+        binding.tilNewComment.setEndIconOnClickListener {
+            val newPostCommentDto = NewPostCommentDto(
+                communityPost.id,
+                binding.etNewComment.text.toString()
+            )
+            newCommentPost(newPostCommentDto)
+        }
     }
 
     private fun setupData() {
@@ -109,6 +126,103 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                 popup.show()
             }
         }
+    }
+
+    private fun setupViewModel() {
+        detailPostViewModel.getPostComments(communityPost.id)
+            .observe(this) { result ->
+                when (result) {
+                    is MyResult.Loading -> {
+                    }
+
+                    is MyResult.Success -> {
+//                        binding.tvNotFound.visibility =
+//                            if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
+                        val layoutManager =
+                            LinearLayoutManager(
+                                this,
+                            )
+                        binding.comments.layoutManager = layoutManager
+                        val adapter = CommentPostListAdapter(
+                            onClick = { commentPost ->
+                                MaterialAlertDialogBuilder(
+                                    this,
+                                    R.style.MaterialAlertDialog_DeleteConfirmation
+                                )
+                                    .setTitle("Hapus Komentar")
+                                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
+                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                                        deleteCommentPost(
+                                            dialog,
+                                            DeleteCommentDto(commentPost.id)
+                                        )
+                                    }
+                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    .show()
+                                Toast.makeText(
+                                    this,
+                                    commentPost.content,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        )
+                        adapter.submitList(result.data)
+                        binding.comments.adapter = adapter
+                    }
+
+                    is MyResult.Error -> {
+                        Toast.makeText(this, result.error, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+    }
+
+    private fun newCommentPost(newPostCommentDto: NewPostCommentDto) {
+        detailPostViewModel.newPostComment(newPostCommentDto)
+            .observe(this) { result ->
+                when (result) {
+                    is MyResult.Loading -> {
+                    }
+
+                    is MyResult.Success -> {
+                        binding.etNewComment.text?.clear()
+                        Toast.makeText(
+                            this,
+                            "Berhasil menambahkan komentar",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        setupViewModel()
+                    }
+
+                    is MyResult.Error -> {
+                        Toast.makeText(this, result.error, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+    }
+
+    private fun deleteCommentPost(dialog: DialogInterface, deleteCommentDto: DeleteCommentDto) {
+        detailPostViewModel.deletePostComment(deleteCommentDto)
+            .observe(this) { result ->
+                when (result) {
+                    is MyResult.Loading -> {
+
+                    }
+
+                    is MyResult.Success -> {
+                        Toast.makeText(this, result.data, Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+
+                    is MyResult.Error -> {
+                        Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
     }
 
     private fun onDelete(communityPost: CommunityPost) {

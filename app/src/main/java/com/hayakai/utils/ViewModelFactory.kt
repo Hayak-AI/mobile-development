@@ -15,6 +15,7 @@ import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.createaccount.RegisterViewModel
 import com.hayakai.ui.detailcontact.DetailContactViewModel
+import com.hayakai.ui.detailpost.DetailPostViewModel
 import com.hayakai.ui.editpost.EditPostViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
@@ -98,6 +99,10 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(EditPostViewModel::class.java) -> {
                 EditPostViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(DetailPostViewModel::class.java) -> {
+                DetailPostViewModel(commentRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
