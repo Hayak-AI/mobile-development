@@ -34,6 +34,9 @@ class ExploreFragment : Fragment() {
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        binding.swiperefresh.setOnRefreshListener {
+            setupViewModel()
+        }
 
         return root
     }
@@ -51,6 +54,7 @@ class ExploreFragment : Fragment() {
                     }
 
                     is MyResult.Success -> {
+                        binding.swiperefresh.isRefreshing = false
 //                        binding.tvNotFound.visibility =
 //                            if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
                         val layoutManager =
@@ -109,6 +113,7 @@ class ExploreFragment : Fragment() {
                     }
 
                     is MyResult.Error -> {
+                        binding.swiperefresh.isRefreshing = false
                         Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
                             .show()
                     }
