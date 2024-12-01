@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.newpost.NewPostActivity">
+    tools:context=".ui.editpost.EditPostActivity">
 
     <Button
         android:id="@+id/back_button"
@@ -22,7 +22,7 @@
         android:id="@+id/action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Membuat Postingan"
+        android:text="Memperbarui Postingan"
         android:textAppearance="@style/TextAppearance.Material3.ActionBar.Subtitle"
         android:textFontWeight="500"
         app:layout_constraintBottom_toBottomOf="@+id/back_button"

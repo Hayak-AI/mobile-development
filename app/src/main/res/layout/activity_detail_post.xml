@@ -76,11 +76,15 @@
 
     <TextView
         android:id="@+id/user_location"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         app:layout_constraintBottom_toBottomOf="@+id/ic_location"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ic_location"
         app:layout_constraintTop_toTopOf="@+id/ic_location"
         tools:text="Palangka Raya" />

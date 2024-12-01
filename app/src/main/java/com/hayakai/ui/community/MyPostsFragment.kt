@@ -1,5 +1,6 @@
 package com.hayakai.ui.community
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.databinding.FragmentMyPostsBinding
+import com.hayakai.ui.editpost.EditPostActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
 
@@ -58,11 +60,9 @@ class MyPostsFragment : Fragment() {
                         binding.recyclerView.layoutManager = layoutManager
                         val adapter = CommunityPostListAdapter(
                             onEdit = { communityPost ->
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Edit ${communityPost.title}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                val intent = Intent(requireContext(), EditPostActivity::class.java)
+                                intent.putExtra(EditPostActivity.EXTRA_POST, communityPost)
+                                requireContext().startActivity(intent)
                             },
                             onDelete = { communityPost ->
                                 MaterialAlertDialogBuilder(
@@ -91,6 +91,11 @@ class MyPostsFragment : Fragment() {
                     }
                 }
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
     }
 
 

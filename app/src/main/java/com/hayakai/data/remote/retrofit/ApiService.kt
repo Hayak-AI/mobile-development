@@ -6,8 +6,10 @@ import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
+import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
@@ -198,14 +200,17 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<GetEmergencyResponse>
 
-    @FormUrlEncoded
-    @POST("posts/create")
-    fun createPost(
-        @Field("title") title: String,
-        @Field("content") content: String,
-        @Field("author") author: String,
+    @POST("posts")
+    suspend fun newPost(
+        @Body newPostDto: NewPostDto,
         @Header("Authorization") token: String
-    ): Call<CreatePostResponse>
+    ): CreatePostResponse
+
+    @PUT("posts")
+    suspend fun updatePost(
+        @Body updatePostDto: UpdatePostDto,
+        @Header("Authorization") token: String
+    ): UpdatePostResponse
 
     @GET("posts")
     suspend fun getAllPosts(
@@ -222,16 +227,6 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("post_id") postId: Int
     ): Call<GetPostResponse>
-
-    @FormUrlEncoded
-    @PUT("posts")
-    fun updatePost(
-        @Path("post_id") postId: Int,
-        @Field("title") title: String,
-        @Field("content") content: String,
-        @Field("category") category: String,
-        @Header("Authorization") token: String
-    ): Call<UpdatePostResponse>
 
     @HTTP(method = "DELETE", path = "/posts", hasBody = true)
     suspend fun deletePost(

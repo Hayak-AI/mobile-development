@@ -8,7 +8,8 @@ import com.hayakai.data.local.dao.CommunityPostDao
 import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.remote.dto.DeletePostDto
-import com.hayakai.data.remote.dto.NewCommentReportDto
+import com.hayakai.data.remote.dto.NewPostDto
+import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
@@ -122,12 +123,30 @@ class CommunityPostRepository(
         }
     }
 
-    fun newCommentReport(newCommentReportDto: NewCommentReportDto) = liveData {
+    fun newPost(newPostDto: NewPostDto) = liveData {
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.newCommentReport(
-                    newCommentReportDto,
+                apiService.newPost(
+                    newPostDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun updatePost(updatePostDto: UpdatePostDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.updatePost(
+                    updatePostDto,
                     userPreference.getSession().first().token.asJWT()
                 )
             emit(MyResult.Success(response.status))

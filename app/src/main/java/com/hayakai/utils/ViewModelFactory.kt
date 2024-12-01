@@ -15,6 +15,7 @@ import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.createaccount.RegisterViewModel
 import com.hayakai.ui.detailcontact.DetailContactViewModel
+import com.hayakai.ui.editpost.EditPostViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
@@ -22,6 +23,7 @@ import com.hayakai.ui.map.MapViewModel
 import com.hayakai.ui.mapreportpost.MapReportPostFragmentViewModel
 import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.newmapreport.NewMapReportViewModel
+import com.hayakai.ui.newpost.NewPostViewModel
 import com.hayakai.ui.profile.ProfileViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
@@ -88,6 +90,14 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(CommunityViewModel::class.java) -> {
                 CommunityViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(NewPostViewModel::class.java) -> {
+                NewPostViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(EditPostViewModel::class.java) -> {
+                EditPostViewModel(communityPostRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")

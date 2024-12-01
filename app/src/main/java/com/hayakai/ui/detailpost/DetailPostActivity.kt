@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,6 +17,7 @@ import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.databinding.ActivityDetailPostBinding
 import com.hayakai.ui.community.CommunityViewModel
+import com.hayakai.ui.editpost.EditPostActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
@@ -26,6 +28,24 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var communityPost: CommunityPost
+
+    private val resultSelectMap =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == EditPostActivity.RESULT_CODE && result.data != null) {
+
+                communityPost = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getParcelableExtra(
+                        EditPostActivity.EXTRA_POST,
+                        CommunityPost::class.java
+                    )
+                } else {
+                    @Suppress("DEPRECATION")
+                    result.data?.getParcelableExtra(EditPostActivity.EXTRA_POST)
+                } ?: CommunityPost()
+                setupView()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailPostBinding.inflate(layoutInflater)
@@ -33,6 +53,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
         supportActionBar?.hide()
         setupAction()
+        setupData()
         setupView()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -46,13 +67,16 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         binding.backButton.setOnClickListener(this)
     }
 
-    private fun setupView() {
+    private fun setupData() {
         communityPost = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_POST, CommunityPost::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(EXTRA_POST)
         } ?: CommunityPost()
+    }
+
+    private fun setupView() {
 
         binding.apply {
             userImage.load(communityPost.userImage)
@@ -117,7 +141,9 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun onEdit(communityPost: CommunityPost) {
-
+        val intent = Intent(this, EditPostActivity::class.java)
+        intent.putExtra(EditPostActivity.EXTRA_POST, communityPost)
+        resultSelectMap.launch(intent)
     }
 
     override fun onClick(v: View?) {
