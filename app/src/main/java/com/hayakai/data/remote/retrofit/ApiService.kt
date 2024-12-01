@@ -145,7 +145,7 @@ interface ApiService {
     ): GetReportMapCommentsResponse
 
     @HTTP(method = "DELETE", path = "/comments", hasBody = true)
-    suspend fun deleteReportMap(
+    suspend fun deleteReportComment(
         @Body deleteCommentDto: DeleteCommentDto,
         @Header("Authorization") token: String
     ): DeleteCommentsResponse

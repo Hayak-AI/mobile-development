@@ -66,7 +66,7 @@ class CommentRepository(
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.deleteReportMap(
+                apiService.deleteReportComment(
                     deleteCommentDto,
                     userPreference.getSession().first().token.asJWT()
                 )
@@ -156,7 +156,7 @@ class CommentRepository(
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.deleteReportMap(
+                apiService.deletePostComment(
                     deleteCommentDto,
                     userPreference.getSession().first().token.asJWT()
                 )
