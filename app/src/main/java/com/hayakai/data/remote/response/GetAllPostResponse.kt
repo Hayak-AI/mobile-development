@@ -5,59 +5,62 @@ import com.google.gson.annotations.SerializedName
 data class GetAllPostResponse(
 
     @field:SerializedName("data")
-    val postList: List<PostItem?>? = null, // Mengganti nama 'data' menjadi 'postList'
+    val data: List<PostItem>, // Mengganti nama 'data' menjadi 'postList'
 
     @field:SerializedName("status")
-    val responseStatus: String? = null // Mengganti 'status' menjadi 'responseStatus'
+    val status: String? = null // Mengganti 'status' menjadi 'responseStatus'
 )
 
 data class PostLocation(
 
     @field:SerializedName("latitude")
-    val latitude: String? = null,
+    val latitude: Double,
 
     @field:SerializedName("name")
-    val locationName: String? = null, // Mengganti 'name' menjadi 'locationName'
+    val locationName: String, // Mengganti 'name' menjadi 'locationName'
 
     @field:SerializedName("longitude")
-    val longitude: String? = null
+    val longitude: Double
 )
 
 data class PostUser(
 
     @field:SerializedName("profile_photo")
-    val profilePhotoUrl: String? = null, // Mengganti 'profile_photo' menjadi 'profilePhotoUrl'
+    val image: String? = null, // Mengganti 'profile_photo' menjadi 'profilePhotoUrl'
 
     @field:SerializedName("name")
-    val userName: String? = null, // Mengganti 'name' menjadi 'userName'
+    val name: String, // Mengganti 'name' menjadi 'userName'
 
     @field:SerializedName("id")
-    val userId: Int? = null // Mengganti 'id' menjadi 'userId'
+    val id: Int // Mengganti 'id' menjadi 'userId'
 )
 
 data class PostItem(
 
     @field:SerializedName("post_id")
-    val postId: Int? = null, // ID unik dari post
+    val id: Int, // ID unik dari post
 
     @field:SerializedName("updated_at")
-    val updatedAt: String? = null, // Waktu post terakhir diperbarui
+    val updatedAt: String, // Waktu post terakhir diperbarui
 
     @field:SerializedName("created_at")
-    val createdAt: String? = null, // Waktu post pertama kali dibuat
+    val createdAt: String, // Waktu post pertama kali dibuat
 
     @field:SerializedName("location")
-    val postLocation: PostLocation? = null, // Mengganti 'location' menjadi 'postLocation'
+    val location: PostLocation? = null, // Mengganti 'location' menjadi 'postLocation'
 
     @field:SerializedName("title")
-    val postTitle: String? = null, // Mengganti 'title' menjadi 'postTitle'
+    val title: String, // Mengganti 'title' menjadi 'postTitle'
 
     @field:SerializedName("category")
-    val postCategory: String? = null, // Mengganti 'category' menjadi 'postCategory'
+    val category: String, // Mengganti 'category' menjadi 'postCategory'
 
     @field:SerializedName("user")
-    val postUser: PostUser? = null, // Mengganti 'user' menjadi 'postUser'
+    val user: PostUser, // Mengganti 'user' menjadi 'postUser'
 
     @field:SerializedName("content")
-    val postContent: String? = null // Mengganti 'content' menjadi 'postContent'
+    val content: String, // Mengganti 'content' menjadi 'postContent'
+
+    @field:SerializedName("by_me")
+    val byMe: Boolean
 )

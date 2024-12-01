@@ -1,5 +1,6 @@
-package com.hayakai.ui.newpost
+package com.hayakai.ui.editpost
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,21 +12,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
+import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.data.local.model.LocationModel
-import com.hayakai.data.remote.dto.LocationNewPost
-import com.hayakai.data.remote.dto.NewPostDto
-import com.hayakai.databinding.ActivityNewPostBinding
+import com.hayakai.data.remote.dto.LocationUpdatePost
+import com.hayakai.data.remote.dto.UpdatePostDto
+import com.hayakai.databinding.ActivityEditPostBinding
 import com.hayakai.ui.newmapreport.SelectMapActivity
+import com.hayakai.ui.newmapreport.SelectMapActivity.Companion.EXTRA_PARCEL
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
 
-class NewPostActivity : AppCompatActivity(), View.OnClickListener {
-    private lateinit var binding: ActivityNewPostBinding
-    private val newPostViewModel: NewPostViewModel by viewModels {
+class EditPostActivity : AppCompatActivity(), View.OnClickListener {
+    private lateinit var binding: ActivityEditPostBinding
+    private val editPostViewModel: EditPostViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
     private var location: LocationModel? = null
+
+    private lateinit var post: CommunityPost
 
     private val resultSelectMap =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -33,12 +39,12 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
 
                 location = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     result.data?.getParcelableExtra(
-                        SelectMapActivity.EXTRA_PARCEL,
+                        EXTRA_PARCEL,
                         LocationModel::class.java
                     )
                 } else {
                     @Suppress("DEPRECATION")
-                    result.data?.getParcelableExtra(SelectMapActivity.EXTRA_PARCEL)
+                    result.data?.getParcelableExtra(EXTRA_PARCEL)
                 } ?: LocationModel()
 
                 binding.tvAddLocation.text = location?.name
@@ -48,12 +54,13 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewPostBinding.inflate(layoutInflater)
+        binding = ActivityEditPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()
 
         setupAction()
+        setupData()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -69,6 +76,30 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
         binding.etContent.addTextChangedListener { validateContent() }
         binding.clAddLocation.setOnClickListener(this)
         binding.btnRemoveLocation.setOnClickListener(this)
+    }
+
+    private fun setupData() {
+        post = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(EXTRA_POST, CommunityPost::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(EXTRA_POST)
+        } ?: CommunityPost()
+
+        binding.apply {
+            etTitle.setText(post.title)
+            etContent.setText(post.content)
+            actvCategory.setText(post.category)
+            if (post.locationName.isNotEmpty()) {
+                location = LocationModel(
+                    post.locationName,
+                    post.latitude,
+                    post.longitude
+                )
+                tvAddLocation.text = post.locationName
+                btnRemoveLocation.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun validateTitle(): Boolean {
@@ -113,8 +144,8 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun newPost(newPostDto: NewPostDto) {
-        newPostViewModel.newPost(newPostDto).observe(this) { result ->
+    private fun editPost(dialog: DialogInterface, updatePostDto: UpdatePostDto) {
+        editPostViewModel.editPost(updatePostDto).observe(this) { result ->
             when (result) {
                 is MyResult.Loading -> {
                     binding.btnSave.isEnabled = false
@@ -122,7 +153,28 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
 
                 is MyResult.Success -> {
                     binding.btnSave.isEnabled = true
-                    Toast.makeText(this, "Berhasil membuat postingan", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Berhasil memperbarui postingan", Toast.LENGTH_SHORT)
+                        .show()
+                    dialog.dismiss()
+                    val intent = Intent()
+                    val parcel = CommunityPost(
+                        updatePostDto.post_id,
+                        updatePostDto.title,
+                        updatePostDto.content,
+                        updatePostDto.category,
+                        post.userId,
+                        post.userName,
+                        post.userImage,
+                        post.byMe,
+                        post.createdAt,
+                        post.updatedAt,
+                        location?.name ?: "",
+                        location?.latitude ?: 0.0,
+                        location?.longitude ?: 0.0,
+
+                        )
+                    intent.putExtra(EXTRA_POST, parcel)
+                    setResult(RESULT_CODE, intent)
                     finish()
                 }
 
@@ -157,20 +209,39 @@ class NewPostActivity : AppCompatActivity(), View.OnClickListener {
                 val title = binding.etTitle.text.toString()
                 val content = binding.etContent.text.toString()
                 val category = binding.actvCategory.text.toString()
-
-                newPost(
-                    NewPostDto(
-                        title = title,
-                        content = content,
-                        category = category,
-                        if (location != null) LocationNewPost(
-                            location!!.name,
-                            location!!.latitude,
-                            location!!.longitude
-                        ) else null
-                    )
+                MaterialAlertDialogBuilder(
+                    this,
+                    R.style.MaterialAlertDialog_DeleteConfirmation
                 )
+                    .setTitle("Perbarui Postingan")
+                    .setMessage("Apakah Anda yakin ingin memperbarui postingan ini?")
+                    .setPositiveButton("Yes") { dialog, _ ->
+                        editPost(
+                            dialog,
+                            UpdatePostDto(
+                                post.id,
+                                title = title,
+                                content = content,
+                                category = category,
+                                if (location != null) LocationUpdatePost(
+                                    location!!.name,
+                                    location!!.latitude,
+                                    location!!.longitude
+                                ) else null
+                            )
+                        )
+                    }
+                    .setNegativeButton("No") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_POST = "extra_post"
+        const val RESULT_CODE = 200
     }
 }

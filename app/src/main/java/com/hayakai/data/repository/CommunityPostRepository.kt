@@ -4,14 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.google.gson.Gson
-import com.hayakai.data.local.dao.CommentPostDao
-import com.hayakai.data.local.dao.CommentReportDao
-import com.hayakai.data.local.entity.CommentPost
-import com.hayakai.data.local.entity.CommentReport
+import com.hayakai.data.local.dao.CommunityPostDao
+import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.data.pref.UserPreference
-import com.hayakai.data.remote.dto.DeleteCommentDto
-import com.hayakai.data.remote.dto.NewCommentReportDto
-import com.hayakai.data.remote.dto.NewPostCommentDto
+import com.hayakai.data.remote.dto.DeletePostDto
+import com.hayakai.data.remote.dto.NewPostDto
+import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
@@ -19,36 +17,40 @@ import com.hayakai.utils.asJWT
 import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
 
-class CommentRepository(
-    private val commentReportDao: CommentReportDao,
-    private val commentPostDao: CommentPostDao,
+class CommunityPostRepository(
+    private val communityPostDao: CommunityPostDao,
     private val apiService: ApiService,
     private val userPreference: UserPreference
 ) {
 
 
-    fun getReportComments(reportId: Int): LiveData<MyResult<List<CommentReport>>> = liveData {
+    fun getAllPosts(): LiveData<MyResult<List<CommunityPost>>> = liveData {
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.getReportComments(
-                    reportId,
+                apiService.getAllPosts(
                     userPreference.getSession().first().token.asJWT()
                 )
-            val commentReports = response.data.map {
-                CommentReport(
-                    it.commentId,
-                    it.reportId,
+            val communityPostList = response.data.map {
+                CommunityPost(
+                    it.id,
+                    it.title,
                     it.content,
+                    it.category,
                     it.user.id,
                     it.user.name,
-                    it.user.profilePhoto,
+                    it.user.image,
                     it.byMe,
-                    it.createdAt
+                    it.createdAt,
+                    it.updatedAt,
+                    it.location?.locationName ?: "",
+                    it.location?.latitude ?: 0.0,
+                    it.location?.longitude ?: 0.0
+
                 )
             }
-            commentReportDao.deleteByReportId(reportId)
-            commentReportDao.insertAll(commentReports)
+            communityPostDao.deleteAll()
+            communityPostDao.insertAll(communityPostList)
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
@@ -56,89 +58,39 @@ class CommentRepository(
         } catch (e: Exception) {
             emit(MyResult.Error(e.message ?: "An error occurred"))
         } finally {
-            val localData: LiveData<MyResult<List<CommentReport>>> =
-                commentReportDao.getAll(reportId).map { MyResult.Success(it) }
+            val localData: LiveData<MyResult<List<CommunityPost>>> =
+                communityPostDao.getAll().map { MyResult.Success(it) }
             emitSource(localData)
         }
     }
 
-    fun deleteCommentReport(deleteCommentDto: DeleteCommentDto) = liveData {
+    fun getMyPosts(): LiveData<MyResult<List<CommunityPost>>> = liveData {
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.deleteReportMap(
-                    deleteCommentDto,
+                apiService.getMyPosts(
                     userPreference.getSession().first().token.asJWT()
                 )
-            commentReportDao.delete(CommentReport(deleteCommentDto.comment_id))
-            emit(MyResult.Success(response.status))
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        }
-    }
-
-    fun newCommentReport(newCommentReportDto: NewCommentReportDto) = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.newCommentReport(
-                    newCommentReportDto,
-                    userPreference.getSession().first().token.asJWT()
-                )
-            emit(MyResult.Success(response.status))
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        }
-    }
-
-    fun newPostComment(newPostCommentDto: NewPostCommentDto) = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.newPostComment(
-                    newPostCommentDto,
-                    userPreference.getSession().first().token.asJWT()
-                )
-            emit(MyResult.Success(response.status))
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        }
-    }
-
-    fun getPostComments(postId: Int): LiveData<MyResult<List<CommentPost>>> = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.getPostComments(
-                    postId,
-                    userPreference.getSession().first().token.asJWT()
-                )
-            val postCommentList = response.data.map {
-                CommentPost(
-                    it.commentId,
-                    it.postId,
+            val communityPostList = response.data.map {
+                CommunityPost(
+                    it.id,
+                    it.title,
                     it.content,
+                    it.category,
                     it.user.id,
                     it.user.name,
-                    it.user.profilePhoto,
+                    it.user.image,
                     it.byMe,
-                    it.createdAt
+                    it.createdAt,
+                    it.updatedAt,
+                    it.location?.locationName ?: "",
+                    it.location?.latitude ?: 0.0,
+                    it.location?.longitude ?: 0.0
+
                 )
             }
-            commentPostDao.deleteByPostId(postId)
-            commentPostDao.insertAll(postCommentList)
+            communityPostDao.deleteMyPosts()
+            communityPostDao.insertAll(communityPostList)
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
@@ -146,21 +98,57 @@ class CommentRepository(
         } catch (e: Exception) {
             emit(MyResult.Error(e.message ?: "An error occurred"))
         } finally {
-            val localData: LiveData<MyResult<List<CommentPost>>> =
-                commentPostDao.getAll(postId).map { MyResult.Success(it) }
+            val localData: LiveData<MyResult<List<CommunityPost>>> =
+                communityPostDao.getMyPosts().map { MyResult.Success(it) }
             emitSource(localData)
         }
     }
 
-    fun deleteCommentPost(deleteCommentDto: DeleteCommentDto) = liveData {
+    fun deletePost(deletePostDto: DeletePostDto) = liveData {
         emit(MyResult.Loading)
         try {
             val response =
-                apiService.deleteReportMap(
-                    deleteCommentDto,
+                apiService.deletePost(
+                    deletePostDto,
                     userPreference.getSession().first().token.asJWT()
                 )
-            commentPostDao.delete(CommentPost(deleteCommentDto.comment_id))
+            communityPostDao.deletePostById(CommunityPost(deletePostDto.post_id))
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun newPost(newPostDto: NewPostDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.newPost(
+                    newPostDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
+            emit(MyResult.Success(response.status))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun updatePost(updatePostDto: UpdatePostDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.updatePost(
+                    updatePostDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
             emit(MyResult.Success(response.status))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
@@ -172,24 +160,21 @@ class CommentRepository(
     }
 
     suspend fun clearLocalData() {
-        commentReportDao.deleteAll()
-        commentPostDao.deleteAll()
+        communityPostDao.deleteAll()
     }
 
 
     companion object {
         @Volatile
-        private var INSTANCE: CommentRepository? = null
+        private var INSTANCE: CommunityPostRepository? = null
 
         fun getInstance(
-            commentReportDao: CommentReportDao,
-            commentPostDao: CommentPostDao,
+            communityPostDao: CommunityPostDao,
             apiService: ApiService,
             userPreference: UserPreference
-        ): CommentRepository {
+        ): CommunityPostRepository {
             return INSTANCE ?: synchronized(this) {
-                val instance =
-                    CommentRepository(commentReportDao, commentPostDao, apiService, userPreference)
+                val instance = CommunityPostRepository(communityPostDao, apiService, userPreference)
                 INSTANCE = instance
                 instance
             }

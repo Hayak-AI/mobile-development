@@ -86,9 +86,16 @@ dependencies {
     implementation("io.coil-kt.coil3:coil:3.0.4")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
 
+    // viewpager2
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
 
     // room
     implementation(libs.androidx.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    // swipe refresh layout
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
 }

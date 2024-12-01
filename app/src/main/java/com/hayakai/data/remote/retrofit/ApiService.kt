@@ -2,11 +2,15 @@ package com.hayakai.data.remote.retrofit
 
 import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
+import com.hayakai.data.remote.dto.NewPostCommentDto
+import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
@@ -24,6 +28,7 @@ import com.hayakai.data.remote.response.GetAllPostResponse
 import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
 import com.hayakai.data.remote.response.GetMyProfileResponse
+import com.hayakai.data.remote.response.GetPostCommentsResponse
 import com.hayakai.data.remote.response.GetPostResponse
 import com.hayakai.data.remote.response.GetReportMapCommentsResponse
 import com.hayakai.data.remote.response.GetReportMapsResponse
@@ -42,7 +47,6 @@ import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -198,19 +202,27 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<GetEmergencyResponse>
 
-    @FormUrlEncoded
-    @POST("posts/create")
-    fun createPost(
-        @Field("title") title: String,
-        @Field("content") content: String,
-        @Field("author") author: String,
+    @POST("posts")
+    suspend fun newPost(
+        @Body newPostDto: NewPostDto,
         @Header("Authorization") token: String
-    ): Call<CreatePostResponse>
+    ): CreatePostResponse
+
+    @PUT("posts")
+    suspend fun updatePost(
+        @Body updatePostDto: UpdatePostDto,
+        @Header("Authorization") token: String
+    ): UpdatePostResponse
 
     @GET("posts")
-    fun getAllPosts(
+    suspend fun getAllPosts(
         @Header("Authorization") token: String
-    ): Call<GetAllPostResponse>
+    ): GetAllPostResponse
+
+    @GET("posts?from=me")
+    suspend fun getMyPosts(
+        @Header("Authorization") token: String
+    ): GetAllPostResponse
 
     @GET("posts")
     fun getPost(
@@ -218,21 +230,29 @@ interface ApiService {
         @Path("post_id") postId: Int
     ): Call<GetPostResponse>
 
-    @FormUrlEncoded
-    @PUT("posts")
-    fun updatePost(
-        @Path("post_id") postId: Int,
-        @Field("title") title: String,
-        @Field("content") content: String,
-        @Field("category") category: String,
+    @HTTP(method = "DELETE", path = "/posts", hasBody = true)
+    suspend fun deletePost(
+        @Body deletePostDto: DeletePostDto,
         @Header("Authorization") token: String
-    ): Call<UpdatePostResponse>
+    ): DeletePostResponse
 
-    @DELETE("posts")
-    fun deletePost(
-        @Path("post_id") postId: Int,
+    @GET("post/{post_id}/comments")
+    suspend fun getPostComments(
+        @Path("post_id") reportId: Int,
+        @Header("Authorization") token: String,
+    ): GetPostCommentsResponse
+
+    @HTTP(method = "DELETE", path = "/comments", hasBody = true)
+    suspend fun deletePostComment(
+        @Body deleteCommentDto: DeleteCommentDto,
         @Header("Authorization") token: String
-    ): Call<DeletePostResponse>
+    ): DeleteCommentsResponse
+
+    @POST("comments")
+    suspend fun newPostComment(
+        @Body newPostCommentDto: NewPostCommentDto,
+        @Header("Authorization") token: String
+    ): NewCommentResponse
 
     // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Post
     @GET("community/posts/comments")

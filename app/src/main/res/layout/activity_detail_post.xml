@@ -48,6 +48,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:padding="2dp"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/back_button"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
@@ -76,11 +77,15 @@
 
     <TextView
         android:id="@+id/user_location"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         app:layout_constraintBottom_toBottomOf="@+id/ic_location"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ic_location"
         app:layout_constraintTop_toTopOf="@+id/ic_location"
         tools:text="Palangka Raya" />
@@ -91,12 +96,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ellipsize="end"
-        android:maxLines="2"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintEnd_toEndOf="@+id/btn_menu"
         app:layout_constraintStart_toStartOf="@+id/user_image"
         app:layout_constraintTop_toBottomOf="@+id/user_image"
-        tools:text="@tools:sample/lorem/random" />
+        tools:text="asdfs fsd s dfas ds a" />
 
     <TextView
         android:id="@+id/tv_content"
@@ -109,7 +113,7 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        tools:text="@tools:sample/lorem/random" />
+        tools:text="asdf saf asd sa fsda " />
 
     <Button
         android:id="@+id/btn_commentcount"
@@ -131,8 +135,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comments"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/til_new_comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_commentcount"
@@ -151,11 +156,14 @@
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
+        app:endIconDrawable="@drawable/ic_send"
+        app:endIconMode="custom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_new_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />

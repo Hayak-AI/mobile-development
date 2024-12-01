@@ -5,14 +5,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.hayakai.data.repository.AuthRepository
 import com.hayakai.data.repository.CommentRepository
+import com.hayakai.data.repository.CommunityPostRepository
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
 import com.hayakai.ui.common.SessionViewModel
+import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.createaccount.RegisterViewModel
 import com.hayakai.ui.detailcontact.DetailContactViewModel
+import com.hayakai.ui.detailpost.DetailPostViewModel
+import com.hayakai.ui.editpost.EditPostViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
@@ -20,6 +24,7 @@ import com.hayakai.ui.map.MapViewModel
 import com.hayakai.ui.mapreportpost.MapReportPostFragmentViewModel
 import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.newmapreport.NewMapReportViewModel
+import com.hayakai.ui.newpost.NewPostViewModel
 import com.hayakai.ui.profile.ProfileViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
@@ -29,7 +34,8 @@ class ViewModelFactory(
     private val settingsRepository: SettingsRepository,
     private val contactRepository: ContactRepository,
     private val mapReportRepository: MapReportRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val communityPostRepository: CommunityPostRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -83,6 +89,22 @@ class ViewModelFactory(
                 NewMapReportViewModel(mapReportRepository) as T
             }
 
+            modelClass.isAssignableFrom(CommunityViewModel::class.java) -> {
+                CommunityViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(NewPostViewModel::class.java) -> {
+                NewPostViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(EditPostViewModel::class.java) -> {
+                EditPostViewModel(communityPostRepository) as T
+            }
+
+            modelClass.isAssignableFrom(DetailPostViewModel::class.java) -> {
+                DetailPostViewModel(commentRepository) as T
+            }
+
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
         }
     }
@@ -99,7 +121,8 @@ class ViewModelFactory(
                     Injection.provideSettingsRepository(context),
                     Injection.provideContactRepository(context),
                     Injection.provideMapReportRepository(context),
-                    Injection.provideCommentRepository(context)
+                    Injection.provideCommentRepository(context),
+                    Injection.provideCommunityPostRepository(context)
                 )
                 INSTANCE = instance
                 instance
