@@ -14,16 +14,12 @@ import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
-import com.hayakai.data.remote.response.CommunityCommentsForPostResponse
-import com.hayakai.data.remote.response.CommunityCommentsForRepostResponse
 import com.hayakai.data.remote.response.CreatePostResponse
 import com.hayakai.data.remote.response.DeleteCommentsResponse
 import com.hayakai.data.remote.response.DeleteContactsResponse
 import com.hayakai.data.remote.response.DeletePostResponse
 import com.hayakai.data.remote.response.DeleteReportMapsResponse
 import com.hayakai.data.remote.response.ForgotPasswordResponse
-import com.hayakai.data.remote.response.GetAllCommentsPostResponse
-import com.hayakai.data.remote.response.GetAllCommentsRepostResponse
 import com.hayakai.data.remote.response.GetAllPostResponse
 import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
@@ -57,7 +53,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface ApiService {
 
@@ -253,32 +248,4 @@ interface ApiService {
         @Body newPostCommentDto: NewPostCommentDto,
         @Header("Authorization") token: String
     ): NewCommentResponse
-
-    // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Post
-    @GET("community/posts/comments")
-    fun getCommunityCommentsForPost(
-        @Header("Authorization") token: String,
-        @Query("post_id") postId: Int
-    ): Call<CommunityCommentsForPostResponse>
-
-    // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Report
-    @GET("community/reports/comments")
-    fun getCommunityCommentsForRepost(
-        @Header("Authorization") token: String,
-        @Query("report_id") reportId: Int
-    ): Call<CommunityCommentsForRepostResponse>
-
-    // Endpoint untuk mendapatkan semua komentar pada post
-    @GET("community/posts/comments")
-    fun getAllCommentsForPost(
-        @Header("Authorization") token: String,
-        @Query("post_id") postId: Int
-    ): Call<GetAllCommentsPostResponse>
-
-    // Endpoint untuk mendapatkan semua komentar pada repost
-    @GET("community/reports/comments")
-    fun getAllCommentsForRepost(
-        @Header("Authorization") token: String,
-        @Query("report_id") reportId: Int
-    ): Call<GetAllCommentsRepostResponse>
 }
