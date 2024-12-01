@@ -73,6 +73,29 @@ class ExploreFragment : Fragment() {
                                     .setMessage("Are you sure you want to delete this post?")
                                     .setPositiveButton("Yes") { dialog, _ ->
                                         communityViewModel.deletePost(DeletePostDto(communityPost.id))
+                                            .observe(viewLifecycleOwner) { result ->
+                                                when (result) {
+                                                    is MyResult.Loading -> {
+
+                                                    }
+
+                                                    is MyResult.Success -> {
+                                                        Toast.makeText(
+                                                            requireContext(),
+                                                            "Post deleted",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+
+                                                    is MyResult.Error -> {
+                                                        Toast.makeText(
+                                                            requireContext(),
+                                                            result.error,
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                                }
+                                            }
                                         dialog.dismiss()
                                     }
                                     .setNegativeButton("No") { dialog, _ ->

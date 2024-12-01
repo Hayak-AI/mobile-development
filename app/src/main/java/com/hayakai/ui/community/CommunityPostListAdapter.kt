@@ -1,5 +1,6 @@
 package com.hayakai.ui.community
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import coil3.load
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.databinding.ItemPostBinding
+import com.hayakai.ui.detailpost.DetailPostActivity
 
 class CommunityPostListAdapter(
     private val onDelete: (CommunityPost) -> Unit,
@@ -46,7 +48,10 @@ class CommunityPostListAdapter(
 //                btnDelete.isVisible = communityPost.byMe
                 btnMenu.setOnClickListener { v: View ->
                     val popup = PopupMenu(v.context, v)
-                    popup.menuInflater.inflate(R.menu.popup_menu_post, popup.menu)
+                    popup.menuInflater.inflate(
+                        if (communityPost.byMe) R.menu.popup_menu_my_post else R.menu.popup_menu_post,
+                        popup.menu
+                    )
                     popup.setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.delete -> {
@@ -63,6 +68,11 @@ class CommunityPostListAdapter(
                         }
                     }
                     popup.show()
+                }
+                itemView.setOnClickListener {
+                    val intent = Intent(itemView.context, DetailPostActivity::class.java)
+                    intent.putExtra(DetailPostActivity.EXTRA_POST, communityPost)
+                    itemView.context.startActivity(intent)
                 }
             }
         }
