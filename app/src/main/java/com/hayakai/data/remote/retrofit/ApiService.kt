@@ -2,6 +2,7 @@ package com.hayakai.data.remote.retrofit
 
 import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
+import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
@@ -42,7 +43,6 @@ import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -208,9 +208,14 @@ interface ApiService {
     ): Call<CreatePostResponse>
 
     @GET("posts")
-    fun getAllPosts(
+    suspend fun getAllPosts(
         @Header("Authorization") token: String
-    ): Call<GetAllPostResponse>
+    ): GetAllPostResponse
+
+    @GET("posts?from=me")
+    suspend fun getMyPosts(
+        @Header("Authorization") token: String
+    ): GetAllPostResponse
 
     @GET("posts")
     fun getPost(
@@ -228,11 +233,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Call<UpdatePostResponse>
 
-    @DELETE("posts")
-    fun deletePost(
-        @Path("post_id") postId: Int,
+    @HTTP(method = "DELETE", path = "/posts", hasBody = true)
+    suspend fun deletePost(
+        @Body deletePostDto: DeletePostDto,
         @Header("Authorization") token: String
-    ): Call<DeletePostResponse>
+    ): DeletePostResponse
 
     // Endpoint untuk mendapatkan komentar komunitas berdasarkan ID Post
     @GET("community/posts/comments")

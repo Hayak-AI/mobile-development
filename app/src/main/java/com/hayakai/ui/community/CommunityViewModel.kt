@@ -1,13 +1,15 @@
 package com.hayakai.ui.community
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hayakai.data.remote.dto.DeletePostDto
+import com.hayakai.data.repository.CommunityPostRepository
 
-class CommunityViewModel : ViewModel() {
+class CommunityViewModel(private val communityPostRepository: CommunityPostRepository) :
+    ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is Community Fragment"
-    }
-    val text: LiveData<String> = _text
+    fun getAllPosts() = communityPostRepository.getAllPosts()
+
+    fun getMyPosts() = communityPostRepository.getMyPosts()
+
+    fun deletePost(deletePostDto: DeletePostDto) = communityPostRepository.deletePost(deletePostDto)
 }

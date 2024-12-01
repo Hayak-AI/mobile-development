@@ -100,4 +100,6 @@
     <string name="title_not_found">Tidak ada data</string>
     <string name="photo_profile_updated">Berhasil mengunggah foto profil</string>
     <string name="evidence_uploaded">Berhasil mengupload bukti laporan</string>
+    <string name="community_tab_text_1">Semua</string>
+    <string name="community_tab_text_2">Saya</string>
 </resources>
