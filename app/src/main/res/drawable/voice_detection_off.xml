@@ -1,0 +1,38 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="245dp"
+    android:height="245dp"
+    android:viewportWidth="245"
+    android:viewportHeight="245">
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M122.5,122.5m-121.47,0a121.47,121.47 0,1 1,242.95 0a121.47,121.47 0,1 1,-242.95 0"
+        android:strokeWidth="2.05018"
+        android:strokeAlpha="0.08"
+        android:strokeColor="@color/md_theme_inverseSurface" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M122.5,122.5m-101.41,0a101.41,101.41 0,1 1,202.83 0a101.41,101.41 0,1 1,-202.83 0"
+        android:strokeWidth="1.87814"
+        android:strokeColor="@color/md_theme_inverseSurface" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M122.5,122.5m-114.22,0a114.22,114.22 0,1 1,228.44 0a114.22,114.22 0,1 1,-228.44 0"
+        android:strokeWidth="2.05018"
+        android:strokeAlpha="0.16"
+        android:strokeColor="@color/md_theme_inverseSurface" />
+    <path
+        android:fillColor="@color/md_theme_inverseSurface"
+        android:pathData="M122.5,122.5m-91.88,0a91.88,91.88 0,1 1,183.75 0a91.88,91.88 0,1 1,-183.75 0" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M141.98,103.02V118.61M141.98,103.02C141.98,97.86 139.92,92.9 136.27,89.25C132.62,85.6 127.67,83.55 122.5,83.55C117.33,83.55 112.38,85.6 108.73,89.25C105.07,92.9 103.02,97.86 103.02,103.02V118.61C103.02,123.77 105.07,128.72 108.73,132.38C112.38,136.03 117.33,138.08 122.5,138.08C127.67,138.08 132.62,136.03 136.27,132.38C139.92,128.72 141.98,123.77 141.98,118.61M141.98,103.02H130.29M141.98,118.61H130.29M153.66,118.61C153.66,126.87 150.38,134.8 144.54,140.64C138.69,146.48 130.76,149.77 122.5,149.77M122.5,149.77C114.24,149.77 106.31,146.48 100.46,140.64C94.62,134.8 91.34,126.87 91.34,118.61M122.5,149.77V161.45M122.5,161.45H134.19M122.5,161.45H110.81"
+        android:strokeWidth="4.85491"
+        android:strokeColor="@color/md_theme_inverseOnSurface"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="@color/md_theme_inverseOnSurface"
+        android:pathData="M102.14,79.51L143.45,151.06A2,2 104.98,0 1,142.72 153.79L142.72,153.79A2,2 104.98,0 1,139.99 153.06L98.67,81.51A2,2 98.49,0 1,99.41 78.77L99.41,78.77A2,2 98.49,0 1,102.14 79.51z"
+        android:strokeWidth="1"
+        android:strokeColor="@color/md_theme_inverseSurface" />
+</vector>

@@ -1,13 +1,18 @@
 package com.hayakai.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.hayakai.data.repository.ContactRepository
+import com.hayakai.data.repository.SettingsRepository
+import com.hayakai.data.repository.UserRepository
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val userRepository: UserRepository,
+    private val settingsRepository: SettingsRepository,
+    private val contactRepository: ContactRepository
+) : ViewModel() {
+    fun getProfile() = userRepository.getProfile()
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+    fun getSettings() = settingsRepository.getSettings()
+
+    fun getContacts() = contactRepository.getContacts()
 }
