@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.hayakai.R
+import com.hayakai.data.pref.SettingsModel
 import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.ActivityProfileBinding
 import com.hayakai.ui.common.SessionViewModel
@@ -28,6 +29,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private val profileViewModel: ProfileViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
+
+    private var settingsModel: SettingsModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +73,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
                 is MyResult.Success -> {
                     binding.progressIndicator.visibility = View.GONE
+                    settingsModel = settings.data
                     settings.data.let {
                         binding.darkModeSwitch.isChecked = it.darkMode
                         binding.voiceDetectionSwitch.isChecked = it.voiceDetection
@@ -119,7 +123,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
                 is MyResult.Success -> {
                     binding.progressIndicator.visibility = View.GONE
-                    setupViewModel()
+                    settingsModel = result.data
                     Toast.makeText(this, "Settings updated", Toast.LENGTH_SHORT).show()
                 }
 
@@ -140,25 +144,25 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
             val updateUserPreferenceDto = UpdateUserPreferenceDto(
                 isChecked,
-                binding.voiceDetectionSwitch.isChecked,
-                binding.trackMyLocationSwitch.isChecked
+                settingsModel?.voiceDetection ?: false,
+                settingsModel?.locationTracking ?: false
             )
             updateSettings(updateUserPreferenceDto)
         }
 
         binding.voiceDetectionSwitch.setOnCheckedChangeListener { _, isChecked ->
             val updateUserPreferenceDto = UpdateUserPreferenceDto(
-                binding.darkModeSwitch.isChecked,
+                settingsModel?.darkMode ?: false,
                 isChecked,
-                binding.trackMyLocationSwitch.isChecked
+                settingsModel?.locationTracking ?: false
             )
             updateSettings(updateUserPreferenceDto)
         }
 
         binding.trackMyLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
             val updateUserPreferenceDto = UpdateUserPreferenceDto(
-                binding.darkModeSwitch.isChecked,
-                binding.voiceDetectionSwitch.isChecked,
+                settingsModel?.darkMode ?: false,
+                settingsModel?.voiceDetection ?: false,
                 isChecked
             )
             updateSettings(updateUserPreferenceDto)

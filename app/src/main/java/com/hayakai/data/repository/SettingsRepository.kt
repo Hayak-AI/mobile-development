@@ -49,13 +49,24 @@ class SettingsRepository private constructor(
                     updateUserPreferenceDto,
                     userPreference.getSession().first().token.asJWT()
                 )
-            emit(MyResult.Success(response.status))
+            apiService.getUserPreferences(userPreference.getSession().first().token.asJWT())
+                .data.let {
+                    userPreference.saveSettings(
+                        SettingsModel(
+                            it.darkMode,
+                            it.voiceDetection,
+                            it.locationTracking
+                        )
+                    )
+                }
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
             emit(MyResult.Error(errorResponse.message))
         } catch (e: Exception) {
             emit(MyResult.Error(e.message ?: "An error occurred"))
+        } finally {
+            emit(MyResult.Success(userPreference.getSettings().first()))
         }
     }
 
