@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -129,15 +128,15 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun validatePhoneNumber(): Boolean {
         return when {
-            binding.etPhone.text.toString().isEmpty() -> {
-                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_empty)
-                false
-            }
-
-            !Patterns.PHONE.matcher(binding.etPhone.text.toString()).matches() -> {
-                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_invalid)
-                false
-            }
+//            binding.etPhone.text.toString().isEmpty() -> {
+//                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_empty)
+//                false
+//            }
+//
+//            !Patterns.PHONE.matcher(binding.etPhone.text.toString()).matches() -> {
+//                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_invalid)
+//                false
+//            }
 
             else -> {
                 binding.tilPhone.error = null

@@ -4,6 +4,7 @@ import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.hayakai.data.pref.SettingsModel
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
@@ -29,6 +30,35 @@ class SettingsRepository private constructor(
                     )
                 )
             }
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        } finally {
+            emit(MyResult.Success(userPreference.getSettings().first()))
+        }
+    }
+
+    fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                apiService.updateUserPreference(
+                    updateUserPreferenceDto,
+                    userPreference.getSession().first().token.asJWT()
+                )
+            apiService.getUserPreferences(userPreference.getSession().first().token.asJWT())
+                .data.let {
+                    userPreference.saveSettings(
+                        SettingsModel(
+                            it.darkMode,
+                            it.voiceDetection,
+                            it.locationTracking
+                        )
+                    )
+                }
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)

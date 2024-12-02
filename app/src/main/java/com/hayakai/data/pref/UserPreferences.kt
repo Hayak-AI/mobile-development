@@ -1,6 +1,7 @@
 package com.hayakai.data.pref
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -39,8 +40,8 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         dataStore.edit { preferences ->
             preferences[NAME_KEY] = user.name
             preferences[EMAIL_KEY] = user.email
-            preferences[PHONE_KEY] = user.phone
-            preferences[IMAGE_KEY] = user.image
+            preferences[PHONE_KEY] = user.phone ?: ""
+            preferences[IMAGE_KEY] = user.image ?: ""
         }
     }
 
@@ -56,6 +57,10 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
     }
 
     suspend fun saveSettings(settings: SettingsModel) {
+        AppCompatDelegate.setDefaultNightMode(
+            if (settings.darkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
         dataStore.edit { preferences ->
             preferences[DARK_MODE_KEY] = settings.darkMode.toString()
             preferences[VOICE_DETECTION_KEY] = settings.voiceDetection.toString()

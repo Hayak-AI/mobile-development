@@ -1,15 +1,20 @@
 package com.hayakai.ui.profile
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.hayakai.R
+import com.hayakai.data.pref.SettingsModel
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.ActivityProfileBinding
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.editprofile.EditProfileActivity
@@ -27,6 +32,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
     private val profileViewModel: ProfileViewModel by viewModels {
         ViewModelFactory.getInstance(this)
     }
+
+    private var settingsModel: SettingsModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +62,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
+    }
+
     private fun setupViewModel() {
         profileViewModel.getSettings().observe(this) { settings ->
             when (settings) {
@@ -64,6 +76,7 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
 
                 is MyResult.Success -> {
                     binding.progressIndicator.visibility = View.GONE
+                    settingsModel = settings.data
                     settings.data.let {
                         binding.darkModeSwitch.isChecked = it.darkMode
                         binding.voiceDetectionSwitch.isChecked = it.voiceDetection
@@ -104,11 +117,84 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+
+    private fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) {
+        profileViewModel.updateSettings(updateUserPreferenceDto).observe(this) { result ->
+            when (result) {
+                is MyResult.Loading -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
+                }
+
+                is MyResult.Success -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    settingsModel = result.data
+                    Toast.makeText(this, "Settings updated", Toast.LENGTH_SHORT).show()
+                }
+
+                is MyResult.Error -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                getMyLocation()
+            }
+        }
+
+    private fun getMyLocation() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(this, "Location permission granted", Toast.LENGTH_SHORT).show()
+        } else {
+            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     private fun setupAction() {
         binding.backButton.setOnClickListener(this)
         binding.settingsPersonalInformation.setOnClickListener(this)
         binding.settingsEmailPassword.setOnClickListener(this)
         binding.settingsLogout.setOnClickListener(this)
+
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                isChecked,
+                settingsModel?.voiceDetection ?: false,
+                settingsModel?.locationTracking ?: false
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
+
+        binding.voiceDetectionSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                settingsModel?.darkMode ?: false,
+                isChecked,
+                settingsModel?.locationTracking ?: false
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
+
+        binding.trackMyLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                settingsModel?.darkMode ?: false,
+                settingsModel?.voiceDetection ?: false,
+                isChecked
+            )
+            if (isChecked) {
+                getMyLocation()
+            }
+            updateSettings(updateUserPreferenceDto)
+        }
     }
 
     override fun onClick(v: View?) {
