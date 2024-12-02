@@ -115,32 +115,24 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         tools:text="asdf saf asd sa fsda " />
 
-    <Button
-        android:id="@+id/btn_commentcount"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
-        android:layout_width="wrap_content"
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minWidth="32dip"
-        android:minHeight="28dip"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/total_comments"
-        app:icon="@drawable/iconamoon_comment_bold"
-        app:iconTint="@color/md_theme_onPrimaryContainer"
-        app:layout_constraintStart_toStartOf="@+id/tv_content"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content"
-        tools:text="30" />
+        app:layout_constraintBottom_toTopOf="@id/comments"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/comments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/til_new_comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_commentcount"
+        app:layout_constraintTop_toBottomOf="@+id/tv_content"
         tools:ignore="RtlSymmetry"
         tools:listitem="@layout/item_comment" />
 

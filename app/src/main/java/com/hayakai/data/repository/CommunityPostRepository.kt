@@ -45,8 +45,8 @@ class CommunityPostRepository(
                     it.updatedAt,
                     it.location?.locationName ?: "",
                     it.location?.latitude ?: 0.0,
-                    it.location?.longitude ?: 0.0
-
+                    it.location?.longitude ?: 0.0,
+                    it.totalComments
                 )
             }
             communityPostDao.deleteAll()
@@ -85,8 +85,8 @@ class CommunityPostRepository(
                     it.updatedAt,
                     it.location?.locationName ?: "",
                     it.location?.latitude ?: 0.0,
-                    it.location?.longitude ?: 0.0
-
+                    it.location?.longitude ?: 0.0,
+                    it.totalComments
                 )
             }
             communityPostDao.deleteMyPosts()

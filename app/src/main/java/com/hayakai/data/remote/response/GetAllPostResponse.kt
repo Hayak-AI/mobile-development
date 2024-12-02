@@ -62,5 +62,8 @@ data class PostItem(
     val content: String, // Mengganti 'content' menjadi 'postContent'
 
     @field:SerializedName("by_me")
-    val byMe: Boolean
+    val byMe: Boolean,
+
+    @field:SerializedName("total_comments")
+    val totalComments: Int
 )

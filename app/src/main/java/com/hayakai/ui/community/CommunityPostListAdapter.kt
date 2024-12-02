@@ -45,7 +45,8 @@ class CommunityPostListAdapter(
                 title.text = communityPost.title
                 userLocation.text = communityPost.locationName
                 content.text = communityPost.content
-//                btnDelete.isVisible = communityPost.byMe
+                btnComment.text =
+                    itemView.context.getString(R.string.total_comments, communityPost.totalComments)
                 btnMenu.setOnClickListener { v: View ->
                     val popup = PopupMenu(v.context, v)
                     popup.menuInflater.inflate(

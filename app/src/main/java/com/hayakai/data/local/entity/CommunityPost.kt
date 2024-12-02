@@ -48,4 +48,7 @@ class CommunityPost(
 
     @ColumnInfo(name = "longitude")
     var longitude: Double = 0.0,
+
+    @ColumnInfo(name = "total_comments")
+    var totalComments: Int = 0,
 ) : Parcelable

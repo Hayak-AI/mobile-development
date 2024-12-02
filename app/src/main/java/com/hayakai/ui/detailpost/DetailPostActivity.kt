@@ -101,7 +101,6 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
             tvTitle.text = communityPost.title
             userLocation.text = communityPost.locationName
             tvContent.text = communityPost.content
-
             btnMenu.setOnClickListener { v: View ->
                 val popup = PopupMenu(v.context, v)
                 popup.menuInflater.inflate(
