@@ -12,6 +12,7 @@ import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
 import com.hayakai.data.remote.response.CreatePostResponse
@@ -31,13 +32,13 @@ import com.hayakai.data.remote.response.GetReportMapsResponse
 import com.hayakai.data.remote.response.GetUserPreferencesResponse
 import com.hayakai.data.remote.response.LoginResponse
 import com.hayakai.data.remote.response.NewCommentResponse
-import com.hayakai.data.remote.response.PostUserPreferencesResponse
 import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
 import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
+import com.hayakai.data.remote.response.UpdateUserPreferenceResponse
 import com.hayakai.data.remote.response.UploadEvidence
 import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
@@ -107,14 +108,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): GetUserPreferencesResponse
 
-    @FormUrlEncoded
-    @POST("preferences")
-    fun postUserPreferences(
-        @Field("dark_mode") darkMode: Boolean,
-        @Field("voice_detection") voiceDetection: Boolean,
-        @Field("location_tracking") locationTracking: Boolean,
+    @PUT("preferences")
+    suspend fun updateUserPreference(
+        @Body updateUserPreferenceDto: UpdateUserPreferenceDto,
         @Header("Authorization") token: String
-    ): Call<PostUserPreferencesResponse>
+    ): UpdateUserPreferenceResponse
 
     @POST("/maps-report")
     suspend fun reportMaps(

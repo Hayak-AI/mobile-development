@@ -39,8 +39,8 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         dataStore.edit { preferences ->
             preferences[NAME_KEY] = user.name
             preferences[EMAIL_KEY] = user.email
-            preferences[PHONE_KEY] = user.phone
-            preferences[IMAGE_KEY] = user.image
+            preferences[PHONE_KEY] = user.phone ?: ""
+            preferences[IMAGE_KEY] = user.image ?: ""
         }
     }
 

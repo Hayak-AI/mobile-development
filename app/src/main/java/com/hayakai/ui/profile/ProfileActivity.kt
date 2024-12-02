@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.hayakai.R
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.ActivityProfileBinding
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.editprofile.EditProfileActivity
@@ -53,6 +54,11 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
     }
 
     private fun setupViewModel() {
@@ -104,11 +110,59 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) {
+        profileViewModel.updateSettings(updateUserPreferenceDto).observe(this) { result ->
+            when (result) {
+                is MyResult.Loading -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
+                }
+
+                is MyResult.Success -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    setupViewModel()
+                    Toast.makeText(this, "Settings updated", Toast.LENGTH_SHORT).show()
+                }
+
+                is MyResult.Error -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun setupAction() {
         binding.backButton.setOnClickListener(this)
         binding.settingsPersonalInformation.setOnClickListener(this)
         binding.settingsEmailPassword.setOnClickListener(this)
         binding.settingsLogout.setOnClickListener(this)
+
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                isChecked,
+                binding.voiceDetectionSwitch.isChecked,
+                binding.trackMyLocationSwitch.isChecked
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
+
+        binding.voiceDetectionSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                binding.darkModeSwitch.isChecked,
+                isChecked,
+                binding.trackMyLocationSwitch.isChecked
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
+
+        binding.trackMyLocationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                binding.darkModeSwitch.isChecked,
+                binding.voiceDetectionSwitch.isChecked,
+                isChecked
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
     }
 
     override fun onClick(v: View?) {
