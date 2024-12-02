@@ -137,6 +137,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private fun setupAction() {
         binding.btnProfile.setOnClickListener(this)
         binding.btnAddContact.setOnClickListener(this)
+        binding.voiceDetection.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -154,6 +155,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
             R.id.btn_add_contact -> {
                 val intent = Intent(requireContext(), NewContactActivity::class.java)
                 startActivity(intent)
+            }
+
+            R.id.voice_detection -> {
+                println("Voice Detection")
             }
         }
     }
