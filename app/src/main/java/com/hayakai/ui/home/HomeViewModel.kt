@@ -1,6 +1,7 @@
 package com.hayakai.ui.home
 
 import androidx.lifecycle.ViewModel
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
@@ -15,4 +16,7 @@ class HomeViewModel(
     fun getSettings() = settingsRepository.getSettings()
 
     fun getContacts() = contactRepository.getContacts()
+
+    fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) =
+        settingsRepository.updateSettings(updateUserPreferenceDto)
 }

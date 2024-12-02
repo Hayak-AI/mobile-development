@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
+import com.hayakai.data.pref.SettingsModel
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.FragmentHomeBinding
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.detailcontact.DetailContactActivity
@@ -32,6 +34,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private val sessionViewModel: SessionViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
     }
+
+    private var settingsModel: SettingsModel? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,6 +82,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
 
                 is MyResult.Success -> {
+                    settingsModel = profile.data
                     binding.voiceDetection.setImageResource(
                         if (profile.data.voiceDetection) R.drawable.voice_detection_on
                         else R.drawable.voice_detection_off
@@ -145,6 +150,27 @@ class HomeFragment : Fragment(), View.OnClickListener {
         _binding = null
     }
 
+    private fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) {
+        viewModel.updateSettings(updateUserPreferenceDto).observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is MyResult.Loading -> {
+                    binding.progressIndicator.visibility = View.VISIBLE
+                }
+
+                is MyResult.Success -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    settingsModel = result.data
+                    Toast.makeText(requireContext(), "Settings updated", Toast.LENGTH_SHORT).show()
+                }
+
+                is MyResult.Error -> {
+                    binding.progressIndicator.visibility = View.GONE
+                    Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btn_profile -> {
@@ -158,7 +184,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.voice_detection -> {
-                println("Voice Detection")
+                val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                    settingsModel?.darkMode ?: false,
+                    !settingsModel?.voiceDetection!!,
+                    settingsModel?.locationTracking ?: false
+                )
+                updateSettings(updateUserPreferenceDto)
             }
         }
     }
