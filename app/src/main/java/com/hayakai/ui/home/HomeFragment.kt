@@ -1,11 +1,17 @@
 package com.hayakai.ui.home
 
+import android.Manifest
+import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.telephony.SmsManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,14 +24,18 @@ import com.hayakai.ui.detailcontact.DetailContactActivity
 import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
+import com.hayakai.utils.AudioClassifierHelper
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import org.tensorflow.lite.support.label.Category
 
 class HomeFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
     private val binding get() = _binding!!
+
+    private lateinit var audioClassifierHelper: AudioClassifierHelper
 
     private val viewModel: HomeViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -87,6 +97,19 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         if (profile.data.voiceDetection) R.drawable.voice_detection_on
                         else R.drawable.voice_detection_off
                     )
+
+                    binding.titleVoiceDetection.text =
+                        if (profile.data.voiceDetection) getString(R.string.title_voice_detection_on) else getString(
+                            R.string.title_voice_detection_off
+                        )
+
+
+                    if (profile.data.voiceDetection) {
+                        requestPermissionsIfNeeded()
+                        audioClassifierHelper.startAudioClassification()
+                    } else {
+                        audioClassifierHelper.stopAudioClassification()
+                    }
                 }
 
                 is MyResult.Error -> {
@@ -124,6 +147,41 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private fun requestPermissionsIfNeeded() {
+        if (!allPermissionsGranted()) {
+            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        }
+    }
+
+    private fun allPermissionsGranted() =
+        ContextCompat.checkSelfPermission(
+            requireContext(),
+            REQUIRED_PERMISSION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            val message = if (isGranted) "Permission granted" else "Permission denied"
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        }
+
+    companion object {
+        private const val REQUIRED_PERMISSION = Manifest.permission.RECORD_AUDIO
+    }
+
+    private fun sendSMS(phoneNumber: String, message: String) {
+        val sentPI: PendingIntent =
+            PendingIntent.getBroadcast(
+                requireContext(), 0, Intent("SMS_SENT"),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        SmsManager.getDefault().sendTextMessage(phoneNumber, null, message, sentPI, null)
+    }
+
+    //    get permission to send sms
+    private fun requestPermission() {
+        requestPermissionLauncher.launch(Manifest.permission.SEND_SMS)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,10 +192,38 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val root: View = binding.root
 
         setupAction()
+        initializeAudioClassifierHelper()
+        requestPermission()
+        sendSMS("+2126000000", "Some text here")
 
 
         return root
     }
+
+    private fun initializeAudioClassifierHelper() {
+        audioClassifierHelper = AudioClassifierHelper(
+            context = requireContext(),
+            classifierListener = object : AudioClassifierHelper.ClassifierListener {
+                override fun onError(error: String) {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                }
+
+                override fun onResults(results: List<Category>, inferenceTime: Long) {
+                    requireActivity().runOnUiThread {
+                        results.let { it ->
+                            if (it.isNotEmpty()) {
+
+                                println(results)
+                            } else {
+                                println("No result")
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
 
     private fun setupAction() {
         binding.btnProfile.setOnClickListener(this)

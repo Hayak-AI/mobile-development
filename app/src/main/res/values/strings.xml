@@ -105,4 +105,7 @@
     <string name="ed_title_error_msg_is_empty">Judul tidak boleh kosong</string>
     <string name="ed_content_error_msg_is_empty">Konten tidak boleh kosong</string>
     <string name="ed_category_error_msg_is_empty">Kategori tidak boleh kosong</string>
+    <string name="audio_classifier_failed">Audio Classifier failed to initialize. See error logs for details</string>
+    <string name="tflite_is_not_initialized_yet">TFlite tidak bisa diinisilisasi</string>
+    <string name="title_voice_detection_off">Tolong hidupkan saya jika merasa tidak aman</string>
 </resources>

@@ -1,0 +1,124 @@
+package com.hayakai.utils
+
+import android.content.Context
+import android.media.AudioRecord
+import android.os.Handler
+import android.os.HandlerThread
+import android.util.Log
+import org.tensorflow.lite.support.audio.TensorAudio
+import org.tensorflow.lite.support.label.Category
+import org.tensorflow.lite.task.audio.classifier.AudioClassifier
+import org.tensorflow.lite.task.audio.classifier.Classifications
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+
+class AudioClassifierHelper(
+    val threshold: Float = 0.3f,
+    val maxResults: Int = 2,
+    val modelName: String = "md.tflite",
+    val overlap: Float = 0.5f,
+    val context: Context,
+    var classifierListener: ClassifierListener? = null
+) {
+    private var audioClassifier: AudioClassifier? = null
+    private var tensorAudio: TensorAudio? = null
+    private var audioRecord: AudioRecord? = null
+    private var handler: Handler? = null
+    private var handlerThread: HandlerThread? = null
+
+    private var executor: ScheduledThreadPoolExecutor? = null
+
+
+    interface ClassifierListener {
+        fun onError(error: String)
+        fun onResults(results: List<Category>, inferenceTime: Long)
+    }
+
+    companion object {
+        private const val TAG = "AudioClassifierHelper"
+        private const val SAMPLING_RATE_IN_HZ = 44100
+        private const val EXPECTED_INPUT_LENGTH = 1.0f // dalam detik
+        private const val REQUIRE_INPUT_BUFFER_SIZE =
+            (SAMPLING_RATE_IN_HZ * EXPECTED_INPUT_LENGTH).toInt()
+        private const val BUFFER_SIZE_IN_BYTES = REQUIRE_INPUT_BUFFER_SIZE * 2 // 2 byte per sample
+    }
+
+    init {
+        setupAudioClassifier()
+    }
+
+    private fun setupAudioClassifier() {
+        try {
+            val options = AudioClassifier.AudioClassifierOptions.builder()
+                .setScoreThreshold(threshold)
+                .setMaxResults(maxResults)
+                .build()
+
+            audioClassifier = AudioClassifier.createFromFileAndOptions(context, modelName, options)
+            tensorAudio = audioClassifier?.createInputTensorAudio()
+            audioRecord = audioClassifier?.createAudioRecord()
+        } catch (e: Exception) {
+            classifierListener?.onError("Error initializing audio classifier: ${e.message}")
+            Log.e(TAG, "Error: ${e.message}")
+        }
+    }
+
+    fun startAudioClassification() {
+        if (audioRecord == null || tensorAudio == null) {
+            classifierListener?.onError("AudioRecord or TensorAudio is not initialized")
+            return
+        }
+
+        if (audioRecord?.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+            return
+        }
+
+
+        audioRecord?.startRecording()
+
+        executor = ScheduledThreadPoolExecutor(1)
+
+        val classifyRunnable = Runnable {
+            audioRecord?.let { classifyAudioAsync(it) }
+        }
+
+        val lengthInMilliSeconds = ((REQUIRE_INPUT_BUFFER_SIZE * 1.0f) / SAMPLING_RATE_IN_HZ) * 1000
+        val interval = (lengthInMilliSeconds * (1 - overlap)).toLong()
+
+        executor?.scheduleWithFixedDelay(
+            classifyRunnable,
+            0,
+            interval,
+            TimeUnit.MILLISECONDS
+        )
+    }
+
+    private fun classifyAudioAsync(audioRecord: AudioRecord) {
+        tensorAudio?.load(audioRecord)
+        val inferenceStartTime = System.currentTimeMillis()
+        val results = audioClassifier?.classify(tensorAudio!!)
+        val inferenceTime = System.currentTimeMillis() - inferenceStartTime
+
+        processResults(results, inferenceTime)
+    }
+
+
+    fun stopAudioClassification() {
+        executor?.shutdownNow()
+        audioClassifier?.close()
+        audioClassifier = null
+        audioRecord?.stop()
+    }
+
+
+    private fun processResults(results: List<Classifications>?, inferenceTime: Long) {
+        results?.flatMap { it.categories }
+            ?.filter { it.score > threshold }
+            ?.sortedByDescending { it.score }
+            ?.take(maxResults)
+            ?.let { classifierListener?.onResults(it, inferenceTime) }
+    }
+
+}
+
+
