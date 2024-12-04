@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 class AudioClassifierHelper(
-    val threshold: Float = 0.3f,
+    val threshold: Float = 0.2f,
     val maxResults: Int = 2,
     val modelName: String = "md.tflite",
     val overlap: Float = 0.5f,
@@ -36,8 +36,8 @@ class AudioClassifierHelper(
 
     companion object {
         private const val TAG = "AudioClassifierHelper"
-        private const val SAMPLING_RATE_IN_HZ = 44100
-        private const val EXPECTED_INPUT_LENGTH = 1.0f // dalam detik
+        private const val SAMPLING_RATE_IN_HZ = 16000
+        private const val EXPECTED_INPUT_LENGTH = 0.500f // dalam detik
         private const val REQUIRE_INPUT_BUFFER_SIZE =
             (SAMPLING_RATE_IN_HZ * EXPECTED_INPUT_LENGTH).toInt()
         private const val BUFFER_SIZE_IN_BYTES = REQUIRE_INPUT_BUFFER_SIZE * 2 // 2 byte per sample
@@ -70,6 +70,7 @@ class AudioClassifierHelper(
         }
 
         if (audioRecord?.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+            println("lagi recording")
             return
         }
 
@@ -85,7 +86,7 @@ class AudioClassifierHelper(
         val lengthInMilliSeconds = ((REQUIRE_INPUT_BUFFER_SIZE * 1.0f) / SAMPLING_RATE_IN_HZ) * 1000
         val interval = (lengthInMilliSeconds * (1 - overlap)).toLong()
 
-        executor?.scheduleWithFixedDelay(
+        executor?.scheduleAtFixedRate(
             classifyRunnable,
             0,
             interval,
@@ -107,6 +108,7 @@ class AudioClassifierHelper(
         executor?.shutdownNow()
         audioClassifier?.close()
         audioClassifier = null
+        tensorAudio = null
         audioRecord?.stop()
     }
 

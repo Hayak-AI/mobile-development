@@ -56,6 +56,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
             } else {
+
+                initializeAudioClassifierHelper()
                 setupViewModel()
             }
         }
@@ -192,7 +194,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val root: View = binding.root
 
         setupAction()
-        initializeAudioClassifierHelper()
         requestPermission()
         sendSMS("+2126000000", "Some text here")
 
@@ -275,6 +276,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     !settingsModel?.voiceDetection!!,
                     settingsModel?.locationTracking ?: false
                 )
+                if (settingsModel?.voiceDetection!!) {
+                    audioClassifierHelper.stopAudioClassification()
+                } else {
+                    requestPermissionsIfNeeded()
+                    audioClassifierHelper.startAudioClassification()
+                }
                 updateSettings(updateUserPreferenceDto)
             }
         }
