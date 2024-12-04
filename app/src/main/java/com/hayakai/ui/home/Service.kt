@@ -28,6 +28,9 @@ import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.hayakai.R
 import com.hayakai.data.local.entity.Contact
+import com.hayakai.data.remote.dto.AddUserToEmergencyDto
+import com.hayakai.data.remote.dto.LocationEmergency
+import com.hayakai.di.Injection
 import com.hayakai.navigation.BottomNavigation
 import com.hayakai.utils.AudioClassifierHelper
 import kotlinx.coroutines.CoroutineScope
@@ -95,6 +98,18 @@ class MyService : Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
 
+    suspend fun sendEmergency(addUserToEmergencyDto: AddUserToEmergencyDto) {
+        try {
+            Injection.provideEmergencyRepository(this@MyService)
+                .addUserToEmergency(addUserToEmergencyDto)
+                .collect {
+                    Log.d(TAG, "onStartCommand: $it")
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "onStartCommand: ${e.message}")
+        }
+    }
+
     private fun initializeAudioClassifierHelper(contactList: List<Contact>) {
 
         audioClassifierHelper = AudioClassifierHelper(
@@ -126,6 +141,20 @@ class MyService : Service() {
                                 Log.d(TAG, "onResults: $it, $location")
                             }
                             if (it.isNotEmpty() && it[0].score > 0.9 && it[0].index == 1) {
+                                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                                    serviceScope.launch {
+                                        sendEmergency(
+                                            AddUserToEmergencyDto(
+                                                description = "Pengguna dalam bahaya",
+                                                location = LocationEmergency(
+                                                    name = "Lokasi pengguna",
+                                                    latitude = location.latitude,
+                                                    longitude = location.longitude
+                                                )
+                                            )
+                                        )
+                                    }
+                                }
                                 contactList.forEach { contact ->
                                     if (contact.notify) {
                                         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -221,6 +250,7 @@ class MyService : Service() {
             @Suppress("DEPRECATION")
             intent?.getParcelableArrayListExtra(EXTRA_CONTACT)
         } ?: ArrayList<Contact>()
+
 
         serviceScope.launch {
             initializeAudioClassifierHelper(contactList)

@@ -13,6 +13,7 @@ import com.hayakai.data.repository.AuthRepository
 import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.CommunityPostRepository
 import com.hayakai.data.repository.ContactRepository
+import com.hayakai.data.repository.EmergencyRepository
 import com.hayakai.data.repository.MapReportRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
@@ -68,5 +69,11 @@ object Injection {
         val apiService = ApiConfig.getApiService()
         val userPreference = UserPreference.getInstance(context.dataStore)
         return CommunityPostRepository.getInstance(communityPostDao, apiService, userPreference)
+    }
+
+    fun provideEmergencyRepository(context: Context): EmergencyRepository {
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return EmergencyRepository.getInstance(apiService, userPreference)
     }
 }
