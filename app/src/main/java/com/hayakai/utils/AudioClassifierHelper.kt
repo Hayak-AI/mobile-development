@@ -2,8 +2,6 @@ package com.hayakai.utils
 
 import android.content.Context
 import android.media.AudioRecord
-import android.os.Handler
-import android.os.HandlerThread
 import android.util.Log
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.support.label.Category
@@ -23,8 +21,6 @@ class AudioClassifierHelper(
     private var audioClassifier: AudioClassifier? = null
     private var tensorAudio: TensorAudio? = null
     private var audioRecord: AudioRecord? = null
-    private var handler: Handler? = null
-    private var handlerThread: HandlerThread? = null
 
     private var executor: ScheduledThreadPoolExecutor? = null
 
@@ -37,10 +33,9 @@ class AudioClassifierHelper(
     companion object {
         private const val TAG = "AudioClassifierHelper"
         private const val SAMPLING_RATE_IN_HZ = 16000
-        private const val EXPECTED_INPUT_LENGTH = 0.500f // dalam detik
+        private const val EXPECTED_INPUT_LENGTH = 0.945f // dalam detik
         private const val REQUIRE_INPUT_BUFFER_SIZE =
             (SAMPLING_RATE_IN_HZ * EXPECTED_INPUT_LENGTH).toInt()
-        private const val BUFFER_SIZE_IN_BYTES = REQUIRE_INPUT_BUFFER_SIZE * 2 // 2 byte per sample
     }
 
     init {

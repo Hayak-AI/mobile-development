@@ -1,21 +1,20 @@
 package com.hayakai.ui.home
 
 import android.Manifest
-import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.telephony.SmsManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
+import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.SettingsModel
 import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.FragmentHomeBinding
@@ -24,18 +23,14 @@ import com.hayakai.ui.detailcontact.DetailContactActivity
 import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
-import com.hayakai.utils.AudioClassifierHelper
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
-import org.tensorflow.lite.support.label.Category
 
 class HomeFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
     private val binding get() = _binding!!
-
-    private lateinit var audioClassifierHelper: AudioClassifierHelper
 
     private val viewModel: HomeViewModel by viewModels {
         ViewModelFactory.getInstance(requireActivity())
@@ -47,6 +42,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private var settingsModel: SettingsModel? = null
 
+    private lateinit var contactList: List<Contact>
+
+    private var fromClick = false
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sessionViewModel.getSession().observe(viewLifecycleOwner) { session ->
@@ -56,8 +55,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
             } else {
-
-                initializeAudioClassifierHelper()
                 setupViewModel()
             }
         }
@@ -104,14 +101,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         if (profile.data.voiceDetection) getString(R.string.title_voice_detection_on) else getString(
                             R.string.title_voice_detection_off
                         )
-
-
-                    if (profile.data.voiceDetection) {
-                        requestPermissionsIfNeeded()
-                        audioClassifierHelper.startAudioClassification()
-                    } else {
-                        audioClassifierHelper.stopAudioClassification()
-                    }
                 }
 
                 is MyResult.Error -> {
@@ -138,8 +127,33 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             startActivity(intent)
                         }
                     )
+                    contactList = contacts.data
                     adapter.submitList(contacts.data)
                     binding.recyclerView.adapter = adapter
+
+                    val audioClassificationService = Intent(requireContext(), MyService::class.java)
+                    audioClassificationService.putParcelableArrayListExtra(
+                        MyService.EXTRA_CONTACT,
+                        contactList as ArrayList<Contact>
+                    )
+                    try {
+
+                        if (settingsModel?.voiceDetection!!) {
+                            if (context?.isServiceRunning(MyService::class.java) == false) {
+                                if (Build.VERSION.SDK_INT >= 26) {
+                                    requireActivity().startForegroundService(
+                                        audioClassificationService
+                                    )
+                                } else {
+                                    requireActivity().startService(audioClassificationService)
+                                }
+                            }
+                        } else {
+                            requireActivity().stopService(audioClassificationService)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("HomeFragment", e.message.toString())
+                    }
                 }
 
                 is MyResult.Error -> {
@@ -149,40 +163,50 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun requestPermissionsIfNeeded() {
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
-        }
-    }
-
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            requireContext(),
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
-
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            val message = if (isGranted) "Permission granted" else "Permission denied"
-            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Permission is granted
+                }
+
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Permission is granted
+                }
+
+
+                else -> {
+                    // Permission is denied
+                }
+            }
         }
 
-    companion object {
-        private const val REQUIRED_PERMISSION = Manifest.permission.RECORD_AUDIO
-    }
 
-    private fun sendSMS(phoneNumber: String, message: String) {
-        val sentPI: PendingIntent =
-            PendingIntent.getBroadcast(
-                requireContext(), 0, Intent("SMS_SENT"),
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        SmsManager.getDefault().sendTextMessage(phoneNumber, null, message, sentPI, null)
-    }
-
-    //    get permission to send sms
     private fun requestPermission() {
-        requestPermissionLauncher.launch(Manifest.permission.SEND_SMS)
+        requestPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
+            )
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        } else {
+//            val intent = Intent()
+//            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//            val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)
+//            intent.setData(uri)
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == 0) {
+//                    println(result.data)
+//                }
+//            }.launch(intent)
+
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+        }
     }
 
     override fun onCreateView(
@@ -195,34 +219,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         setupAction()
         requestPermission()
-        sendSMS("+2126000000", "Some text here")
 
 
         return root
-    }
-
-    private fun initializeAudioClassifierHelper() {
-        audioClassifierHelper = AudioClassifierHelper(
-            context = requireContext(),
-            classifierListener = object : AudioClassifierHelper.ClassifierListener {
-                override fun onError(error: String) {
-                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
-                }
-
-                override fun onResults(results: List<Category>, inferenceTime: Long) {
-                    requireActivity().runOnUiThread {
-                        results.let { it ->
-                            if (it.isNotEmpty()) {
-
-                                println(results)
-                            } else {
-                                println("No result")
-                            }
-                        }
-                    }
-                }
-            }
-        )
     }
 
 
@@ -271,17 +270,29 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.voice_detection -> {
+                fromClick = true
                 val updateUserPreferenceDto = UpdateUserPreferenceDto(
                     settingsModel?.darkMode ?: false,
                     !settingsModel?.voiceDetection!!,
                     settingsModel?.locationTracking ?: false
                 )
+                val audioClassificationService = Intent(requireContext(), MyService::class.java)
+                audioClassificationService.putParcelableArrayListExtra(
+                    MyService.EXTRA_CONTACT,
+                    contactList as ArrayList<Contact>
+                )
                 if (settingsModel?.voiceDetection!!) {
-                    audioClassifierHelper.stopAudioClassification()
+                    requireActivity().stopService(audioClassificationService)
                 } else {
-                    requestPermissionsIfNeeded()
-                    audioClassifierHelper.startAudioClassification()
+
+
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        requireActivity().startForegroundService(audioClassificationService)
+                    } else {
+                        requireActivity().startService(audioClassificationService)
+                    }
                 }
+
                 updateSettings(updateUserPreferenceDto)
             }
         }
