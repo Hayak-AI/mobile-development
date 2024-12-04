@@ -153,7 +153,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toggleGroup" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/title_voice_detection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -174,7 +174,7 @@
         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
         android:textFontWeight="500"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/title_voice_detection" />
 
     <Button
         android:id="@+id/btn_add_contact"

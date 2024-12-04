@@ -1,15 +1,20 @@
 package com.hayakai.ui.home
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hayakai.R
+import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.SettingsModel
 import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.FragmentHomeBinding
@@ -36,6 +41,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private var settingsModel: SettingsModel? = null
+
+    private lateinit var contactList: List<Contact>
+
+    private var fromClick = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -87,6 +96,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         if (profile.data.voiceDetection) R.drawable.voice_detection_on
                         else R.drawable.voice_detection_off
                     )
+
+                    binding.titleVoiceDetection.text =
+                        if (profile.data.voiceDetection) getString(R.string.title_voice_detection_on) else getString(
+                            R.string.title_voice_detection_off
+                        )
                 }
 
                 is MyResult.Error -> {
@@ -113,8 +127,33 @@ class HomeFragment : Fragment(), View.OnClickListener {
                             startActivity(intent)
                         }
                     )
+                    contactList = contacts.data
                     adapter.submitList(contacts.data)
                     binding.recyclerView.adapter = adapter
+
+                    val audioClassificationService = Intent(requireContext(), MyService::class.java)
+                    audioClassificationService.putParcelableArrayListExtra(
+                        MyService.EXTRA_CONTACT,
+                        contactList as ArrayList<Contact>
+                    )
+                    try {
+
+                        if (settingsModel?.voiceDetection!!) {
+                            if (context?.isServiceRunning(MyService::class.java) == false) {
+                                if (Build.VERSION.SDK_INT >= 26) {
+                                    requireActivity().startForegroundService(
+                                        audioClassificationService
+                                    )
+                                } else {
+                                    requireActivity().startService(audioClassificationService)
+                                }
+                            }
+                        } else {
+                            requireActivity().stopService(audioClassificationService)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("HomeFragment", e.message.toString())
+                    }
                 }
 
                 is MyResult.Error -> {
@@ -124,6 +163,51 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            when {
+                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                    // Permission is granted
+                }
+
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                    // Permission is granted
+                }
+
+
+                else -> {
+                    // Permission is denied
+                }
+            }
+        }
+
+
+    private fun requestPermission() {
+        requestPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
+            )
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        } else {
+//            val intent = Intent()
+//            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+//            val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)
+//            intent.setData(uri)
+//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//                if (result.resultCode == 0) {
+//                    println(result.data)
+//                }
+//            }.launch(intent)
+
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,10 +218,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val root: View = binding.root
 
         setupAction()
+        requestPermission()
 
 
         return root
     }
+
 
     private fun setupAction() {
         binding.btnProfile.setOnClickListener(this)
@@ -184,11 +270,29 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.voice_detection -> {
+                fromClick = true
                 val updateUserPreferenceDto = UpdateUserPreferenceDto(
                     settingsModel?.darkMode ?: false,
                     !settingsModel?.voiceDetection!!,
                     settingsModel?.locationTracking ?: false
                 )
+                val audioClassificationService = Intent(requireContext(), MyService::class.java)
+                audioClassificationService.putParcelableArrayListExtra(
+                    MyService.EXTRA_CONTACT,
+                    contactList as ArrayList<Contact>
+                )
+                if (settingsModel?.voiceDetection!!) {
+                    requireActivity().stopService(audioClassificationService)
+                } else {
+
+
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        requireActivity().startForegroundService(audioClassificationService)
+                    } else {
+                        requireActivity().startService(audioClassificationService)
+                    }
+                }
+
                 updateSettings(updateUserPreferenceDto)
             }
         }

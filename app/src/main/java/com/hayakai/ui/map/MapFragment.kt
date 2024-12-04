@@ -175,27 +175,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             }
             val authorImage = tag.userImage
             val ivAuthorImage = view.findViewById<ImageView>(R.id.author_image)
-            if (authorImage.isNotBlank()) {
-                val request = ImageRequest.Builder(view.context)
-                    .allowHardware(false)
-                    .data(authorImage)
-                    .target(
-                        onStart = { placeholder ->
-                            // Handle the placeholder drawable.
-                        },
-                        onSuccess = { result ->
-                            ivAuthorImage.setImageBitmap(result.toBitmap())
-                            if (marker.isInfoWindowShown) {
-                                marker.hideInfoWindow()
-                                marker.showInfoWindow()
+            if (authorImage != null) {
+                if (authorImage.isNotBlank()) {
+                    val request = ImageRequest.Builder(view.context)
+                        .allowHardware(false)
+                        .data(authorImage)
+                        .target(
+                            onStart = { placeholder ->
+                                // Handle the placeholder drawable.
+                            },
+                            onSuccess = { result ->
+                                ivAuthorImage.setImageBitmap(result.toBitmap())
+                                if (marker.isInfoWindowShown) {
+                                    marker.hideInfoWindow()
+                                    marker.showInfoWindow()
+                                }
+                            },
+                            onError = { error ->
+                                // Handle the error drawable.
                             }
-                        },
-                        onError = { error ->
-                            // Handle the error drawable.
-                        }
-                    )
-                    .build()
-                view.context.imageLoader.enqueue(request)
+                        )
+                        .build()
+                    view.context.imageLoader.enqueue(request)
+                }
             }
 
 
@@ -221,6 +223,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 is MyResult.Success -> {
                     mMap.clear()
                     result.data.forEach { mapReport ->
+                        print(mapReport)
                         if (btnToggleMyReport && !mapReport.byMe) {
                             return@forEach
                         }
@@ -250,6 +253,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 }
 
                 is MyResult.Error -> {
+                    println(result.error)
                     Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
                 }
             }
