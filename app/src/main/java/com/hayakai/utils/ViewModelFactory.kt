@@ -8,6 +8,7 @@ import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.CommunityPostRepository
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.MapReportRepository
+import com.hayakai.data.repository.NewsRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
@@ -35,7 +36,8 @@ class ViewModelFactory(
     private val contactRepository: ContactRepository,
     private val mapReportRepository: MapReportRepository,
     private val commentRepository: CommentRepository,
-    private val communityPostRepository: CommunityPostRepository
+    private val communityPostRepository: CommunityPostRepository,
+    private val newsRepository: NewsRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -46,7 +48,12 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(userRepository, settingsRepository, contactRepository) as T
+                HomeViewModel(
+                    userRepository,
+                    settingsRepository,
+                    contactRepository,
+                    newsRepository
+                ) as T
             }
 
             modelClass.isAssignableFrom(SessionViewModel::class.java) -> {
@@ -78,7 +85,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(MapViewModel::class.java) -> {
-                MapViewModel(mapReportRepository) as T
+                MapViewModel(mapReportRepository, newsRepository) as T
             }
 
             modelClass.isAssignableFrom(MapReportPostFragmentViewModel::class.java) -> {
@@ -90,7 +97,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(CommunityViewModel::class.java) -> {
-                CommunityViewModel(communityPostRepository) as T
+                CommunityViewModel(communityPostRepository, newsRepository) as T
             }
 
             modelClass.isAssignableFrom(NewPostViewModel::class.java) -> {
@@ -122,7 +129,8 @@ class ViewModelFactory(
                     Injection.provideContactRepository(context),
                     Injection.provideMapReportRepository(context),
                     Injection.provideCommentRepository(context),
-                    Injection.provideCommunityPostRepository(context)
+                    Injection.provideCommunityPostRepository(context),
+                    Injection.provideNewsRepository(context)
                 )
                 INSTANCE = instance
                 instance
