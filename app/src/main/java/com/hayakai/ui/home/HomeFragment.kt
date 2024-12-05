@@ -2,17 +2,28 @@ package com.hayakai.ui.home
 
 import android.Manifest
 import android.content.Intent
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
 import com.hayakai.R
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.SettingsModel
@@ -20,11 +31,16 @@ import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.databinding.FragmentHomeBinding
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.detailcontact.DetailContactActivity
+import com.hayakai.ui.home.MyService.Companion.TAG
 import com.hayakai.ui.newcontact.NewContactActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class HomeFragment : Fragment(), View.OnClickListener {
 
@@ -45,6 +61,40 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private lateinit var contactList: List<Contact>
 
     private var fromClick = false
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
+    private fun createLocationRequest() {
+        val priority = Priority.PRIORITY_HIGH_ACCURACY
+        val interval = TimeUnit.SECONDS.toMillis(30)
+        val maxWaitTime = TimeUnit.SECONDS.toMillis(1)
+        locationRequest = LocationRequest.Builder(
+            priority,
+            interval
+        ).apply {
+            setMaxUpdateDelayMillis(maxWaitTime)
+        }.build()
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+        val client = LocationServices.getSettingsClient(requireContext())
+        client.checkLocationSettings(builder.build()).addOnSuccessListener {
+            Log.d(TAG, "createLocationRequest: onSuccess")
+        }.addOnFailureListener {
+            Log.e(TAG, "createLocationRequest: onFailure")
+        }
+    }
+
+    private fun createLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    Log.d(TAG, "onLocationResult: " + location.latitude + ", " + location.longitude)
+                }
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -161,6 +211,61 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+
+        if (PermissionChecker.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED || PermissionChecker.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED
+        ) {
+            Log.e(TAG, "Permission not granted")
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+        val geocoder = Geocoder(requireContext(), resources.configuration.locales[0])
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            lifecycleScope.launch {
+                try {
+                    val addresses =
+                        withContext(Dispatchers.IO) {
+                            geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        }
+                    println(addresses)
+                    viewModel.getAllNews(addresses?.firstOrNull()?.locality ?: "Disini")
+                        .observe(viewLifecycleOwner) { news ->
+                            when (news) {
+                                is MyResult.Loading -> {
+                                }
+
+                                is MyResult.Success -> {
+
+                                    binding.tvSafetyScore.text =
+                                        getString(
+                                            R.string.title_score,
+                                            news.data.firstOrNull()?.safetyScore ?: 0
+                                        )
+                                }
+
+                                is MyResult.Error -> {
+                                    Toast.makeText(requireContext(), news.error, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+        }
     }
 
     private val requestPermissionLauncher =
@@ -219,6 +324,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         setupAction()
         requestPermission()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        createLocationRequest()
+        createLocationCallback()
 
 
         return root

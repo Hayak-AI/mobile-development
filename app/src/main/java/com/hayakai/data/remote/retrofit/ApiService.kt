@@ -33,6 +33,7 @@ import com.hayakai.data.remote.response.GetReportMapsResponse
 import com.hayakai.data.remote.response.GetUserPreferencesResponse
 import com.hayakai.data.remote.response.LoginResponse
 import com.hayakai.data.remote.response.NewCommentResponse
+import com.hayakai.data.remote.response.NewsResponse
 import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
 import com.hayakai.data.remote.response.ResetPasswordResponse
@@ -242,4 +243,10 @@ interface ApiService {
         @Body newPostCommentDto: NewPostCommentDto,
         @Header("Authorization") token: String
     ): NewCommentResponse
+
+    @GET("news/{location}")
+    suspend fun getNews(
+        @Path("location") location: String,
+        @Header("Authorization") token: String
+    ): NewsResponse
 }
