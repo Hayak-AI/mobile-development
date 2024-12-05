@@ -353,6 +353,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                                             R.string.title_score,
                                             news.data.firstOrNull()?.safetyScore ?: 0
                                         )
+                                    val adapter = NewsListAdapter()
+                                    adapter.submitList(news.data)
+                                    binding.recyclerView.adapter = adapter
                                 }
 
                                 is MyResult.Error -> {
@@ -400,6 +403,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         binding.btnReport.setOnClickListener(this)
         binding.btnListReport.setOnClickListener(this)
         binding.btnProfile.setOnClickListener(this)
+        binding.btnNews.setOnClickListener(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -478,6 +482,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         private const val TAG = "MapsFragment"
     }
 
+    var newsToggle = false
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btn_report -> {
@@ -499,6 +505,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             R.id.btn_profile -> {
                 val intent = Intent(requireContext(), ProfileActivity::class.java)
                 startActivity(intent)
+            }
+
+            R.id.btn_news -> {
+                if (newsToggle) {
+                    binding.recyclerView.visibility = View.GONE
+                } else {
+                    binding.recyclerView.visibility = View.VISIBLE
+                }
+                newsToggle = !newsToggle
             }
         }
     }

@@ -89,9 +89,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private fun createLocationCallback() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    Log.d(TAG, "onLocationResult: " + location.latitude + ", " + location.longitude)
-                }
             }
         }
     }
@@ -151,6 +148,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         if (profile.data.voiceDetection) getString(R.string.title_voice_detection_on) else getString(
                             R.string.title_voice_detection_off
                         )
+                    if (context?.isServiceRunning(MyService::class.java) == true && !profile.data.voiceDetection && fromClick) {
+                        requireActivity().stopService(
+                            Intent(
+                                requireContext(),
+                                MyService::class.java
+                            )
+                        )
+                    }
                 }
 
                 is MyResult.Error -> {
@@ -260,8 +265,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT)
-                        .show()
                 }
             }
 
