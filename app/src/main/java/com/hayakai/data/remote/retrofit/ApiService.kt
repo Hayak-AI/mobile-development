@@ -5,11 +5,13 @@ import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
+import com.hayakai.data.remote.dto.ForgotPasswordDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
+import com.hayakai.data.remote.dto.ResetPasswordDto
 import com.hayakai.data.remote.dto.UpdateContactDto
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
@@ -74,18 +76,15 @@ interface ApiService {
         @Field("password") password: String
     ): RegisterResponse
 
-    @FormUrlEncoded
     @POST("forgot-password")
-    fun forgotPassword(
-        @Field("email") email: String
-    ): Call<ForgotPasswordResponse>
+    suspend fun forgotPassword(
+        @Body forgotPasswordDto: ForgotPasswordDto
+    ): ForgotPasswordResponse
 
-    @FormUrlEncoded
-    @POST("reset-password")
-    fun resetPassword(
-        @Field("email") email: String,
-        @Field("new_password") newPassword: String
-    ): Call<ResetPasswordResponse>
+    @PUT("reset-password")
+    suspend fun resetPassword(
+        @Body resetPasswordDto: ResetPasswordDto
+    ): ResetPasswordResponse
 
     @Multipart
     @POST("users/upload-profile-photo")

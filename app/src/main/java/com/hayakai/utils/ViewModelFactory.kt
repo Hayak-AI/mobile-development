@@ -19,6 +19,7 @@ import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.detailpost.DetailPostViewModel
 import com.hayakai.ui.editpost.EditPostViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
+import com.hayakai.ui.forgotpassword.ForgotPasswordViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
 import com.hayakai.ui.map.MapViewModel
@@ -110,6 +111,10 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(DetailPostViewModel::class.java) -> {
                 DetailPostViewModel(commentRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ForgotPasswordViewModel::class.java) -> {
+                ForgotPasswordViewModel(authRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")

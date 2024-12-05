@@ -6,6 +6,8 @@ import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.hayakai.data.pref.SessionModel
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.ForgotPasswordDto
+import com.hayakai.data.remote.dto.ResetPasswordDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
@@ -46,6 +48,34 @@ class AuthRepository private constructor(
         emit(MyResult.Loading)
         try {
             val response = apiService.register(name, email, password)
+            emit(MyResult.Success(response))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun forgotPassword(forgotPasswordDto: ForgotPasswordDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.forgotPassword(forgotPasswordDto)
+            emit(MyResult.Success(response))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun resetPassword(resetPasswordDto: ResetPasswordDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.resetPassword(resetPasswordDto)
             emit(MyResult.Success(response))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
