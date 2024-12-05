@@ -21,9 +21,9 @@
     <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
     <string name="onboarding_image_decoration">Hiasan gambar</string>
     <string name="hint_image_decoration">hiasan_gambar</string>
-    <string name="title_send_token">Kirim token</string>
+    <string name="title_send_otp">Kirim otp</string>
     <string name="title_update_password">Perbarui kata sandi</string>
-    <string name="hint_token">Masukkan token dari email</string>
+    <string name="hint_otp">Masukkan OTP dari email</string>
     <string name="hint_new_password">Masukkan kata sandi baru</string>
     <string name="headline_create_account">Yuk bergabung untuk ciptakan lingkungan yang aman</string>
     <string name="title_have_account">Sudah punya akun?</string>
@@ -108,4 +108,6 @@
     <string name="audio_classifier_failed">Audio Classifier failed to initialize. See error logs for details</string>
     <string name="tflite_is_not_initialized_yet">TFlite tidak bisa diinisilisasi</string>
     <string name="title_voice_detection_off">Tolong hidupkan saya jika merasa tidak aman</string>
+    <string name="ed_otp_error_msg_is_empty">OTP tidak boleh kosong</string>
+    <string name="ed_otp_error_msg_is_invalid">OTP tidak valid</string>
 </resources>
