@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.metadata)
-    implementation(libs.tensorflow.lite.gpu)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,7 +75,7 @@ dependencies {
 
     // maps
     implementation(libs.play.services.maps)
-    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation(libs.play.services.location)
 
     // retrofit
     implementation(libs.retrofit)
@@ -88,11 +87,11 @@ dependencies {
     ksp(libs.compiler)
 
     // coil
-    implementation("io.coil-kt.coil3:coil:3.0.4")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
 
     // viewpager2
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.androidx.viewpager2)
 
 
     // room
@@ -101,9 +100,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // swipe refresh layout
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+    implementation(libs.androidx.swiperefreshlayout)
 
-    implementation("org.tensorflow:tensorflow-lite-task-audio:0.4.4")
+    implementation(libs.tensorflow.lite.task.audio)
 
 
 }
