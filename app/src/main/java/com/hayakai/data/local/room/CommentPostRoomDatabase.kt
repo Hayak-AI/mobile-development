@@ -8,7 +8,7 @@ import com.hayakai.data.local.dao.CommentPostDao
 import com.hayakai.data.local.entity.CommentPost
 
 
-@Database(entities = [CommentPost::class], version = 1)
+@Database(entities = [CommentPost::class], version = 1, exportSchema = false)
 abstract class CommentPostRoomDatabase : RoomDatabase() {
     abstract fun commentPostDao(): CommentPostDao
 

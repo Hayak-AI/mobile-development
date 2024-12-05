@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.hayakai.data.local.dao.NewsDao
 import com.hayakai.data.local.entity.News
 
-@Database(entities = [News::class], version = 1)
+@Database(entities = [News::class], version = 1, exportSchema = false)
 abstract class NewsRoomDatabase : RoomDatabase() {
     abstract fun newsDao(): NewsDao
 

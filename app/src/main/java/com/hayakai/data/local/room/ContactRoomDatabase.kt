@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.hayakai.data.local.dao.ContactDao
 import com.hayakai.data.local.entity.Contact
 
-@Database(entities = [Contact::class], version = 1)
+@Database(entities = [Contact::class], version = 1, exportSchema = false)
 abstract class ContactRoomDatabase : RoomDatabase() {
     abstract fun contactDao(): ContactDao
 

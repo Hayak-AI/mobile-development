@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.hayakai.data.local.dao.MapReportDao
 import com.hayakai.data.local.entity.MapReport
 
-@Database(entities = [MapReport::class], version = 2)
+@Database(entities = [MapReport::class], version = 2, exportSchema = false)
 abstract class MapReportRoomDatabase : RoomDatabase() {
     abstract fun mapReportDao(): MapReportDao
 
