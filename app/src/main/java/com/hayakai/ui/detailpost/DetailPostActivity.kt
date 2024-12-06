@@ -14,6 +14,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommunityPost
@@ -96,11 +98,25 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupView() {
 
         binding.apply {
-            userImage.load(communityPost.userImage)
-            userName.text = communityPost.userName
+            userImage.load(communityPost.userImage) {
+                placeholder(R.drawable.fallback_user)
+                fallback(R.drawable.fallback_user)
+            }
+            userName.text = if (communityPost.byMe) getString(
+                R.string.by_me,
+                communityPost.userName
+            ) else communityPost.userName
             tvTitle.text = communityPost.title
-            userLocation.text = communityPost.locationName
+            if (communityPost.locationName.isEmpty()) {
+                userLocation.visibility = View.GONE
+                pinLocation.visibility = View.GONE
+            } else {
+                userLocation.visibility = View.VISIBLE
+                pinLocation.visibility = View.VISIBLE
+                userLocation.text = communityPost.locationName
+            }
             tvContent.text = communityPost.content
+            tvCategory.text = communityPost.category
             btnMenu.setOnClickListener { v: View ->
                 val popup = PopupMenu(v.context, v)
                 popup.menuInflater.inflate(
@@ -160,11 +176,6 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                                         dialog.dismiss()
                                     }
                                     .show()
-                                Toast.makeText(
-                                    this,
-                                    commentPost.content,
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         )
                         adapter.submitList(result.data)

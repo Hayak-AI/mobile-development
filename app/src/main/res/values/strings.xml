@@ -110,4 +110,13 @@
     <string name="ed_otp_error_msg_is_empty">OTP tidak boleh kosong</string>
     <string name="ed_otp_error_msg_is_invalid">OTP tidak valid</string>
     <string name="title_select_map">Tandai Lokasi</string>
+    <string name="title_upload_evidence">Upload bukti laporan jika ada</string>
+    <string name="title_icon_location">Location icon</string>
+    <string name="by_me">(Saya) %s</string>
+    <string name="title_post">Judul</string>
+    <string name="title_category">Kategori</string>
+    <string name="title_delete_location">Hapus lokasi</string>
+    <string name="title_add_content">Tulis konten...</string>
+    <string name="title_create_post">Membuat Postingan</string>
+    <string name="title_update_post">Memperbarui Postingan</string>
 </resources>

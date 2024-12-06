@@ -3,7 +3,6 @@ package com.hayakai.ui.map
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.location.Geocoder
 import android.os.Bundle
 import android.os.Looper
@@ -40,7 +39,7 @@ import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MapColorScheme
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hayakai.R
@@ -54,6 +53,7 @@ import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import com.hayakai.utils.isDarkMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -256,6 +256,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                         .build()
                     view.context.imageLoader.enqueue(request)
                 }
+            } else {
+                ivAuthorImage.setImageResource(R.drawable.fallback_user)
             }
 
 
@@ -410,6 +412,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         mMap = googleMap
 
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
+        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        mMap.mapColorScheme = if (isDarkMode()) MapColorScheme.DARK else MapColorScheme.LIGHT
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isIndoorLevelPickerEnabled = true
@@ -417,7 +421,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         mMap.uiSettings.isMapToolbarEnabled = true
 
         getMyLocation()
-        setMapStyle()
 
         sessionViewModel.getSession().observe(viewLifecycleOwner) { session ->
             if (session.token.isEmpty()) {
@@ -452,23 +455,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             mMap.isMyLocationEnabled = true
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    private fun setMapStyle() {
-        try {
-            val success =
-                mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                        requireContext(),
-                        R.raw.map_style
-                    )
-                )
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.")
-            }
-        } catch (exception: Resources.NotFoundException) {
-            Log.e(TAG, "Can't find style. Error: ", exception)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.hayakai.ui.createaccount
+package com.hayakai.ui.register
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,15 +11,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.hayakai.R
-import com.hayakai.databinding.ActivityCreateAccountBinding
+import com.hayakai.databinding.ActivityRegisterBinding
 import com.hayakai.ui.login.LoginActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
 
-class CreateAccountActivity : AppCompatActivity(), View.OnClickListener {
+class RegisterActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var binding: ActivityCreateAccountBinding
+    private lateinit var binding: ActivityRegisterBinding
 
     private val registerViewModel: RegisterViewModel by viewModels {
         ViewModelFactory.getInstance(this)
@@ -27,7 +27,7 @@ class CreateAccountActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCreateAccountBinding.inflate(layoutInflater)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()

@@ -85,7 +85,7 @@
             android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.createaccount.CreateAccountActivity"
+            android:name=".ui.register.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".ui.forgotpassword.ForgotPasswordActivity"

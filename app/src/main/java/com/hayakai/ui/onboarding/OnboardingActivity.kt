@@ -11,8 +11,8 @@ import com.hayakai.R
 import com.hayakai.databinding.ActivityOnboardingBinding
 import com.hayakai.navigation.BottomNavigation
 import com.hayakai.ui.common.SessionViewModel
-import com.hayakai.ui.createaccount.CreateAccountActivity
 import com.hayakai.ui.login.LoginActivity
+import com.hayakai.ui.register.RegisterActivity
 import com.hayakai.utils.ViewModelFactory
 
 class OnboardingActivity : AppCompatActivity(), View.OnClickListener {
@@ -61,7 +61,7 @@ class OnboardingActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.btn_register -> {
-                val intent = Intent(this@OnboardingActivity, CreateAccountActivity::class.java)
+                val intent = Intent(this@OnboardingActivity, RegisterActivity::class.java)
                 startActivity(intent)
             }
         }

@@ -20,23 +20,27 @@
 
     <TextView
         android:id="@+id/author"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         android:textFontWeight="500"
         app:layout_constraintBottom_toBottomOf="@+id/author_image"
+        app:layout_constraintEnd_toStartOf="@+id/btn_delete"
         app:layout_constraintStart_toEndOf="@+id/author_image"
         app:layout_constraintTop_toTopOf="@+id/author_image"
-        tools:text="Jordi Irawan" />
+        tools:text="Jordi Irawan Jordi Irawan  Jordi Irawan Jordi Irawan" />
 
     <TextView
         android:id="@+id/text_comment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="42dp"
         android:layout_marginTop="8dp"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+        app:layout_constraintEnd_toEndOf="@+id/btn_delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author"
         tools:ignore="RtlSymmetry"

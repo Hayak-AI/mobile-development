@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.databinding.ItemPostBinding
@@ -40,11 +42,25 @@ class CommunityPostListAdapter(
 
         fun bind(communityPost: CommunityPost) {
             binding.apply {
-                userImage.load(communityPost.userImage)
-                userName.text = communityPost.userName
+                userImage.load(communityPost.userImage) {
+                    placeholder(R.drawable.fallback_user)
+                    fallback(R.drawable.fallback_user)
+                }
+                userName.text = if (communityPost.byMe) itemView.context.getString(
+                    R.string.by_me,
+                    communityPost.userName
+                ) else communityPost.userName
                 title.text = communityPost.title
-                userLocation.text = communityPost.locationName
+                if (communityPost.locationName.isEmpty()) {
+                    userLocation.visibility = View.GONE
+                    pinLocation.visibility = View.GONE
+                } else {
+                    userLocation.visibility = View.VISIBLE
+                    pinLocation.visibility = View.VISIBLE
+                    userLocation.text = communityPost.locationName
+                }
                 content.text = communityPost.content
+                tvCategory.text = communityPost.category
                 btnComment.text =
                     itemView.context.getString(R.string.total_comments, communityPost.totalComments)
                 btnMenu.setOnClickListener { v: View ->

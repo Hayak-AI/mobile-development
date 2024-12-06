@@ -52,6 +52,7 @@
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
         app:errorEnabled="true"
+        app:startIconDrawable="@drawable/outline_email_24"
         app:layout_constraintTop_toBottomOf="@+id/main_title">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -73,6 +74,7 @@
         app:boxCornerRadiusTopStart="100dp"
         app:endIconMode="password_toggle"
         app:errorEnabled="true"
+        app:startIconDrawable="@drawable/outline_lock_24"
         app:layout_constraintTop_toBottomOf="@+id/til_email"
         tools:layout_editor_absoluteX="16dp">
 

@@ -1,4 +1,4 @@
-package com.hayakai.ui.createaccount
+package com.hayakai.ui.register
 
 import androidx.lifecycle.ViewModel
 import com.hayakai.data.repository.AuthRepository

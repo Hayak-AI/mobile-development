@@ -52,7 +52,8 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
         app:strokeColor="@color/md_theme_primary"
         app:strokeWidth="1dp"
-        tools:src="@tools:sample/avatars" />
+        android:padding="1dp"
+        tools:src="@drawable/fallback_user" />
 
     <LinearLayout
         android:layout_width="wrap_content"

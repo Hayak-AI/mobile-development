@@ -48,6 +48,7 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="42dp"
         android:hint="@string/hint_full_name"
+        app:startIconDrawable="@drawable/outline_person_24"
         app:boxCornerRadiusBottomEnd="100dp"
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
@@ -74,6 +75,7 @@
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
         app:errorEnabled="true"
+        app:startIconDrawable="@drawable/outline_phone_24"
         app:layout_constraintTop_toBottomOf="@+id/til_full_name"
         tools:layout_editor_absoluteX="16dp">
 
@@ -96,6 +98,7 @@
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
         app:errorEnabled="true"
+        app:startIconDrawable="@drawable/outline_email_24"
         app:layout_constraintTop_toBottomOf="@+id/til_phone"
         tools:layout_editor_absoluteX="16dp">
 
@@ -182,6 +185,8 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="12dp"
         android:text="@string/title_save"
+        app:icon="@drawable/outline_check_circle_24"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

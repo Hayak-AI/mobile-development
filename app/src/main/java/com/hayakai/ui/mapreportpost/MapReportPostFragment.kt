@@ -50,7 +50,7 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
             } ?: MapReport()
 
 
-            binding.authorImage.load(reportMap.userImage)
+            binding.authorImage.load(reportMap.userImage ?: R.drawable.fallback_user)
             binding.author.text = reportMap.userName
             binding.verified.text = if (reportMap.verified) "Verified" else "Not Verified"
             binding.name.text = reportMap.name
@@ -97,11 +97,6 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
                                         dialog.dismiss()
                                     }
                                     .show()
-                                Toast.makeText(
-                                    requireContext(),
-                                    commentReport.content,
-                                    Toast.LENGTH_SHORT
-                                ).show()
                             }
                         )
                         adapter.submitList(result.data)
