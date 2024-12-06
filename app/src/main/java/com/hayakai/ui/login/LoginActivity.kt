@@ -14,9 +14,9 @@ import com.hayakai.R
 import com.hayakai.data.pref.SessionModel
 import com.hayakai.databinding.ActivityLoginBinding
 import com.hayakai.navigation.BottomNavigation
-import com.hayakai.ui.createaccount.CreateAccountActivity
 import com.hayakai.ui.forgotpassword.ForgotPasswordActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
+import com.hayakai.ui.register.RegisterActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
 
@@ -128,7 +128,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.register_button -> {
-                val intent = Intent(this@LoginActivity, CreateAccountActivity::class.java)
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
                 startActivity(intent)
             }
 

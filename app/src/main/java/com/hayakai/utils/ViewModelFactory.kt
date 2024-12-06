@@ -14,7 +14,6 @@ import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.community.CommunityViewModel
-import com.hayakai.ui.createaccount.RegisterViewModel
 import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.detailpost.DetailPostViewModel
 import com.hayakai.ui.editpost.EditPostViewModel
@@ -28,6 +27,7 @@ import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.newmapreport.NewMapReportViewModel
 import com.hayakai.ui.newpost.NewPostViewModel
 import com.hayakai.ui.profile.ProfileViewModel
+import com.hayakai.ui.register.RegisterViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
 class ViewModelFactory(
