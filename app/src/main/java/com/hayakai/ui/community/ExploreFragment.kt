@@ -121,11 +121,6 @@ class ExploreFragment : Fragment() {
             }
     }
 
-    override fun onResume() {
-        super.onResume()
-        setupViewModel()
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

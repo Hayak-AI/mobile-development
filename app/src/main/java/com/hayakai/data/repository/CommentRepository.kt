@@ -125,7 +125,7 @@ class CommentRepository(
                     postId,
                     userPreference.getSession().first().token.asJWT()
                 )
-            val postCommentList = response.data.map {
+            val postCommentList = response.data?.map {
                 CommentPost(
                     it.commentId,
                     it.postId,
@@ -138,7 +138,9 @@ class CommentRepository(
                 )
             }
             commentPostDao.deleteByPostId(postId)
-            commentPostDao.insertAll(postCommentList)
+            if (postCommentList != null) {
+                commentPostDao.insertAll(postCommentList)
+            }
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)

@@ -86,7 +86,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                         currentProfilePhoto = profile.data.image
                         Glide.with(this)
                             .load(profile.data.image)
-                            .placeholder(R.drawable.mdi_user_outline)
+                            .placeholder(R.drawable.fallback_user)
                             .into(binding.userImage)
                     }
                 }

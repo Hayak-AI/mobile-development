@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import com.hayakai.R
 import com.hayakai.data.local.entity.CommentPost
 import com.hayakai.databinding.ItemCommentBinding
 
@@ -35,7 +36,7 @@ class CommentPostListAdapter(
 
         fun bind(commentPost: CommentPost) {
             binding.apply {
-                authorImage.load(commentPost.userImage)
+                authorImage.load(commentPost.userImage ?: R.drawable.fallback_user)
                 author.text = commentPost.userName
                 textComment.text = commentPost.content
                 btnDelete.isVisible = commentPost.byMe

@@ -100,7 +100,8 @@ class ProfileActivity : AppCompatActivity(), View.OnClickListener {
                         binding.userEmail.text = it.email
                         Glide.with(this)
                             .load(it.image)
-                            .placeholder(R.drawable.mdi_user_outline)
+                            .fallback(R.drawable.fallback_user)
+                            .placeholder(R.drawable.fallback_user)
                             .into(binding.userImage)
                     }
                 }
