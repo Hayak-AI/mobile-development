@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HayakAI"
+rootProject.name = "Hayak"
 include(":app")
  

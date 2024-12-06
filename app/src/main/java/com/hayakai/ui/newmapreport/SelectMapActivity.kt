@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +30,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInitializedCallback {
+class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInitializedCallback,
+    View.OnClickListener {
     private lateinit var binding: ActivitySelectMapBinding
     private lateinit var mMap: GoogleMap
 
@@ -159,6 +161,14 @@ class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInit
             }
         } catch (exception: Resources.NotFoundException) {
             Log.e(TAG, "Can't find style. Error: ", exception)
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.back_button -> {
+                finish()
+            }
         }
     }
 
