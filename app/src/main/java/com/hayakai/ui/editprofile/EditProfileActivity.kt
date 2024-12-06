@@ -14,8 +14,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
-import com.dicoding.picodiploma.mycamera.reduceFileImage
-import com.dicoding.picodiploma.mycamera.uriToFile
 import com.hayakai.R
 import com.hayakai.data.pref.UserModel
 import com.hayakai.data.remote.dto.UpdateProfileDto
@@ -24,6 +22,8 @@ import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import com.hayakai.utils.reduceFileImage
+import com.hayakai.utils.uriToFile
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
