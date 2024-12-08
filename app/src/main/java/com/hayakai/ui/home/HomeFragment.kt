@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -148,6 +149,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         if (profile.data.voiceDetection) getString(R.string.title_voice_detection_on) else getString(
                             R.string.title_voice_detection_off
                         )
+
+                    binding.mbtgVoiceSensitivity.check(
+                        when (profile.data.voiceSensitivity) {
+                            "low" -> R.id.btn_low
+                            "medium" -> R.id.btn_medium
+                            else -> R.id.btn_high
+                        }
+                    )
                     if (context?.isServiceRunning(MyService::class.java) == true && !profile.data.voiceDetection && fromClick) {
                         requireActivity().stopService(
                             Intent(
@@ -190,6 +199,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     audioClassificationService.putParcelableArrayListExtra(
                         MyService.EXTRA_CONTACT,
                         contactList as ArrayList<Contact>
+                    )
+                    audioClassificationService.putExtra(
+                        MyService.EXTRA_THRESHOLD,
+                        when (settingsModel?.voiceSensitivity) {
+                            "low" -> 0.8f
+                            "medium" -> 0.5f
+                            else -> 0.2f
+                        }
                     )
                     try {
 
@@ -240,7 +257,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         withContext(Dispatchers.IO) {
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)
                         }
-                    println(addresses)
+
                     viewModel.getAllNews(addresses?.firstOrNull()?.locality ?: "Disini")
                         .observe(viewLifecycleOwner) { news ->
                             when (news) {
@@ -291,15 +308,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
 
     private fun requestPermission() {
-        requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
-            )
+        val perms = mutableListOf<String>(
+            Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
         )
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            requestPermissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+            perms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         } else {
 //            val intent = Intent()
 //            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -313,8 +328,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissionLauncher.launch(arrayOf(Manifest.permission.POST_NOTIFICATIONS))
+            perms.add(Manifest.permission.POST_NOTIFICATIONS)
         }
+
+        requestPermissionLauncher.launch(perms.toTypedArray())
     }
 
     override fun onCreateView(
@@ -340,6 +357,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
         binding.btnProfile.setOnClickListener(this)
         binding.btnAddContact.setOnClickListener(this)
         binding.voiceDetection.setOnClickListener(this)
+        binding.mbtgVoiceSensitivity.addOnButtonCheckedListener { group, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val updateUserPreferenceDto = UpdateUserPreferenceDto(
+                voice_sensitivity = when (checkedId) {
+                    R.id.btn_low -> "low"
+                    R.id.btn_medium -> "medium"
+                    else -> "high"
+                }
+            )
+            updateSettings(updateUserPreferenceDto)
+        }
+
     }
 
     override fun onDestroyView() {
@@ -357,7 +386,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 is MyResult.Success -> {
                     binding.progressIndicator.visibility = View.GONE
                     settingsModel = result.data
-                    Toast.makeText(requireContext(), "Settings updated", Toast.LENGTH_SHORT).show()
                 }
 
                 is MyResult.Error -> {
@@ -366,6 +394,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun obtainViewModel(): HomeViewModel {
+        val factory = ViewModelFactory.getInstance(requireActivity())
+        return ViewModelProvider(this, factory).get(HomeViewModel::class.java)
     }
 
     override fun onClick(v: View?) {
@@ -383,9 +416,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             R.id.voice_detection -> {
                 fromClick = true
                 val updateUserPreferenceDto = UpdateUserPreferenceDto(
-                    settingsModel?.darkMode ?: false,
-                    !settingsModel?.voiceDetection!!,
-                    settingsModel?.locationTracking ?: false
+                    voice_detection = !settingsModel?.voiceDetection!!,
                 )
                 val audioClassificationService = Intent(requireContext(), MyService::class.java)
                 audioClassificationService.putParcelableArrayListExtra(

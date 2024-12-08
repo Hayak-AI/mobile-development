@@ -26,7 +26,7 @@ class SettingsRepository private constructor(
                     SettingsModel(
                         it.darkMode,
                         it.voiceDetection,
-                        it.locationTracking
+                        it.voiceSensitivity
                     )
                 )
             }
@@ -44,9 +44,17 @@ class SettingsRepository private constructor(
     fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) = liveData {
         emit(MyResult.Loading)
         try {
+            val test = UpdateUserPreferenceDto()
+            userPreference.getSettings().first().let {
+                test.dark_mode = updateUserPreferenceDto.dark_mode ?: it.darkMode
+                test.voice_detection = updateUserPreferenceDto.voice_detection ?: it.voiceDetection
+                test.voice_sensitivity =
+                    updateUserPreferenceDto.voice_sensitivity ?: it.voiceSensitivity
+            }
+
             val response =
                 apiService.updateUserPreference(
-                    updateUserPreferenceDto,
+                    test,
                     userPreference.getSession().first().token.asJWT()
                 )
             apiService.getUserPreferences(userPreference.getSession().first().token.asJWT())
@@ -55,7 +63,7 @@ class SettingsRepository private constructor(
                         SettingsModel(
                             it.darkMode,
                             it.voiceDetection,
-                            it.locationTracking
+                            it.voiceSensitivity
                         )
                     )
                 }

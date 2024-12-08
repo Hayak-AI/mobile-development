@@ -1,7 +1,6 @@
 package com.hayakai.data.pref
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -57,14 +56,11 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
     }
 
     suspend fun saveSettings(settings: SettingsModel) {
-        AppCompatDelegate.setDefaultNightMode(
-            if (settings.darkMode) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
-        )
+
         dataStore.edit { preferences ->
             preferences[DARK_MODE_KEY] = settings.darkMode.toString()
             preferences[VOICE_DETECTION_KEY] = settings.voiceDetection.toString()
-            preferences[LOCATION_TRACKING_KEY] = settings.locationTracking.toString()
+            preferences[VOICE_SENSITIVITY_KEY] = settings.voiceSensitivity
         }
     }
 
@@ -73,7 +69,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             SettingsModel(
                 preferences[DARK_MODE_KEY]?.toBoolean() ?: false,
                 preferences[VOICE_DETECTION_KEY]?.toBoolean() ?: false,
-                preferences[LOCATION_TRACKING_KEY]?.toBoolean() ?: false,
+                preferences[VOICE_SENSITIVITY_KEY] ?: "medium",
             )
         }
     }
@@ -91,7 +87,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
 
         private val DARK_MODE_KEY = stringPreferencesKey("dark_mode")
         private val VOICE_DETECTION_KEY = stringPreferencesKey("voice_detection")
-        private val LOCATION_TRACKING_KEY = stringPreferencesKey("location_tracking")
+        private val VOICE_SENSITIVITY_KEY = stringPreferencesKey("voice_sensitivity")
 
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {

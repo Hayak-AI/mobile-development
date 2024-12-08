@@ -281,28 +281,6 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intent)
             }
 
-            R.id.btn_save -> {
-//                if (!validateName() or !validatePhoneNumber() or !validateEmail() or !validateMessage()) return
-//
-//                val name = binding.etFullName.text.toString()
-//                val phoneNumber = binding.etPhone.text.toString()
-//                val email = binding.etEmail.text.toString()
-//                val message = binding.etMessage.text.toString()
-//                val notify = binding.switchNotify.isChecked
-//
-//                updateContact(
-//                    UpdateContactDto(
-//                        contact.id,
-//                        name,
-//                        email,
-//                        phoneNumber,
-//                        notify,
-//                        message
-//                    )
-//                )
-
-            }
-
         }
     }
 

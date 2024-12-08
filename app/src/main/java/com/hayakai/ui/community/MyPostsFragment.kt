@@ -99,6 +99,11 @@ class MyPostsFragment : Fragment() {
     }
 
 
+    override fun onResume() {
+        super.onResume()
+        setupViewModel()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

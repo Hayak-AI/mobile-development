@@ -81,12 +81,26 @@ class CommunityPostListAdapter(
                                 true
                             }
 
+                            R.id.detail -> {
+                                val intent =
+                                    Intent(itemView.context, DetailPostActivity::class.java)
+                                intent.putExtra(DetailPostActivity.EXTRA_POST, communityPost)
+                                itemView.context.startActivity(intent)
+                                true
+                            }
+
                             else -> false
                         }
                     }
                     popup.show()
                 }
                 itemView.setOnClickListener {
+                    val intent = Intent(itemView.context, DetailPostActivity::class.java)
+                    intent.putExtra(DetailPostActivity.EXTRA_POST, communityPost)
+                    itemView.context.startActivity(intent)
+                }
+
+                btnComment.setOnClickListener {
                     val intent = Intent(itemView.context, DetailPostActivity::class.java)
                     intent.putExtra(DetailPostActivity.EXTRA_POST, communityPost)
                     itemView.context.startActivity(intent)
