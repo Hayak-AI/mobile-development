@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,8 +22,11 @@ import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.databinding.FragmentMapReportPostBinding
+import com.hayakai.ui.common.LoadingStateAdapter
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener {
     private var _binding: FragmentMapReportPostBinding? = null
@@ -33,6 +38,7 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
         ViewModelFactory.getInstance(requireContext())
     }
 
+    private lateinit var adapter: CommentReportListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +64,7 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
             binding.image.load(reportMap.evidenceUrl)
             binding.btnDelete.visibility = if (reportMap.byMe) View.VISIBLE else View.GONE
 
+            mapReportPostFragmentViewModel.getReportComments(reportMap.id)
             setupViewModel()
         }
 
@@ -65,50 +72,63 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
     }
 
     private fun setupViewModel() {
-        mapReportPostFragmentViewModel.getCommentReports(reportMap.id)
-            .observe(viewLifecycleOwner) { result ->
-                when (result) {
-                    is MyResult.Loading -> {
-                    }
-
-                    is MyResult.Success -> {
-//                        binding.tvNotFound.visibility =
-//                            if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
-                        val layoutManager =
-                            LinearLayoutManager(
-                                requireContext(),
-                            )
-                        binding.comments.layoutManager = layoutManager
-                        val adapter = CommentReportListAdapter(
-                            onClick = { commentReport ->
-                                MaterialAlertDialogBuilder(
-                                    requireContext(),
-                                    R.style.MaterialAlertDialog_DeleteConfirmation
-                                )
-                                    .setTitle("Hapus Komentar")
-                                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
-                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                                        deleteCommentReport(
-                                            dialog,
-                                            DeleteCommentDto(commentReport.id)
-                                        )
-                                    }
-                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .show()
-                            }
+        val layoutManager =
+            LinearLayoutManager(
+                requireContext(),
+            )
+        binding.comments.layoutManager = layoutManager
+        adapter = CommentReportListAdapter(
+            onClick = { commentReport ->
+                MaterialAlertDialogBuilder(
+                    requireContext(),
+                    R.style.MaterialAlertDialog_DeleteConfirmation
+                )
+                    .setTitle("Hapus Komentar")
+                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
+                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                        deleteCommentReport(
+                            dialog,
+                            DeleteCommentDto(commentReport.id)
                         )
-                        adapter.submitList(result.data)
-                        binding.comments.adapter = adapter
                     }
-
-                    is MyResult.Error -> {
-                        Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT)
-                            .show()
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
                     }
-                }
+                    .show()
             }
+        )
+        binding.comments.adapter = adapter
+        binding.comments.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+        mapReportPostFragmentViewModel.reportComments
+            .observe(viewLifecycleOwner) {
+                adapter.submitData(lifecycle, it)
+            }
+
+        binding.swiperefresh.setOnRefreshListener {
+            binding.comments.removeAllViewsInLayout()
+            adapter.refresh()
+            binding.swiperefresh.isRefreshing = false
+        }
+        binding.retryButton.setOnClickListener {
+            adapter.retry()
+        }
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                if (loadStates.refresh is LoadState.Error) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else if (loadStates.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else {
+                    binding.loadingLayout.visibility = View.GONE
+                }
+                binding.swiperefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -154,12 +174,13 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
                     is MyResult.Success -> {
                         binding.etCreateComment.text?.clear()
+                        mapReportPostFragmentViewModel.getReportComments(reportMap.id)
+                        adapter.refresh()
                         Toast.makeText(
                             requireContext(),
                             "Berhasil menambahkan komentar",
                             Toast.LENGTH_SHORT
                         ).show()
-                        setupViewModel()
                     }
 
                     is MyResult.Error -> {
@@ -216,6 +237,8 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
                     }
 
                     is MyResult.Success -> {
+                        mapReportPostFragmentViewModel.getReportComments(reportMap.id)
+                        adapter.refresh()
                         Toast.makeText(
                             requireContext(),
                             "Berhasil menghapus komentar",

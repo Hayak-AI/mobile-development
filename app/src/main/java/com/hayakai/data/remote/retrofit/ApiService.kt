@@ -60,6 +60,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -143,6 +144,8 @@ interface ApiService {
     @GET("report/{report_id}/comments")
     suspend fun getReportComments(
         @Path("report_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetReportMapCommentsResponse
 
@@ -213,12 +216,17 @@ interface ApiService {
 
     @GET("posts")
     suspend fun getAllPosts(
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String
     ): GetAllPostResponse
 
-    @GET("posts?from=me")
+    @GET("posts")
     suspend fun getMyPosts(
-        @Header("Authorization") token: String
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
+        @Header("Authorization") token: String,
+        @Query("from") from: String = "me"
     ): GetAllPostResponse
 
     @GET("posts")
@@ -236,6 +244,8 @@ interface ApiService {
     @GET("post/{post_id}/comments")
     suspend fun getPostComments(
         @Path("post_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetPostCommentsResponse
 

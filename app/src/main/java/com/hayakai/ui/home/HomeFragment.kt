@@ -374,6 +374,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun updateSettings(updateUserPreferenceDto: UpdateUserPreferenceDto) {

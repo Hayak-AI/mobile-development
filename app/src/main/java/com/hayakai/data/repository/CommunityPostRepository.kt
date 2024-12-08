@@ -2,7 +2,10 @@ package com.hayakai.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.map
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.google.gson.Gson
 import com.hayakai.data.local.dao.CommunityPostDao
 import com.hayakai.data.local.entity.CommunityPost
@@ -10,7 +13,10 @@ import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.UpdatePostDto
+import com.hayakai.data.remote.paging.ExplorePostPagingSource
+import com.hayakai.data.remote.paging.MyPostPagingSource
 import com.hayakai.data.remote.response.ErrorResponse
+import com.hayakai.data.remote.response.PostItem
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.asJWT
@@ -24,84 +30,26 @@ class CommunityPostRepository(
 ) {
 
 
-    fun getAllPosts(): LiveData<MyResult<List<CommunityPost>>> = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.getAllPosts(
-                    userPreference.getSession().first().token.asJWT()
-                )
-            val communityPostList = response.data.map {
-                CommunityPost(
-                    it.id,
-                    it.title,
-                    it.content,
-                    it.category,
-                    it.user.id,
-                    it.user.name,
-                    it.user.image,
-                    it.byMe,
-                    it.createdAt,
-                    it.updatedAt,
-                    it.location?.locationName ?: "",
-                    it.location?.latitude ?: 0.0,
-                    it.location?.longitude ?: 0.0,
-                    it.totalComments
-                )
-            }
-            communityPostDao.deleteAll()
-            communityPostDao.insertAll(communityPostList)
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        } finally {
-            val localData: LiveData<MyResult<List<CommunityPost>>> =
-                communityPostDao.getAll().map { MyResult.Success(it) }
-            emitSource(localData)
-        }
+    fun getAllPosts(): LiveData<PagingData<PostItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = true,
+                initialLoadSize = 5
+            ),
+            pagingSourceFactory = { ExplorePostPagingSource(apiService, userPreference) }
+        ).liveData
     }
 
-    fun getMyPosts(): LiveData<MyResult<List<CommunityPost>>> = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.getMyPosts(
-                    userPreference.getSession().first().token.asJWT()
-                )
-            val communityPostList = response.data.map {
-                CommunityPost(
-                    it.id,
-                    it.title,
-                    it.content,
-                    it.category,
-                    it.user.id,
-                    it.user.name,
-                    it.user.image,
-                    it.byMe,
-                    it.createdAt,
-                    it.updatedAt,
-                    it.location?.locationName ?: "",
-                    it.location?.latitude ?: 0.0,
-                    it.location?.longitude ?: 0.0,
-                    it.totalComments
-                )
-            }
-            communityPostDao.deleteMyPosts()
-            communityPostDao.insertAll(communityPostList)
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        } finally {
-            val localData: LiveData<MyResult<List<CommunityPost>>> =
-                communityPostDao.getMyPosts().map { MyResult.Success(it) }
-            emitSource(localData)
-        }
+    fun getMyPosts(): LiveData<PagingData<PostItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = true,
+                initialLoadSize = 5
+            ),
+            pagingSourceFactory = { MyPostPagingSource(apiService, userPreference) }
+        ).liveData
     }
 
     fun deletePost(deletePostDto: DeletePostDto) = liveData {

@@ -12,6 +12,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
 import coil3.request.fallback
@@ -23,11 +25,14 @@ import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.databinding.ActivityDetailPostBinding
+import com.hayakai.ui.common.LoadingStateAdapter
 import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.editpost.EditPostActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityDetailPostBinding
@@ -38,6 +43,8 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var communityPost: CommunityPost
+
+    private lateinit var adapter: CommentPostListAdapter
 
     private val resultSelectMap =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -66,6 +73,11 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         setupAction()
         setupData()
         setupView()
+
+        if (savedInstanceState == null) {
+            detailPostViewModel.getPostComments(communityPost.id)
+        }
+
         setupViewModel()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -144,50 +156,63 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupViewModel() {
-        detailPostViewModel.getPostComments(communityPost.id)
-            .observe(this) { result ->
-                when (result) {
-                    is MyResult.Loading -> {
-                    }
-
-                    is MyResult.Success -> {
-//                        binding.tvNotFound.visibility =
-//                            if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
-                        val layoutManager =
-                            LinearLayoutManager(
-                                this,
-                            )
-                        binding.comments.layoutManager = layoutManager
-                        val adapter = CommentPostListAdapter(
-                            onClick = { commentPost ->
-                                MaterialAlertDialogBuilder(
-                                    this,
-                                    R.style.MaterialAlertDialog_DeleteConfirmation
-                                )
-                                    .setTitle("Hapus Komentar")
-                                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
-                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                                        deleteCommentPost(
-                                            dialog,
-                                            DeleteCommentDto(commentPost.id)
-                                        )
-                                    }
-                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .show()
-                            }
+        val layoutManager =
+            LinearLayoutManager(
+                this,
+            )
+        binding.comments.layoutManager = layoutManager
+        adapter = CommentPostListAdapter(
+            onClick = { commentPost ->
+                MaterialAlertDialogBuilder(
+                    this,
+                    R.style.MaterialAlertDialog_DeleteConfirmation
+                )
+                    .setTitle("Hapus Komentar")
+                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
+                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                        deleteCommentPost(
+                            dialog,
+                            DeleteCommentDto(commentPost.id)
                         )
-                        adapter.submitList(result.data)
-                        binding.comments.adapter = adapter
                     }
-
-                    is MyResult.Error -> {
-                        Toast.makeText(this, result.error, Toast.LENGTH_SHORT)
-                            .show()
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
                     }
-                }
+                    .show()
             }
+        )
+        binding.comments.adapter = adapter
+        binding.comments.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+        detailPostViewModel.postComments
+            .observe(this) {
+                adapter.submitData(lifecycle, it)
+            }
+
+        binding.swiperefresh.setOnRefreshListener {
+            binding.comments.removeAllViewsInLayout()
+            adapter.refresh()
+            binding.swiperefresh.isRefreshing = false
+        }
+        binding.retryButton.setOnClickListener {
+            adapter.retry()
+        }
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                if (loadStates.refresh is LoadState.Error) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else if (loadStates.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else {
+                    binding.loadingLayout.visibility = View.GONE
+                }
+                binding.swiperefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+            }
+        }
     }
 
     private fun newCommentPost(newPostCommentDto: NewPostCommentDto) {
@@ -199,12 +224,13 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
                     is MyResult.Success -> {
                         binding.etNewComment.text?.clear()
+                        detailPostViewModel.getPostComments(communityPost.id)
+                        adapter.refresh()
                         Toast.makeText(
                             this,
                             "Berhasil menambahkan komentar",
                             Toast.LENGTH_SHORT
                         ).show()
-                        setupViewModel()
                     }
 
                     is MyResult.Error -> {
@@ -225,7 +251,10 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
                     is MyResult.Success -> {
                         Toast.makeText(this, result.data, Toast.LENGTH_SHORT).show()
+                        detailPostViewModel.getPostComments(communityPost.id)
+                        adapter.refresh()
                         dialog.dismiss()
+
                     }
 
                     is MyResult.Error -> {

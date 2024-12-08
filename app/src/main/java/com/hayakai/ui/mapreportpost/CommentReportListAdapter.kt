@@ -3,17 +3,18 @@ package com.hayakai.ui.mapreportpost
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommentReport
+import com.hayakai.data.remote.response.DataItemComment
 import com.hayakai.databinding.ItemCommentBinding
 
 class CommentReportListAdapter(
     private val onClick: (CommentReport) -> Unit
-) : ListAdapter<CommentReport, CommentReportListAdapter.ViewHolder>(DIFF_CALLBACK) {
+) : PagingDataAdapter<DataItemComment, CommentReportListAdapter.ViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCommentBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -24,7 +25,7 @@ class CommentReportListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { holder.bind(it) }
     }
 
 
@@ -34,7 +35,19 @@ class CommentReportListAdapter(
         binding.root
     ) {
 
-        fun bind(commentReport: CommentReport) {
+        fun bind(dataItemComment: DataItemComment) {
+            val commentReport = dataItemComment.let {
+                CommentReport(
+                    it.commentId,
+                    it.reportId,
+                    it.content,
+                    it.user.id,
+                    it.user.name,
+                    it.user.profilePhoto,
+                    it.byMe,
+                    it.createdAt
+                )
+            }
             binding.apply {
                 authorImage.load(commentReport.userImage ?: R.drawable.fallback_user)
                 author.text = commentReport.userName
@@ -49,14 +62,17 @@ class CommentReportListAdapter(
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CommentReport>() {
-            override fun areItemsTheSame(oldItem: CommentReport, newItem: CommentReport): Boolean {
-                return oldItem.id == newItem.id
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItemComment>() {
+            override fun areItemsTheSame(
+                oldItem: DataItemComment,
+                newItem: DataItemComment
+            ): Boolean {
+                return oldItem.commentId == newItem.commentId
             }
 
             override fun areContentsTheSame(
-                oldItem: CommentReport,
-                newItem: CommentReport
+                oldItem: DataItemComment,
+                newItem: DataItemComment
             ): Boolean {
                 return oldItem == newItem
             }

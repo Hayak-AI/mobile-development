@@ -180,6 +180,7 @@ class CommunityFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     override fun onClick(v: View?) {

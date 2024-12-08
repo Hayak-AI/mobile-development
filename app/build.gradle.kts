@@ -104,5 +104,6 @@ dependencies {
 
     implementation(libs.tensorflow.lite.task.audio)
 
-
+    // paging
+    implementation(libs.androidx.paging.runtime.ktx)
 }
