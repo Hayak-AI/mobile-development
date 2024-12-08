@@ -110,9 +110,13 @@ class MyService : Service() {
         }
     }
 
-    private fun initializeAudioClassifierHelper(contactList: List<Contact>) {
+    private fun initializeAudioClassifierHelper(
+        contactList: List<Contact>,
+        threshold: Float = 0.2f
+    ) {
 
         audioClassifierHelper = AudioClassifierHelper(
+            threshold = threshold,
             context = this,
             classifierListener = object : AudioClassifierHelper.ClassifierListener {
                 override fun onError(error: String) {
@@ -239,10 +243,6 @@ class MyService : Service() {
         }
 
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        createLocationRequest()
-        createLocationCallback()
-
         Log.d(TAG, "Service dijalankan...")
         val contactList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableArrayListExtra(EXTRA_CONTACT, Contact::class.java)
@@ -251,9 +251,15 @@ class MyService : Service() {
             intent?.getParcelableArrayListExtra(EXTRA_CONTACT)
         } ?: ArrayList<Contact>()
 
+        val threshold = intent?.getFloatExtra(EXTRA_THRESHOLD, 0.2f) ?: 0.2f
+
 
         serviceScope.launch {
-            initializeAudioClassifierHelper(contactList)
+
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MyService)
+            createLocationRequest()
+            createLocationCallback()
+            initializeAudioClassifierHelper(contactList, threshold)
             audioClassifierHelper.startAudioClassification()
 
         }
@@ -281,6 +287,7 @@ class MyService : Service() {
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "hayak_01"
         private const val CHANNEL_NAME = "hayak channel"
+        const val EXTRA_THRESHOLD = "extra_threshold"
     }
 
     private val serviceJob = Job()

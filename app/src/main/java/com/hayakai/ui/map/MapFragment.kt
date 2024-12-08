@@ -462,6 +462,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     companion object {

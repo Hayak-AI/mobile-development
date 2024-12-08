@@ -19,6 +19,6 @@ data class UserPreferencesData(
     @field:SerializedName("voice_detection")
     val voiceDetection: Boolean,
 
-    @field:SerializedName("location_tracking")
-    val locationTracking: Boolean
+    @field:SerializedName("voice_sensitivity")
+    val voiceSensitivity: String,
 )

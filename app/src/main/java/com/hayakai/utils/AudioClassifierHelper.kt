@@ -44,6 +44,7 @@ class AudioClassifierHelper(
 
     private fun setupAudioClassifier() {
         try {
+            println(threshold)
             val options = AudioClassifier.AudioClassifierOptions.builder()
                 .setScoreThreshold(threshold)
                 .setMaxResults(maxResults)

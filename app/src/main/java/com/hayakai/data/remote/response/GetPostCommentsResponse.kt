@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class GetPostCommentsResponse(
 
     @field:SerializedName("data")
-    val data: List<PostDataItemComment>? = emptyList(),
+    val data: List<PostDataItemComment> = emptyList(),
 
     @field:SerializedName("status")
     val status: String

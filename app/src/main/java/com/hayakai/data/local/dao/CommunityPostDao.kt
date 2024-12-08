@@ -54,7 +54,7 @@ interface CommunityPostDao {
     @Update
     suspend fun update(communityPost: CommunityPost)
 
-    @Query("SELECT * FROM communitypost")
+    @Query("SELECT * FROM communitypost ORDER BY created_at DESC")
     fun getAll(): LiveData<List<CommunityPost>>
 
 }

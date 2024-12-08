@@ -13,6 +13,7 @@ import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.ResetPasswordDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdateEmailPassDto
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
@@ -40,6 +41,7 @@ import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
 import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
+import com.hayakai.data.remote.response.UpdateEmailPassResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
 import com.hayakai.data.remote.response.UpdateUserPreferenceResponse
@@ -58,6 +60,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -85,6 +88,12 @@ interface ApiService {
     suspend fun resetPassword(
         @Body resetPasswordDto: ResetPasswordDto
     ): ResetPasswordResponse
+
+    @PUT("update-email-password")
+    suspend fun updateEmailPassword(
+        @Body updateEmailPassDto: UpdateEmailPassDto,
+        @Header("Authorization") token: String
+    ): UpdateEmailPassResponse
 
     @Multipart
     @POST("users/upload-profile-photo")
@@ -135,6 +144,8 @@ interface ApiService {
     @GET("report/{report_id}/comments")
     suspend fun getReportComments(
         @Path("report_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetReportMapCommentsResponse
 
@@ -205,12 +216,17 @@ interface ApiService {
 
     @GET("posts")
     suspend fun getAllPosts(
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String
     ): GetAllPostResponse
 
-    @GET("posts?from=me")
+    @GET("posts")
     suspend fun getMyPosts(
-        @Header("Authorization") token: String
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
+        @Header("Authorization") token: String,
+        @Query("from") from: String = "me"
     ): GetAllPostResponse
 
     @GET("posts")
@@ -228,6 +244,8 @@ interface ApiService {
     @GET("post/{post_id}/comments")
     suspend fun getPostComments(
         @Path("post_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetPostCommentsResponse
 

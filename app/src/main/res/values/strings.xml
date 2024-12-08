@@ -119,4 +119,5 @@
     <string name="title_add_content">Tulis konten...</string>
     <string name="title_create_post">Membuat Postingan</string>
     <string name="title_update_post">Memperbarui Postingan</string>
+    <string name="retry">Coba lagi</string>
 </resources>

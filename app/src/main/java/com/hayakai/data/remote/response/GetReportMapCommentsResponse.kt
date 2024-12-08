@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class GetReportMapCommentsResponse(
 
     @field:SerializedName("data")
-    val data: List<DataItemComment>,
+    val data: List<DataItemComment> = emptyList(),
 
     @field:SerializedName("status")
     val status: String

@@ -4,6 +4,7 @@ import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import com.hayakai.data.pref.UserModel
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.UpdateEmailPassDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
@@ -69,6 +70,26 @@ class UserRepository private constructor(
                 userPreference.getSession().first().token.asJWT()
             )
             emit(MyResult.Success(response.data))
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            emit(MyResult.Error(errorResponse.message))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
+    fun updateEmailPass(updateEmailPassDto: UpdateEmailPassDto) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response = apiService.updateEmailPassword(
+                updateEmailPassDto,
+                userPreference.getSession().first().token.asJWT()
+            )
+            userPreference.getUser().first().let {
+                saveUser(UserModel(it.name, updateEmailPassDto.email, it.phone, it.image))
+            }
+            emit(MyResult.Success(response))
         } catch (e: HttpException) {
             val errorBody = e.response()?.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)

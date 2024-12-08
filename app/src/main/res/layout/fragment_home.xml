@@ -108,7 +108,7 @@
         app:layout_constraintTop_toBottomOf="@+id/home_say_name" />
 
     <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggleGroup"
+        android:id="@+id/mbtg_voice_sensitivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -126,6 +126,7 @@
             android:text="@string/title_high" />
 
         <com.google.android.material.button.MaterialButton
+            android:enabled="true"
             android:id="@+id/btn_medium"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="wrap_content"
@@ -151,7 +152,7 @@
         android:src="@drawable/voice_detection_on"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toggleGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/mbtg_voice_sensitivity" />
 
     <TextView
         android:id="@+id/title_voice_detection"
