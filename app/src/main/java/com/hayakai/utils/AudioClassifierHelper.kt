@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class AudioClassifierHelper(
     val threshold: Float = 0.2f,
     val maxResults: Int = 2,
-    val modelName: String = "optimize_300mb_metadata.tflite",
+    val modelName: String = "model.tflite",
     val overlap: Float = 0.5f,
     val context: Context,
     var classifierListener: ClassifierListener? = null
