@@ -13,6 +13,7 @@ import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.data.remote.dto.ResetPasswordDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdateEmailPassDto
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
 import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
@@ -40,6 +41,7 @@ import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
 import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
+import com.hayakai.data.remote.response.UpdateEmailPassResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
 import com.hayakai.data.remote.response.UpdateUserPreferenceResponse
@@ -85,6 +87,12 @@ interface ApiService {
     suspend fun resetPassword(
         @Body resetPasswordDto: ResetPasswordDto
     ): ResetPasswordResponse
+
+    @PUT("update-email-password")
+    suspend fun updateEmailPassword(
+        @Body updateEmailPassDto: UpdateEmailPassDto,
+        @Header("Authorization") token: String
+    ): UpdateEmailPassResponse
 
     @Multipart
     @POST("users/upload-profile-photo")
