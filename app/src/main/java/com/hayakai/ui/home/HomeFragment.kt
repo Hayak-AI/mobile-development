@@ -313,19 +313,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
             Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
         )
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             perms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        } else {
-//            val intent = Intent()
-//            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//            val uri: Uri = Uri.fromParts("package", requireContext().packageName, null)
-//            intent.setData(uri)
-//            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//                if (result.resultCode == 0) {
-//                    println(result.data)
-//                }
-//            }.launch(intent)
-
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             perms.add(Manifest.permission.POST_NOTIFICATIONS)
@@ -429,11 +418,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 } else {
 
 
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        requireActivity().startForegroundService(audioClassificationService)
-                    } else {
-                        requireActivity().startService(audioClassificationService)
-                    }
+                    requireActivity().startForegroundService(audioClassificationService)
+
                 }
 
                 updateSettings(updateUserPreferenceDto)
