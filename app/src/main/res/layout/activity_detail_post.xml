@@ -172,6 +172,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:visibility="gone"
         android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/til_new_comment"
         app:layout_constraintTop_toBottomOf="@+id/divider">
@@ -190,10 +191,11 @@
 
         <Button
             android:id="@+id/retry_button"
+            style="?attr/materialIconButtonFilledStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:icon="@drawable/baseline_refresh_24"
             android:layout_gravity="center"
-            android:text="@string/retry"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/error_msg" />
