@@ -212,13 +212,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
                         if (settingsModel?.voiceDetection!!) {
                             if (context?.isServiceRunning(MyService::class.java) == false) {
-                                if (Build.VERSION.SDK_INT >= 26) {
-                                    requireActivity().startForegroundService(
-                                        audioClassificationService
-                                    )
-                                } else {
-                                    requireActivity().startService(audioClassificationService)
-                                }
+                                requireActivity().startForegroundService(
+                                    audioClassificationService
+                                )
                             }
                         } else {
                             requireActivity().stopService(audioClassificationService)
