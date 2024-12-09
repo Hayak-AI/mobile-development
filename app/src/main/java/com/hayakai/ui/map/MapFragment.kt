@@ -232,8 +232,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 tvAuthorName.text = authorName
             }
             val authorImage = tag.userImage
+
             val ivAuthorImage = view.findViewById<ImageView>(R.id.author_image)
-            if (authorImage != null) {
+            ivAuthorImage.setImageBitmap(null)
+            if (!authorImage.isNullOrEmpty()) {
                 if (authorImage.isNotBlank()) {
                     val request = ImageRequest.Builder(view.context)
                         .allowHardware(false)
@@ -250,7 +252,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                                 }
                             },
                             onError = { error ->
-                                // Handle the error drawable.
+                                ivAuthorImage.setImageResource(R.drawable.fallback_user)
                             }
                         )
                         .build()

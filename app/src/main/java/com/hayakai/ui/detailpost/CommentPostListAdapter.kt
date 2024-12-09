@@ -7,6 +7,9 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.request.crossfade
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommentPost
 import com.hayakai.data.remote.response.PostDataItemComment
@@ -49,7 +52,11 @@ class CommentPostListAdapter(
                 )
             }
             binding.apply {
-                authorImage.load(commentPost.userImage ?: R.drawable.fallback_user)
+                authorImage.load(if (commentPost.userImage.isNullOrEmpty()) R.drawable.fallback_user else commentPost.userImage) {
+                    crossfade(true)
+                    placeholder(R.drawable.fallback_user)
+                    fallback(R.drawable.fallback_user)
+                }
                 author.text = commentPost.userName
                 textComment.text = commentPost.content
                 btnDelete.isVisible = commentPost.byMe

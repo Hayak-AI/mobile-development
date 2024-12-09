@@ -110,7 +110,7 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupView() {
 
         binding.apply {
-            userImage.load(communityPost.userImage) {
+            userImage.load(if (communityPost.userImage.isNullOrEmpty()) R.drawable.fallback_user else communityPost.userImage) {
                 placeholder(R.drawable.fallback_user)
                 fallback(R.drawable.fallback_user)
             }

@@ -56,7 +56,7 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
             } ?: MapReport()
 
 
-            binding.authorImage.load(reportMap.userImage ?: R.drawable.fallback_user)
+            binding.authorImage.load(if (reportMap.userImage.isNullOrEmpty()) R.drawable.fallback_user else reportMap.userImage)
             binding.author.text = reportMap.userName
             binding.verified.text = if (reportMap.verified) "Verified" else "Not Verified"
             binding.name.text = reportMap.name

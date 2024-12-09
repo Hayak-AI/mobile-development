@@ -49,7 +49,7 @@ class CommentReportListAdapter(
                 )
             }
             binding.apply {
-                authorImage.load(commentReport.userImage ?: R.drawable.fallback_user)
+                authorImage.load(if (commentReport.userImage.isNullOrEmpty()) R.drawable.fallback_user else commentReport.userImage)
                 author.text = commentReport.userName
                 textComment.text = commentReport.content
                 btnDelete.isVisible = commentReport.byMe

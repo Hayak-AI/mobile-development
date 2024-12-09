@@ -61,7 +61,7 @@ class CommunityPostListAdapter(
                 )
             }
             binding.apply {
-                userImage.load(data.userImage) {
+                userImage.load(if (data.userImage.isNullOrEmpty()) R.drawable.fallback_user else data.userImage) {
                     placeholder(R.drawable.fallback_user)
                     fallback(R.drawable.fallback_user)
                 }
