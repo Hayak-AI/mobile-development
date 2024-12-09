@@ -83,6 +83,39 @@ class MyService : Service() {
         return notificationBuilder.build()
     }
 
+    private fun createNotification(contact: Contact): Notification {
+        val notificationIntent = Intent(this, BottomNavigation::class.java)
+        val pendingFlags: Int = if (Build.VERSION.SDK_INT >= 23) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, pendingFlags)
+
+        val mNotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Hayak AI - Darurat")
+            .setContentText("Pesan darurat telah dikirim ke ${contact.name}")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(pendingIntent)
+
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        channel.description = CHANNEL_NAME
+        notificationBuilder.setChannelId(CHANNEL_ID)
+        mNotificationManager.createNotificationChannel(channel)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            notificationBuilder.setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
+        }
+        return notificationBuilder.build()
+
+    }
+
     private fun sendSMS(phoneNumber: String, message: String) {
         val sentPI: PendingIntent =
             PendingIntent.getBroadcast(
@@ -157,6 +190,9 @@ class MyService : Service() {
                                         )
                                     }
                                 }
+                                val notificationManager =
+                                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
                                 contactList.forEach { contact ->
                                     if (contact.notify) {
                                         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -166,6 +202,9 @@ class MyService : Service() {
                                             println(
                                                 "Mengirim pesan ke ${contact.name} (${contact.phone})"
                                             )
+                                            createNotification(contact).let {
+                                                startForeground(NOTIFICATION_ID, it)
+                                            }
                                         }.addOnFailureListener {
                                             val message =
                                                 "Halo, ${contact.name}\nPesan saya adalah ${contact.message}\nSaya dalam bahaya dan saya tidak bisa mendapatkan lokasi saya"
