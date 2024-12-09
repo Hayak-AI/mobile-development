@@ -7,4 +7,5 @@ import com.hayakai.data.repository.CommunityPostRepository
 class EditPostViewModel(private val communityPostRepository: CommunityPostRepository) :
     ViewModel() {
     fun editPost(updatePostDto: UpdatePostDto) = communityPostRepository.updatePost(updatePostDto)
+    fun generate(text: String) = communityPostRepository.generate(text)
 }

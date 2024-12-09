@@ -4,7 +4,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -56,7 +59,14 @@ class EditPostActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityEditPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val params =
+            binding.tilContent.findViewById<ImageView>(com.google.android.material.R.id.text_input_end_icon)
+                .layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.BOTTOM
 
+        binding.tilContent
+            .findViewById<ImageView>(com.google.android.material.R.id.text_input_end_icon)
+            .setLayoutParams(params)
         supportActionBar?.hide()
 
         setupAction()
@@ -76,6 +86,26 @@ class EditPostActivity : AppCompatActivity(), View.OnClickListener {
         binding.etContent.addTextChangedListener { validateContent() }
         binding.clAddLocation.setOnClickListener(this)
         binding.btnRemoveLocation.setOnClickListener(this)
+        binding.tilContent.setEndIconOnClickListener {
+            editPostViewModel.generate(binding.etContent.text.toString() + " [Tanpa ada markdown ataupun html, cukup teks saja, kurang dari 800 huruf]")
+                .observe(this) { result ->
+                    when (result) {
+                        is MyResult.Loading -> {
+                            binding.btnSave.isEnabled = false
+                        }
+
+                        is MyResult.Success -> {
+                            binding.btnSave.isEnabled = true
+                            binding.etContent.setText(result.data)
+                        }
+
+                        is MyResult.Error -> {
+                            binding.btnSave.isEnabled = true
+                            Toast.makeText(this, result.error, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+        }
     }
 
     private fun setupData() {

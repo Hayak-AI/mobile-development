@@ -10,8 +10,11 @@ import com.google.gson.Gson
 import com.hayakai.data.local.dao.CommunityPostDao
 import com.hayakai.data.local.entity.CommunityPost
 import com.hayakai.data.pref.UserPreference
+import com.hayakai.data.remote.dto.Content
 import com.hayakai.data.remote.dto.DeletePostDto
+import com.hayakai.data.remote.dto.GeminiDto
 import com.hayakai.data.remote.dto.NewPostDto
+import com.hayakai.data.remote.dto.Part
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.paging.ExplorePostPagingSource
 import com.hayakai.data.remote.paging.MyPostPagingSource
@@ -26,6 +29,7 @@ import retrofit2.HttpException
 class CommunityPostRepository(
     private val communityPostDao: CommunityPostDao,
     private val apiService: ApiService,
+    private val geminiApiService: ApiService,
     private val userPreference: UserPreference
 ) {
 
@@ -107,6 +111,31 @@ class CommunityPostRepository(
         }
     }
 
+    fun generate(text: String) = liveData {
+        emit(MyResult.Loading)
+        try {
+            val response =
+                geminiApiService.generate(
+                    GeminiDto(
+                        listOf(
+                            Content(
+                                listOf(
+                                    Part(text)
+                                )
+                            )
+                        )
+                    ),
+                )
+            response.candidates.first().content.parts.first().text.let {
+                emit(MyResult.Success(it))
+            }
+        } catch (e: HttpException) {
+            emit(MyResult.Error("Error generating text"))
+        } catch (e: Exception) {
+            emit(MyResult.Error(e.message ?: "An error occurred"))
+        }
+    }
+
     suspend fun clearLocalData() {
         communityPostDao.deleteAll()
     }
@@ -119,10 +148,16 @@ class CommunityPostRepository(
         fun getInstance(
             communityPostDao: CommunityPostDao,
             apiService: ApiService,
+            geminiApiService: ApiService,
             userPreference: UserPreference
         ): CommunityPostRepository {
             return INSTANCE ?: synchronized(this) {
-                val instance = CommunityPostRepository(communityPostDao, apiService, userPreference)
+                val instance = CommunityPostRepository(
+                    communityPostDao,
+                    apiService,
+                    geminiApiService,
+                    userPreference
+                )
                 INSTANCE = instance
                 instance
             }

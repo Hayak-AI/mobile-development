@@ -117,7 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="3"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:layout_constraintEnd_toEndOf="@+id/title"
             app:layout_constraintStart_toStartOf="@+id/title"

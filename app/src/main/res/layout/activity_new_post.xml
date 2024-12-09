@@ -43,6 +43,8 @@
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="100"
         app:errorEnabled="true"
         app:layout_constraintTop_toBottomOf="@+id/back_button">
 
@@ -90,7 +92,11 @@
         app:boxCornerRadiusBottomStart="32dp"
         app:boxCornerRadiusTopEnd="32dp"
         app:boxCornerRadiusTopStart="32dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="1000"
         app:errorEnabled="true"
+        app:endIconDrawable="@drawable/outline_generating_tokens_24"
+        app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/til_category">

@@ -6,4 +6,6 @@ import com.hayakai.data.repository.CommunityPostRepository
 
 class NewPostViewModel(private val communityPostRepository: CommunityPostRepository) : ViewModel() {
     fun newPost(newPostDto: NewPostDto) = communityPostRepository.newPost(newPostDto)
+
+    fun generate(text: String) = communityPostRepository.generate(text)
 }

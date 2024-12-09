@@ -1,11 +1,13 @@
 package com.hayakai.data.remote.retrofit
 
+import com.hayakai.BuildConfig
 import com.hayakai.data.remote.dto.AddUserToEmergencyDto
 import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
 import com.hayakai.data.remote.dto.ForgotPasswordDto
+import com.hayakai.data.remote.dto.GeminiDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
@@ -25,6 +27,7 @@ import com.hayakai.data.remote.response.DeleteContactsResponse
 import com.hayakai.data.remote.response.DeletePostResponse
 import com.hayakai.data.remote.response.DeleteReportMapsResponse
 import com.hayakai.data.remote.response.ForgotPasswordResponse
+import com.hayakai.data.remote.response.GeminiAPIResponse
 import com.hayakai.data.remote.response.GetAllPostResponse
 import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
@@ -266,4 +269,9 @@ interface ApiService {
         @Path("location") location: String,
         @Header("Authorization") token: String
     ): NewsResponse
+
+    @POST("?key=${BuildConfig.GEMINI_API_KEY}")
+    suspend fun generate(
+        @Body geminiDto: GeminiDto
+    ): GeminiAPIResponse
 }

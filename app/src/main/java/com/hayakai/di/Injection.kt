@@ -69,8 +69,14 @@ object Injection {
     fun provideCommunityPostRepository(context: Context): CommunityPostRepository {
         val communityPostDao = CommunityPostRoomDatabase.getDatabase(context).communityPostDao()
         val apiService = ApiConfig.getApiService()
+        val geminiApiService = ApiConfig.getApiServiceGemini()
         val userPreference = UserPreference.getInstance(context.dataStore)
-        return CommunityPostRepository.getInstance(communityPostDao, apiService, userPreference)
+        return CommunityPostRepository.getInstance(
+            communityPostDao,
+            apiService,
+            geminiApiService,
+            userPreference
+        )
     }
 
     fun provideEmergencyRepository(context: Context): EmergencyRepository {
