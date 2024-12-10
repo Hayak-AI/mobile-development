@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.data.pref.SettingsModel
@@ -400,6 +401,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.voice_detection -> {
+
                 fromClick = true
                 val updateUserPreferenceDto = UpdateUserPreferenceDto(
                     voice_detection = !settingsModel?.voiceDetection!!,
@@ -409,16 +411,25 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     MyService.EXTRA_CONTACT,
                     contactList as ArrayList<Contact>
                 )
-                if (settingsModel?.voiceDetection!!) {
-                    requireActivity().stopService(audioClassificationService)
-                } else {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(if (settingsModel?.voiceDetection!!) "Konfirmasi Menonaktifkan Deteksi Suara" else "Konfirmasi Pengaktifan Deteksi Suara")
+                    .setMessage(if (settingsModel?.voiceDetection!!) "Deteksi suara teriakan untuk pengiriman pesan darurat akan dinonaktifkan. Apakah Anda yakin?" else "Aplikasi akan mendeteksi suara teriakan untuk memicu pengiriman pesan darurat kepada kontak yang terdaftar dan yang diberitahu. Apakah Anda yakin ingin mengaktifkan deteksi suara?")
+                    .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton(resources.getString(R.string.yes)) { dialog, which ->
+                        if (settingsModel?.voiceDetection!!) {
+                            requireActivity().stopService(audioClassificationService)
+                        } else {
+                            requireActivity().startForegroundService(audioClassificationService)
+                        }
+
+                        updateSettings(updateUserPreferenceDto)
+                        dialog.dismiss()
+                    }
+                    .show()
 
 
-                    requireActivity().startForegroundService(audioClassificationService)
-
-                }
-
-                updateSettings(updateUserPreferenceDto)
             }
         }
     }
