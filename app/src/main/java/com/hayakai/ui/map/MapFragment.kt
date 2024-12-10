@@ -350,21 +350,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                         .observe(viewLifecycleOwner) { news ->
                             when (news) {
                                 is MyResult.Loading -> {
+                                    binding.loadingSafetyScore.visibility = View.VISIBLE
+                                    binding.tvSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.GONE
                                 }
 
                                 is MyResult.Success -> {
-
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
                                     binding.tvSafetyScore.text =
                                         getString(
                                             R.string.title_score,
                                             news.data.firstOrNull()?.safetyScore ?: 0
                                         )
-                                    val adapter = NewsListAdapter()
-                                    adapter.submitList(news.data)
-                                    binding.recyclerView.adapter = adapter
                                 }
 
                                 is MyResult.Error -> {
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
                                     Toast.makeText(requireContext(), news.error, Toast.LENGTH_SHORT)
                                         .show()
                                 }

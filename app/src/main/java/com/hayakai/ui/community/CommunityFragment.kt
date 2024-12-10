@@ -148,10 +148,14 @@ class CommunityFragment : Fragment(), View.OnClickListener {
                         .observe(viewLifecycleOwner) { news ->
                             when (news) {
                                 is MyResult.Loading -> {
+                                    binding.loadingSafetyScore.visibility = View.VISIBLE
+                                    binding.tvSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.GONE
                                 }
 
                                 is MyResult.Success -> {
-
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
                                     binding.tvSafetyScore.text =
                                         getString(
                                             R.string.title_score,
@@ -160,6 +164,8 @@ class CommunityFragment : Fragment(), View.OnClickListener {
                                 }
 
                                 is MyResult.Error -> {
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
                                     Toast.makeText(requireContext(), news.error, Toast.LENGTH_SHORT)
                                         .show()
                                 }

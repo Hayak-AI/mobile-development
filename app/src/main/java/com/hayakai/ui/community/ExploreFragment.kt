@@ -31,6 +31,7 @@ class ExploreFragment : Fragment() {
     private val communityViewModel: CommunityViewModel by viewModels {
         ViewModelFactory.getInstance(requireContext())
     }
+    private lateinit var adapter: CommunityPostListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,7 +57,7 @@ class ExploreFragment : Fragment() {
                 requireContext(),
             )
         binding.recyclerView.layoutManager = layoutManager
-        val adapter = CommunityPostListAdapter(
+        adapter = CommunityPostListAdapter(
             onEdit = { communityPost ->
                 val intent = Intent(requireContext(), EditPostActivity::class.java)
                 intent.putExtra(EditPostActivity.EXTRA_POST, communityPost)
@@ -83,6 +84,7 @@ class ExploreFragment : Fragment() {
                                             "Post deleted",
                                             Toast.LENGTH_SHORT
                                         ).show()
+                                        adapter.refresh()
                                     }
 
                                     is MyResult.Error -> {
@@ -137,7 +139,7 @@ class ExploreFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        setupViewModel()
+        adapter.refresh()
     }
 
 

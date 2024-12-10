@@ -27,23 +27,23 @@ class SplashScreen : AppCompatActivity() {
 
         val taglineAnimationSet = AnimationSet(true).apply {
             addAnimation(TranslateAnimation(0f, 0f, 500f, 0f).apply {
-                duration = 1000
+                duration = 500
                 fillAfter = true
             })
             addAnimation(AlphaAnimation(0.0f, 1.0f).apply {
-                duration = 1000
+                duration = 500
             })
         }
         tvTagline.startAnimation(taglineAnimationSet)
 
         val subtitleAnimationSet = AnimationSet(true).apply {
             addAnimation(TranslateAnimation(0f, 0f, 500f, 0f).apply {
-                duration = 1000
+                duration = 500
                 startOffset = 1200
                 fillAfter = true
             })
             addAnimation(AlphaAnimation(0.0f, 1.0f).apply {
-                duration = 1000
+                duration = 500
                 startOffset = 1200
             })
         }
@@ -63,6 +63,6 @@ class SplashScreen : AppCompatActivity() {
             val intent = Intent(this, OnboardingActivity::class.java)
             startActivity(intent)
             finish()
-        }, 3000)
+        }, 100)
     }
 }
