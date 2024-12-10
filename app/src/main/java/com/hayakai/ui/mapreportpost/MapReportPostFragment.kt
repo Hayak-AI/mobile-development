@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -61,7 +63,10 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
             binding.verified.text = if (reportMap.verified) "Verified" else "Not Verified"
             binding.name.text = reportMap.name
             binding.description.text = reportMap.description
-            binding.image.load(reportMap.evidenceUrl)
+            binding.image.load(reportMap.evidenceUrl) {
+                fallback(R.drawable.fallback_report)
+                placeholder(R.drawable.fallback_report)
+            }
             binding.btnDelete.visibility = if (reportMap.byMe) View.VISIBLE else View.GONE
 
             mapReportPostFragmentViewModel.getReportComments(reportMap.id)

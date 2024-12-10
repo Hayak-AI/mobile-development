@@ -206,7 +206,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                     .data(evindeceUrl)
                     .target(
                         onStart = { placeholder ->
-                            // Handle the placeholder drawable.
+                            evidence.setImageResource(R.drawable.fallback_report)
                         },
                         onSuccess = { result ->
 
@@ -217,13 +217,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                             }
                         },
                         onError = { error ->
-                            // Handle the error drawable.
+                            evidence.setImageResource(R.drawable.fallback_report)
                         }
                     )
                     .build()
                 view.context.imageLoader.enqueue(request)
 
 
+            } else {
+                evidence.setImageResource(R.drawable.fallback_report)
             }
 
             val authorName = tag.userName
