@@ -345,7 +345,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                         withContext(Dispatchers.IO) {
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)
                         }
-                    println(addresses)
                     viewModel.getAllNews(addresses?.firstOrNull()?.locality ?: "Disini")
                         .observe(viewLifecycleOwner) { news ->
                             when (news) {
@@ -363,6 +362,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                                             R.string.title_score,
                                             news.data.firstOrNull()?.safetyScore ?: 0
                                         )
+                                    val adapter = NewsListAdapter()
+                                    adapter.submitList(news.data)
+                                    binding.recyclerView.adapter = adapter
                                 }
 
                                 is MyResult.Error -> {
