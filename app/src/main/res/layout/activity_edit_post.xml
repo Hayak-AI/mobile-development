@@ -22,24 +22,13 @@
         android:id="@+id/action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Memperbarui Postingan"
+        android:text="@string/title_update_post"
         android:textAppearance="@style/TextAppearance.Material3.ActionBar.Subtitle"
         android:textFontWeight="500"
         app:layout_constraintBottom_toBottomOf="@+id/back_button"
-        app:layout_constraintEnd_toStartOf="@+id/btn_preview"
-        app:layout_constraintStart_toEndOf="@+id/back_button"
-        app:layout_constraintTop_toTopOf="@+id/back_button" />
-
-    <Button
-        android:id="@+id/btn_preview"
-        style="?attr/materialIconButtonFilledTonalStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        app:icon="@drawable/outline_remove_red_eye_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/back_button" />
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -48,12 +37,15 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="42dp"
-        android:hint="Judul"
+        android:hint="@string/title_post"
+        app:startIconDrawable="@drawable/baseline_title_24"
         app:boxCornerRadiusBottomEnd="100dp"
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
         app:boxCornerRadiusTopStart="100dp"
         app:errorEnabled="true"
+        app:counterEnabled="true"
+        app:counterMaxLength="100"
         app:layout_constraintTop_toBottomOf="@+id/back_button">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -70,7 +62,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:hint="Kategori"
+        android:hint="@string/title_category"
+        app:startIconDrawable="@drawable/outline_category_24"
         app:boxCornerRadiusBottomEnd="100dp"
         app:boxCornerRadiusBottomStart="100dp"
         app:boxCornerRadiusTopEnd="100dp"
@@ -94,11 +87,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
-        android:hint="Tulis konten..."
+        android:hint="@string/title_add_content"
         app:boxCornerRadiusBottomEnd="32dp"
         app:boxCornerRadiusBottomStart="32dp"
         app:boxCornerRadiusTopEnd="32dp"
         app:boxCornerRadiusTopStart="32dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="1000"
+        app:endIconDrawable="@drawable/outline_generating_tokens_24"
+        app:endIconMode="custom"
         app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -177,7 +174,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:text="Hapus lokasi"
+        android:text="@string/title_delete_location"
         android:visibility="gone"
         app:icon="@drawable/baseline_delete_forever_24"
         app:layout_constraintBottom_toBottomOf="@+id/btn_save"
@@ -191,6 +188,8 @@
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="12dp"
         android:text="@string/title_save"
+        app:icon="@drawable/outline_check_circle_24"
+        app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_remove_location" />

@@ -1,17 +1,24 @@
 package com.hayakai.data.remote.retrofit
 
+import com.hayakai.BuildConfig
+import com.hayakai.data.remote.dto.AddUserToEmergencyDto
 import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeleteContactDto
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.DeleteReportMapDto
+import com.hayakai.data.remote.dto.ForgotPasswordDto
+import com.hayakai.data.remote.dto.GeminiDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewContactDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.data.remote.dto.NewPostDto
 import com.hayakai.data.remote.dto.NewReportMapDto
+import com.hayakai.data.remote.dto.ResetPasswordDto
 import com.hayakai.data.remote.dto.UpdateContactDto
+import com.hayakai.data.remote.dto.UpdateEmailPassDto
 import com.hayakai.data.remote.dto.UpdatePostDto
 import com.hayakai.data.remote.dto.UpdateProfileDto
+import com.hayakai.data.remote.dto.UpdateUserPreferenceDto
 import com.hayakai.data.remote.response.AddContactsResponse
 import com.hayakai.data.remote.response.AddUserToEmergencyResponse
 import com.hayakai.data.remote.response.CreatePostResponse
@@ -20,6 +27,7 @@ import com.hayakai.data.remote.response.DeleteContactsResponse
 import com.hayakai.data.remote.response.DeletePostResponse
 import com.hayakai.data.remote.response.DeleteReportMapsResponse
 import com.hayakai.data.remote.response.ForgotPasswordResponse
+import com.hayakai.data.remote.response.GeminiAPIResponse
 import com.hayakai.data.remote.response.GetAllPostResponse
 import com.hayakai.data.remote.response.GetContactsResponse
 import com.hayakai.data.remote.response.GetEmergencyResponse
@@ -31,13 +39,15 @@ import com.hayakai.data.remote.response.GetReportMapsResponse
 import com.hayakai.data.remote.response.GetUserPreferencesResponse
 import com.hayakai.data.remote.response.LoginResponse
 import com.hayakai.data.remote.response.NewCommentResponse
-import com.hayakai.data.remote.response.PostUserPreferencesResponse
+import com.hayakai.data.remote.response.NewsResponse
 import com.hayakai.data.remote.response.RegisterResponse
 import com.hayakai.data.remote.response.ReportMapsResponse
 import com.hayakai.data.remote.response.ResetPasswordResponse
 import com.hayakai.data.remote.response.UpdateContactsResponse
+import com.hayakai.data.remote.response.UpdateEmailPassResponse
 import com.hayakai.data.remote.response.UpdatePostResponse
 import com.hayakai.data.remote.response.UpdateProfileResponse
+import com.hayakai.data.remote.response.UpdateUserPreferenceResponse
 import com.hayakai.data.remote.response.UploadEvidence
 import com.hayakai.data.remote.response.UploadProfilePhotoResponse
 import okhttp3.MultipartBody
@@ -53,6 +63,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -71,18 +82,21 @@ interface ApiService {
         @Field("password") password: String
     ): RegisterResponse
 
-    @FormUrlEncoded
     @POST("forgot-password")
-    fun forgotPassword(
-        @Field("email") email: String
-    ): Call<ForgotPasswordResponse>
+    suspend fun forgotPassword(
+        @Body forgotPasswordDto: ForgotPasswordDto
+    ): ForgotPasswordResponse
 
-    @FormUrlEncoded
-    @POST("reset-password")
-    fun resetPassword(
-        @Field("email") email: String,
-        @Field("new_password") newPassword: String
-    ): Call<ResetPasswordResponse>
+    @PUT("reset-password")
+    suspend fun resetPassword(
+        @Body resetPasswordDto: ResetPasswordDto
+    ): ResetPasswordResponse
+
+    @PUT("update-email-password")
+    suspend fun updateEmailPassword(
+        @Body updateEmailPassDto: UpdateEmailPassDto,
+        @Header("Authorization") token: String
+    ): UpdateEmailPassResponse
 
     @Multipart
     @POST("users/upload-profile-photo")
@@ -107,14 +121,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): GetUserPreferencesResponse
 
-    @FormUrlEncoded
-    @POST("preferences")
-    fun postUserPreferences(
-        @Field("dark_mode") darkMode: Boolean,
-        @Field("voice_detection") voiceDetection: Boolean,
-        @Field("location_tracking") locationTracking: Boolean,
+    @PUT("preferences")
+    suspend fun updateUserPreference(
+        @Body updateUserPreferenceDto: UpdateUserPreferenceDto,
         @Header("Authorization") token: String
-    ): Call<PostUserPreferencesResponse>
+    ): UpdateUserPreferenceResponse
 
     @POST("/maps-report")
     suspend fun reportMaps(
@@ -136,6 +147,8 @@ interface ApiService {
     @GET("report/{report_id}/comments")
     suspend fun getReportComments(
         @Path("report_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetReportMapCommentsResponse
 
@@ -181,21 +194,16 @@ interface ApiService {
         @Header("Authorization") token: String
     ): DeleteContactsResponse
 
-    @FormUrlEncoded
     @POST("/emergencies")
-    fun addUserToEmergency(
-        @Field("user_id") userId: Int,
-        @Field("name") name: String,
-        @Field("phone") phone: String,
-        @Field("relationship") relationship: String,
-        @Field("emergency_contact") emergencyContact: Boolean,
+    suspend fun addUserToEmergency(
+        @Body addUserToEmergencyDto: AddUserToEmergencyDto,
         @Header("Authorization") token: String
-    ): Call<AddUserToEmergencyResponse>
+    ): AddUserToEmergencyResponse
 
     @GET("emergencies")
-    fun getEmergencies(
+    suspend fun getEmergencies(
         @Header("Authorization") token: String
-    ): Call<GetEmergencyResponse>
+    ): GetEmergencyResponse
 
     @POST("posts")
     suspend fun newPost(
@@ -211,12 +219,17 @@ interface ApiService {
 
     @GET("posts")
     suspend fun getAllPosts(
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String
     ): GetAllPostResponse
 
-    @GET("posts?from=me")
+    @GET("posts")
     suspend fun getMyPosts(
-        @Header("Authorization") token: String
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
+        @Header("Authorization") token: String,
+        @Query("from") from: String = "me"
     ): GetAllPostResponse
 
     @GET("posts")
@@ -234,6 +247,8 @@ interface ApiService {
     @GET("post/{post_id}/comments")
     suspend fun getPostComments(
         @Path("post_id") reportId: Int,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int,
         @Header("Authorization") token: String,
     ): GetPostCommentsResponse
 
@@ -248,4 +263,15 @@ interface ApiService {
         @Body newPostCommentDto: NewPostCommentDto,
         @Header("Authorization") token: String
     ): NewCommentResponse
+
+    @GET("news/{location}")
+    suspend fun getNews(
+        @Path("location") location: String,
+        @Header("Authorization") token: String
+    ): NewsResponse
+
+    @POST("?key=${BuildConfig.GEMINI_API_KEY}")
+    suspend fun generate(
+        @Body geminiDto: GeminiDto
+    ): GeminiAPIResponse
 }

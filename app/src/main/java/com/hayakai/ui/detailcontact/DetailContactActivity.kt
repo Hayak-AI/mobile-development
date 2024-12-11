@@ -121,12 +121,8 @@ class DetailContactActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun validateEmail(): Boolean {
         return when {
-            binding.etEmail.text.toString().isEmpty() -> {
-                binding.tilEmail.error = getString(R.string.ed_email_error_msg_is_empty)
-                false
-            }
-
-            !Patterns.EMAIL_ADDRESS.matcher(binding.etEmail.text.toString()).matches() -> {
+            !Patterns.EMAIL_ADDRESS.matcher(binding.etEmail.text.toString())
+                .matches() && binding.etEmail.text.toString().isNotEmpty() -> {
                 binding.tilEmail.error = getString(R.string.ed_email_error_msg_is_invalid)
                 false
             }

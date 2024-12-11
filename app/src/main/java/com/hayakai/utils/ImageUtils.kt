@@ -1,4 +1,4 @@
-package com.dicoding.picodiploma.mycamera
+package com.hayakai.utils
 
 import android.content.ContentValues
 import android.content.Context

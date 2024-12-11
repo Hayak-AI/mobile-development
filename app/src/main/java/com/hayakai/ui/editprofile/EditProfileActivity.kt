@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -15,8 +14,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
-import com.dicoding.picodiploma.mycamera.reduceFileImage
-import com.dicoding.picodiploma.mycamera.uriToFile
 import com.hayakai.R
 import com.hayakai.data.pref.UserModel
 import com.hayakai.data.remote.dto.UpdateProfileDto
@@ -25,6 +22,8 @@ import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import com.hayakai.utils.reduceFileImage
+import com.hayakai.utils.uriToFile
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -87,7 +86,7 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
                         currentProfilePhoto = profile.data.image
                         Glide.with(this)
                             .load(profile.data.image)
-                            .placeholder(R.drawable.mdi_user_outline)
+                            .placeholder(R.drawable.fallback_user)
                             .into(binding.userImage)
                     }
                 }
@@ -129,15 +128,15 @@ class EditProfileActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun validatePhoneNumber(): Boolean {
         return when {
-            binding.etPhone.text.toString().isEmpty() -> {
-                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_empty)
-                false
-            }
-
-            !Patterns.PHONE.matcher(binding.etPhone.text.toString()).matches() -> {
-                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_invalid)
-                false
-            }
+//            binding.etPhone.text.toString().isEmpty() -> {
+//                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_empty)
+//                false
+//            }
+//
+//            !Patterns.PHONE.matcher(binding.etPhone.text.toString()).matches() -> {
+//                binding.tilPhone.error = getString(R.string.ed_phone_error_msg_is_invalid)
+//                false
+//            }
 
             else -> {
                 binding.tilPhone.error = null

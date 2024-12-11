@@ -1,114 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp">
+    style="?attr/materialCardViewElevatedStyle"
+    android:layout_margin="4dp"
+    android:paddingVertical="8dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/user_image"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:padding="2dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:strokeColor="@color/md_theme_primary"
-        app:strokeWidth="1dp"
-        tools:src="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-        app:layout_constraintStart_toEndOf="@+id/user_image"
-        app:layout_constraintTop_toTopOf="@+id/user_image"
-        tools:text="Jordi Irawan" />
+        android:paddingBottom="4dp">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:src="@drawable/baseline_location_on_24"
-        app:layout_constraintBottom_toBottomOf="@+id/user_image"
-        app:layout_constraintStart_toStartOf="@+id/user_name"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/user_image"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="1dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+            app:strokeColor="@color/md_theme_primary"
+            app:strokeWidth="1dp"
+            tools:src="@drawable/fallback_user" />
 
-    <TextView
-        android:id="@+id/user_location"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/btn_menu"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2"
-        tools:text="Palangka Raya" />
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingEnd="4dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+            app:layout_constraintEnd_toStartOf="@+id/btn_menu"
+            app:layout_constraintStart_toEndOf="@+id/user_image"
+            app:layout_constraintTop_toTopOf="@+id/user_image"
+            tools:ignore="RtlSymmetry"
+            tools:text="Jordi Irawan Jordi IrawanJord Jordi Irawan Jordi Irawan" />
 
-    <Button
-        android:id="@+id/btn_menu"
-        style="?attr/materialIconButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:drawableStart="@drawable/dots"
-        app:icon="@drawable/dots"
-        app:iconTint="@color/md_theme_onPrimaryContainer"
-        app:layout_constraintBottom_toBottomOf="@+id/user_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/user_image" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-        app:layout_constraintEnd_toEndOf="@+id/btn_menu"
-        app:layout_constraintStart_toStartOf="@+id/user_image"
-        app:layout_constraintTop_toBottomOf="@+id/user_image"
-        tools:text="@tools:sample/lorem/random" />
-
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-        app:layout_constraintEnd_toEndOf="@+id/title"
-        app:layout_constraintStart_toStartOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        tools:text="@tools:sample/lorem/random" />
-
-    <Button
-        android:id="@+id/btn_comment"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minWidth="32dip"
-        android:minHeight="28dip"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/total_comments"
-        app:icon="@drawable/iconamoon_comment_bold"
-        app:iconTint="@color/md_theme_onPrimaryContainer"
-        app:layout_constraintStart_toStartOf="@+id/content"
-        app:layout_constraintTop_toBottomOf="@+id/content"
-        tools:text="30" />
+        <TextView
+            android:id="@+id/tv_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/safety_score_bg"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/md_theme_onPrimaryContainer"
+            app:layout_constraintBottom_toBottomOf="@+id/pin_location"
+            app:layout_constraintEnd_toStartOf="@+id/pin_location"
+            app:layout_constraintStart_toStartOf="@+id/user_name"
+            app:layout_constraintTop_toTopOf="@+id/pin_location"
+            tools:text="General" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/pin_location"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@string/title_icon_location"
+            android:src="@drawable/baseline_location_on_24"
+            app:layout_constraintBottom_toBottomOf="@+id/user_image"
+            app:layout_constraintStart_toEndOf="@+id/tv_category"
+            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            app:tint="@color/md_theme_primary" />
+
+        <TextView
+            android:id="@+id/user_location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:layout_constraintBottom_toBottomOf="@+id/pin_location"
+            app:layout_constraintEnd_toStartOf="@+id/btn_menu"
+            app:layout_constraintStart_toEndOf="@+id/pin_location"
+            app:layout_constraintTop_toTopOf="@+id/pin_location"
+            tools:text="Palangka Raya" />
+
+        <Button
+            android:id="@+id/btn_menu"
+            style="?attr/materialIconButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:drawableStart="@drawable/dots"
+            app:icon="@drawable/dots"
+            app:iconTint="@color/md_theme_onPrimaryContainer"
+            app:layout_constraintBottom_toBottomOf="@+id/user_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/user_image" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            app:layout_constraintEnd_toEndOf="@+id/btn_menu"
+            app:layout_constraintStart_toStartOf="@+id/user_image"
+            app:layout_constraintTop_toBottomOf="@+id/user_image"
+            tools:text="@tools:sample/lorem/random" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:layout_constraintEnd_toEndOf="@+id/title"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="@tools:sample/lorem/random" />
+
+        <Button
+            android:id="@+id/btn_comment"
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minWidth="32dip"
+            android:minHeight="20dip"
+            android:paddingLeft="8dp"
+            android:paddingTop="0dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="0dp"
+            android:text="@string/total_comments"
+            app:icon="@drawable/iconamoon_comment_bold"
+            app:iconTint="@color/md_theme_onPrimaryContainer"
+            app:layout_constraintStart_toStartOf="@+id/content"
+            app:layout_constraintTop_toBottomOf="@+id/content"
+            tools:text="30" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

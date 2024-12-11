@@ -54,48 +54,70 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
         app:strokeColor="@color/md_theme_primary"
         app:strokeWidth="1dp"
-        tools:src="@tools:sample/avatars" />
+        tools:src="@drawable/fallback_user" />
 
     <TextView
         android:id="@+id/user_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingEnd="4dp"
         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+        app:layout_constraintEnd_toEndOf="@+id/btn_menu"
         app:layout_constraintStart_toEndOf="@+id/user_image"
         app:layout_constraintTop_toTopOf="@+id/user_image"
-        tools:text="Jordi Irawan" />
+        tools:ignore="RtlSymmetry"
+        tools:text="Jordi Irawan Jordi IrawanJord Jordi Irawan Jordi Irawan" />
+
+    <TextView
+        android:id="@+id/tv_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/safety_score_bg"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textColor="@color/md_theme_onPrimaryContainer"
+        app:layout_constraintBottom_toBottomOf="@+id/pin_location"
+        app:layout_constraintEnd_toStartOf="@+id/pin_location"
+        app:layout_constraintStart_toStartOf="@+id/user_name"
+        app:layout_constraintTop_toTopOf="@+id/pin_location"
+        tools:text="General" />
+
 
     <ImageView
-        android:id="@+id/ic_location"
+        android:id="@+id/pin_location"
         android:layout_width="16dp"
         android:layout_height="16dp"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@string/title_icon_location"
         android:src="@drawable/baseline_location_on_24"
         app:layout_constraintBottom_toBottomOf="@+id/user_image"
-        app:layout_constraintStart_toStartOf="@+id/user_name"
-        app:layout_constraintTop_toBottomOf="@+id/user_name" />
+        app:layout_constraintStart_toEndOf="@+id/tv_category"
+        app:layout_constraintTop_toBottomOf="@+id/user_name"
+        app:tint="@color/md_theme_primary" />
 
     <TextView
         android:id="@+id/user_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="16dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-        app:layout_constraintBottom_toBottomOf="@+id/ic_location"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ic_location"
-        app:layout_constraintTop_toTopOf="@+id/ic_location"
-        tools:text="Palangka Raya" />
+        app:layout_constraintBottom_toBottomOf="@+id/pin_location"
+        app:layout_constraintEnd_toEndOf="@+id/btn_menu"
+        app:layout_constraintStart_toEndOf="@+id/pin_location"
+        app:layout_constraintTop_toTopOf="@+id/pin_location"
+        tools:text="Palangka Raya Palangka RayaPalangka RayaPalangka Raya" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         app:layout_constraintEnd_toEndOf="@+id/btn_menu"
         app:layout_constraintStart_toStartOf="@+id/user_image"
@@ -107,42 +129,75 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:ellipsize="end"
-        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         app:layout_constraintEnd_toEndOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
         tools:text="asdf saf asd sa fsda " />
 
-    <Button
-        android:id="@+id/btn_commentcount"
-        style="@style/Widget.Material3.Button.TextButton.Icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minWidth="32dip"
-        android:minHeight="28dip"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:text="@string/total_comments"
-        app:icon="@drawable/iconamoon_comment_bold"
-        app:iconTint="@color/md_theme_onPrimaryContainer"
-        app:layout_constraintStart_toStartOf="@+id/tv_content"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content"
-        tools:text="30" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/comments"
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/swiperefresh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_content" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
         app:layout_constraintBottom_toTopOf="@+id/til_new_comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_commentcount"
-        tools:ignore="RtlSymmetry"
-        tools:listitem="@layout/item_comment" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_content"
+        android:layout_height="0dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:ignore="RtlSymmetry"
+            tools:listitem="@layout/item_comment" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/til_new_comment"
+        app:layout_constraintTop_toBottomOf="@+id/divider">
+
+        <TextView
+            android:id="@+id/error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:textColor="?android:textColorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Timeout" />
+
+        <Button
+            android:id="@+id/retry_button"
+            style="?attr/materialIconButtonFilledStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/baseline_refresh_24"
+            android:layout_gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/error_msg" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_new_comment"

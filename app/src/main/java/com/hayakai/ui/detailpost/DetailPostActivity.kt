@@ -12,8 +12,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.load
+import coil3.request.fallback
+import coil3.request.placeholder
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.hayakai.R
 import com.hayakai.data.local.entity.CommunityPost
@@ -21,11 +25,14 @@ import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.DeletePostDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
 import com.hayakai.databinding.ActivityDetailPostBinding
+import com.hayakai.ui.common.LoadingStateAdapter
 import com.hayakai.ui.community.CommunityViewModel
 import com.hayakai.ui.editpost.EditPostActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityDetailPostBinding
@@ -36,6 +43,8 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         ViewModelFactory.getInstance(this)
     }
     private lateinit var communityPost: CommunityPost
+
+    private lateinit var adapter: CommentPostListAdapter
 
     private val resultSelectMap =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -64,6 +73,11 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
         setupAction()
         setupData()
         setupView()
+
+        if (savedInstanceState == null) {
+            detailPostViewModel.getPostComments(communityPost.id)
+        }
+
         setupViewModel()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -96,12 +110,25 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupView() {
 
         binding.apply {
-            userImage.load(communityPost.userImage)
-            userName.text = communityPost.userName
+            userImage.load(if (communityPost.userImage.isNullOrEmpty()) R.drawable.fallback_user else communityPost.userImage) {
+                placeholder(R.drawable.fallback_user)
+                fallback(R.drawable.fallback_user)
+            }
+            userName.text = if (communityPost.byMe) getString(
+                R.string.by_me,
+                communityPost.userName
+            ) else communityPost.userName
             tvTitle.text = communityPost.title
-            userLocation.text = communityPost.locationName
+            if (communityPost.locationName.isEmpty()) {
+                userLocation.visibility = View.GONE
+                pinLocation.visibility = View.GONE
+            } else {
+                userLocation.visibility = View.VISIBLE
+                pinLocation.visibility = View.VISIBLE
+                userLocation.text = communityPost.locationName
+            }
             tvContent.text = communityPost.content
-
+            tvCategory.text = communityPost.category
             btnMenu.setOnClickListener { v: View ->
                 val popup = PopupMenu(v.context, v)
                 popup.menuInflater.inflate(
@@ -129,55 +156,63 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupViewModel() {
-        detailPostViewModel.getPostComments(communityPost.id)
-            .observe(this) { result ->
-                when (result) {
-                    is MyResult.Loading -> {
-                    }
-
-                    is MyResult.Success -> {
-//                        binding.tvNotFound.visibility =
-//                            if (contacts.data.isEmpty()) View.VISIBLE else View.GONE
-                        val layoutManager =
-                            LinearLayoutManager(
-                                this,
-                            )
-                        binding.comments.layoutManager = layoutManager
-                        val adapter = CommentPostListAdapter(
-                            onClick = { commentPost ->
-                                MaterialAlertDialogBuilder(
-                                    this,
-                                    R.style.MaterialAlertDialog_DeleteConfirmation
-                                )
-                                    .setTitle("Hapus Komentar")
-                                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
-                                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                                        deleteCommentPost(
-                                            dialog,
-                                            DeleteCommentDto(commentPost.id)
-                                        )
-                                    }
-                                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .show()
-                                Toast.makeText(
-                                    this,
-                                    commentPost.content,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+        val layoutManager =
+            LinearLayoutManager(
+                this,
+            )
+        binding.comments.layoutManager = layoutManager
+        adapter = CommentPostListAdapter(
+            onClick = { commentPost ->
+                MaterialAlertDialogBuilder(
+                    this,
+                    R.style.MaterialAlertDialog_DeleteConfirmation
+                )
+                    .setTitle("Hapus Komentar")
+                    .setMessage("Apakah Anda yakin ingin menghapus komentar ini?")
+                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                        deleteCommentPost(
+                            dialog,
+                            DeleteCommentDto(commentPost.id)
                         )
-                        adapter.submitList(result.data)
-                        binding.comments.adapter = adapter
                     }
-
-                    is MyResult.Error -> {
-                        Toast.makeText(this, result.error, Toast.LENGTH_SHORT)
-                            .show()
+                    .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
                     }
-                }
+                    .show()
             }
+        )
+        binding.comments.adapter = adapter
+        binding.comments.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+
+        detailPostViewModel.postComments
+            .observe(this) {
+                adapter.submitData(lifecycle, it)
+            }
+
+        binding.swiperefresh.setOnRefreshListener {
+            binding.comments.removeAllViewsInLayout()
+            adapter.refresh()
+            binding.swiperefresh.isRefreshing = false
+        }
+        binding.retryButton.setOnClickListener {
+            adapter.retry()
+        }
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                if (loadStates.refresh is LoadState.Error) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else if (loadStates.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                    binding.loadingLayout.visibility = View.VISIBLE
+                } else {
+                    binding.loadingLayout.visibility = View.GONE
+                }
+                binding.swiperefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+            }
+        }
     }
 
     private fun newCommentPost(newPostCommentDto: NewPostCommentDto) {
@@ -189,12 +224,13 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
                     is MyResult.Success -> {
                         binding.etNewComment.text?.clear()
+                        detailPostViewModel.getPostComments(communityPost.id)
+                        adapter.refresh()
                         Toast.makeText(
                             this,
                             "Berhasil menambahkan komentar",
                             Toast.LENGTH_SHORT
                         ).show()
-                        setupViewModel()
                     }
 
                     is MyResult.Error -> {
@@ -215,7 +251,10 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
 
                     is MyResult.Success -> {
                         Toast.makeText(this, result.data, Toast.LENGTH_SHORT).show()
+                        detailPostViewModel.getPostComments(communityPost.id)
+                        adapter.refresh()
                         dialog.dismiss()
+
                     }
 
                     is MyResult.Error -> {
@@ -269,28 +308,6 @@ class DetailPostActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_profile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
                 startActivity(intent)
-            }
-
-            R.id.btn_save -> {
-//                if (!validateName() or !validatePhoneNumber() or !validateEmail() or !validateMessage()) return
-//
-//                val name = binding.etFullName.text.toString()
-//                val phoneNumber = binding.etPhone.text.toString()
-//                val email = binding.etEmail.text.toString()
-//                val message = binding.etMessage.text.toString()
-//                val notify = binding.switchNotify.isChecked
-//
-//                updateContact(
-//                    UpdateContactDto(
-//                        contact.id,
-//                        name,
-//                        email,
-//                        phoneNumber,
-//                        notify,
-//                        message
-//                    )
-//                )
-
             }
 
         }

@@ -39,7 +39,7 @@ data class MapReport(
     var userName: String = "",
 
     @ColumnInfo(name = "user_image")
-    var userImage: String = "",
+    var userImage: String? = "",
 
     @ColumnInfo(name = "by_me")
     var byMe: Boolean = false

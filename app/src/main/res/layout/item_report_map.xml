@@ -26,7 +26,7 @@
                 android:contentDescription="@string/news_image"
                 android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-                tools:src="@tools:sample/backgrounds/scenic" />
+                tools:src="@drawable/fallback_report" />
 
             <TextView
                 android:id="@+id/verified"

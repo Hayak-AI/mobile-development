@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.hayakai.data.local.dao.CommunityPostDao
 import com.hayakai.data.local.entity.CommunityPost
 
-@Database(entities = [CommunityPost::class], version = 1)
+@Database(entities = [CommunityPost::class], version = 1, exportSchema = false)
 abstract class CommunityPostRoomDatabase : RoomDatabase() {
     abstract fun communityPostDao(): CommunityPostDao
 

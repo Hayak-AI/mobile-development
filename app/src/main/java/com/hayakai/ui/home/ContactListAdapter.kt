@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.hayakai.R
 import com.hayakai.data.local.entity.Contact
 import com.hayakai.databinding.ItemContactBinding
 
@@ -28,6 +29,7 @@ class ContactListAdapter(
             binding.contactName.text = contact.name
             binding.contactPhone.text = contact.phone
             binding.contactEmail.text = contact.email
+            binding.contactBellIcon.setImageResource(if (contact.notify) R.drawable.notify_bell_on else R.drawable.notify_bell_off)
             binding.root.setOnClickListener { onClick(contact) }
         }
     }

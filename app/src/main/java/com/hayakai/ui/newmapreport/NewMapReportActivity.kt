@@ -15,8 +15,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import coil3.load
-import com.dicoding.picodiploma.mycamera.reduceFileImage
-import com.dicoding.picodiploma.mycamera.uriToFile
 import com.hayakai.R
 import com.hayakai.data.local.model.LocationModel
 import com.hayakai.data.remote.dto.LocationData
@@ -24,6 +22,8 @@ import com.hayakai.data.remote.dto.NewReportMapDto
 import com.hayakai.databinding.ActivityNewMapReportBinding
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import com.hayakai.utils.reduceFileImage
+import com.hayakai.utils.uriToFile
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody

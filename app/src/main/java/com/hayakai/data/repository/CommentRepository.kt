@@ -2,7 +2,10 @@ package com.hayakai.data.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import androidx.lifecycle.map
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.google.gson.Gson
 import com.hayakai.data.local.dao.CommentPostDao
 import com.hayakai.data.local.dao.CommentReportDao
@@ -12,7 +15,11 @@ import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.remote.dto.DeleteCommentDto
 import com.hayakai.data.remote.dto.NewCommentReportDto
 import com.hayakai.data.remote.dto.NewPostCommentDto
+import com.hayakai.data.remote.paging.CommentPostPagingSource
+import com.hayakai.data.remote.paging.CommentReportPagingSource
+import com.hayakai.data.remote.response.DataItemComment
 import com.hayakai.data.remote.response.ErrorResponse
+import com.hayakai.data.remote.response.PostDataItemComment
 import com.hayakai.data.remote.retrofit.ApiService
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.asJWT
@@ -27,39 +34,21 @@ class CommentRepository(
 ) {
 
 
-    fun getReportComments(reportId: Int): LiveData<MyResult<List<CommentReport>>> = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.getReportComments(
-                    reportId,
-                    userPreference.getSession().first().token.asJWT()
-                )
-            val commentReports = response.data.map {
-                CommentReport(
-                    it.commentId,
-                    it.reportId,
-                    it.content,
-                    it.user.id,
-                    it.user.name,
-                    it.user.profilePhoto,
-                    it.byMe,
-                    it.createdAt
+    fun getReportComments(reportId: Int): LiveData<PagingData<DataItemComment>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = true,
+                initialLoadSize = 5
+            ),
+            pagingSourceFactory = {
+                CommentReportPagingSource(
+                    apiService,
+                    userPreference,
+                    reportId
                 )
             }
-            commentReportDao.deleteByReportId(reportId)
-            commentReportDao.insertAll(commentReports)
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        } finally {
-            val localData: LiveData<MyResult<List<CommentReport>>> =
-                commentReportDao.getAll(reportId).map { MyResult.Success(it) }
-            emitSource(localData)
-        }
+        ).liveData
     }
 
     fun deleteCommentReport(deleteCommentDto: DeleteCommentDto) = liveData {
@@ -117,39 +106,15 @@ class CommentRepository(
         }
     }
 
-    fun getPostComments(postId: Int): LiveData<MyResult<List<CommentPost>>> = liveData {
-        emit(MyResult.Loading)
-        try {
-            val response =
-                apiService.getPostComments(
-                    postId,
-                    userPreference.getSession().first().token.asJWT()
-                )
-            val postCommentList = response.data.map {
-                CommentPost(
-                    it.commentId,
-                    it.postId,
-                    it.content,
-                    it.user.id,
-                    it.user.name,
-                    it.user.profilePhoto,
-                    it.byMe,
-                    it.createdAt
-                )
-            }
-            commentPostDao.deleteByPostId(postId)
-            commentPostDao.insertAll(postCommentList)
-        } catch (e: HttpException) {
-            val errorBody = e.response()?.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            emit(MyResult.Error(errorResponse.message))
-        } catch (e: Exception) {
-            emit(MyResult.Error(e.message ?: "An error occurred"))
-        } finally {
-            val localData: LiveData<MyResult<List<CommentPost>>> =
-                commentPostDao.getAll(postId).map { MyResult.Success(it) }
-            emitSource(localData)
-        }
+    fun getPostComments(postId: Int): LiveData<PagingData<PostDataItemComment>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = true,
+                initialLoadSize = 5
+            ),
+            pagingSourceFactory = { CommentPostPagingSource(apiService, userPreference, postId) }
+        ).liveData
     }
 
     fun deleteCommentPost(deleteCommentDto: DeleteCommentDto) = liveData {

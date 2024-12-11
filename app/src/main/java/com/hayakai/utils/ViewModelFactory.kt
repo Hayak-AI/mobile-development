@@ -8,16 +8,17 @@ import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.CommunityPostRepository
 import com.hayakai.data.repository.ContactRepository
 import com.hayakai.data.repository.MapReportRepository
+import com.hayakai.data.repository.NewsRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 import com.hayakai.di.Injection
 import com.hayakai.ui.common.SessionViewModel
 import com.hayakai.ui.community.CommunityViewModel
-import com.hayakai.ui.createaccount.RegisterViewModel
 import com.hayakai.ui.detailcontact.DetailContactViewModel
 import com.hayakai.ui.detailpost.DetailPostViewModel
 import com.hayakai.ui.editpost.EditPostViewModel
 import com.hayakai.ui.editprofile.EditProfileViewModel
+import com.hayakai.ui.forgotpassword.ForgotPasswordViewModel
 import com.hayakai.ui.home.HomeViewModel
 import com.hayakai.ui.login.LoginViewModel
 import com.hayakai.ui.map.MapViewModel
@@ -26,6 +27,7 @@ import com.hayakai.ui.newcontact.NewContactViewModel
 import com.hayakai.ui.newmapreport.NewMapReportViewModel
 import com.hayakai.ui.newpost.NewPostViewModel
 import com.hayakai.ui.profile.ProfileViewModel
+import com.hayakai.ui.register.RegisterViewModel
 import com.hayakai.ui.settingsemailpassword.SettingsEmailPasswordViewModel
 
 class ViewModelFactory(
@@ -35,7 +37,8 @@ class ViewModelFactory(
     private val contactRepository: ContactRepository,
     private val mapReportRepository: MapReportRepository,
     private val commentRepository: CommentRepository,
-    private val communityPostRepository: CommunityPostRepository
+    private val communityPostRepository: CommunityPostRepository,
+    private val newsRepository: NewsRepository
 ) :
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
@@ -46,7 +49,12 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
-                HomeViewModel(userRepository, settingsRepository, contactRepository) as T
+                HomeViewModel(
+                    userRepository,
+                    settingsRepository,
+                    contactRepository,
+                    newsRepository
+                ) as T
             }
 
             modelClass.isAssignableFrom(SessionViewModel::class.java) -> {
@@ -78,7 +86,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(MapViewModel::class.java) -> {
-                MapViewModel(mapReportRepository) as T
+                MapViewModel(mapReportRepository, newsRepository) as T
             }
 
             modelClass.isAssignableFrom(MapReportPostFragmentViewModel::class.java) -> {
@@ -90,7 +98,7 @@ class ViewModelFactory(
             }
 
             modelClass.isAssignableFrom(CommunityViewModel::class.java) -> {
-                CommunityViewModel(communityPostRepository) as T
+                CommunityViewModel(communityPostRepository, newsRepository) as T
             }
 
             modelClass.isAssignableFrom(NewPostViewModel::class.java) -> {
@@ -103,6 +111,10 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(DetailPostViewModel::class.java) -> {
                 DetailPostViewModel(commentRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ForgotPasswordViewModel::class.java) -> {
+                ForgotPasswordViewModel(authRepository) as T
             }
 
             else -> throw Throwable("Unknown ViewModel class: ${modelClass.name}")
@@ -122,7 +134,8 @@ class ViewModelFactory(
                     Injection.provideContactRepository(context),
                     Injection.provideMapReportRepository(context),
                     Injection.provideCommentRepository(context),
-                    Injection.provideCommunityPostRepository(context)
+                    Injection.provideCommunityPostRepository(context),
+                    Injection.provideNewsRepository(context)
                 )
                 INSTANCE = instance
                 instance

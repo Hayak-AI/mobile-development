@@ -29,13 +29,20 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "API_URL", properties.getProperty("API_URL"))
+            buildConfigField("String", "GEMINI_API_KEY", properties.getProperty("GEMINI_API_KEY"))
+            buildConfigField("String", "GEMINI_API_URL", properties.getProperty("GEMINI_API_URL"))
         }
         release {
+            buildConfigField("String", "API_URL", properties.getProperty("API_URL"))
+            buildConfigField("String", "GEMINI_API_KEY", properties.getProperty("GEMINI_API_KEY"))
+            buildConfigField("String", "GEMINI_API_URL", properties.getProperty("GEMINI_API_URL"))
             isMinifyEnabled = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -48,6 +55,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        mlModelBinding = true
     }
 }
 
@@ -63,6 +71,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.activity)
+    implementation(libs.tensorflow.lite.support)
+    implementation(libs.tensorflow.lite.metadata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -72,6 +82,7 @@ dependencies {
 
     // maps
     implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 
     // retrofit
     implementation(libs.retrofit)
@@ -83,11 +94,11 @@ dependencies {
     ksp(libs.compiler)
 
     // coil
-    implementation("io.coil-kt.coil3:coil:3.0.4")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
 
     // viewpager2
-    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation(libs.androidx.viewpager2)
 
 
     // room
@@ -96,6 +107,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // swipe refresh layout
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+    implementation(libs.androidx.swiperefreshlayout)
 
+    implementation(libs.tensorflow.lite.task.audio)
+
+    // paging
+    implementation(libs.androidx.paging.runtime.ktx)
 }

@@ -9,37 +9,37 @@ data class GetEmergencyResponse(
     val responseStatus: String? = null, // Mengubah nama status untuk menghindari conflict
 
     @field:SerializedName("data")
-    val emergencyData: List<EmergencyDataItem?>? = null // Mengganti nama 'data' menjadi 'emergencyData'
+    val emergencyData: List<EmergencyDataItem> = emptyList() // Mengganti nama 'data' menjadi 'emergencyData'
 )
 
 // Kelas untuk data lokasi, bisa jadi lokasi kejadian darurat
 data class EmergencyLocation(
 
     @field:SerializedName("latitude")
-    val latitude: String? = null,
+    val latitude: Double,
 
     @field:SerializedName("name")
-    val locationName: String? = null, // Mengubah nama 'name' menjadi 'locationName'
+    val locationName: Double, // Mengubah nama 'name' menjadi 'locationName'
 
     @field:SerializedName("longitude")
-    val longitude: String? = null
+    val longitude: Double
 )
 
 // Kelas untuk item darurat yang berisi informasi mengenai kejadian darurat
 data class EmergencyDataItem(
 
     @field:SerializedName("emergency_id")
-    val emergencyId: Int? = null, // ID untuk setiap laporan darurat
+    val emergencyId: Int, // ID untuk setiap laporan darurat
 
     @field:SerializedName("description")
-    val emergencyDescription: String? = null, // Deskripsi dari kejadian darurat
+    val description: String, // Deskripsi dari kejadian darurat
 
     @field:SerializedName("location")
-    val emergencyLocation: EmergencyLocation? = null, // Lokasi kejadian darurat
+    val location: EmergencyLocation, // Lokasi kejadian darurat
 
     @field:SerializedName("evidence_url")
     val evidenceUrl: String? = null, // URL bukti terkait kejadian darurat
 
     @field:SerializedName("status")
-    val emergencyStatus: String? = null // Status dari kejadian darurat (misalnya: resolved)
+    val status: String // Status dari kejadian darurat (misalnya: resolved)
 )

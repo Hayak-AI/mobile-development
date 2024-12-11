@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HayakAI</string>
+    <string name="app_name">Hayak</string>
     <string name="title_home">Beranda</string>
     <string name="title_map">Peta</string>
     <string name="title_community">Komunitas</string>
@@ -21,9 +21,9 @@
     <string name="title_terms_conditions">Dengan melanjutkan, Anda dianggap telah membaca dan menyetujui syarat dan ketentuan yang berlaku.</string>
     <string name="onboarding_image_decoration">Hiasan gambar</string>
     <string name="hint_image_decoration">hiasan_gambar</string>
-    <string name="title_send_token">Kirim token</string>
+    <string name="title_send_otp">Kirim otp</string>
     <string name="title_update_password">Perbarui kata sandi</string>
-    <string name="hint_token">Masukkan token dari email</string>
+    <string name="hint_otp">Masukkan OTP dari email</string>
     <string name="hint_new_password">Masukkan kata sandi baru</string>
     <string name="headline_create_account">Yuk bergabung untuk ciptakan lingkungan yang aman</string>
     <string name="title_have_account">Sudah punya akun?</string>
@@ -72,7 +72,6 @@
     <string name="title_news">Berita</string>
     <string name="title_list_report">Laporan</string>
     <string name="title_report">Laporkan</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_comment">Tulis komentar</string>
     <string name="hint_add_location">Tambahkan lokasi</string>
@@ -105,4 +104,20 @@
     <string name="ed_title_error_msg_is_empty">Judul tidak boleh kosong</string>
     <string name="ed_content_error_msg_is_empty">Konten tidak boleh kosong</string>
     <string name="ed_category_error_msg_is_empty">Kategori tidak boleh kosong</string>
+    <string name="audio_classifier_failed">Audio Classifier failed to initialize. See error logs for details</string>
+    <string name="tflite_is_not_initialized_yet">TFlite tidak bisa diinisilisasi</string>
+    <string name="title_voice_detection_off">Tolong hidupkan saya jika merasa tidak aman</string>
+    <string name="ed_otp_error_msg_is_empty">OTP tidak boleh kosong</string>
+    <string name="ed_otp_error_msg_is_invalid">OTP tidak valid</string>
+    <string name="title_select_map">Tandai Lokasi</string>
+    <string name="title_upload_evidence">Upload bukti laporan jika ada</string>
+    <string name="title_icon_location">Location icon</string>
+    <string name="by_me">(Saya) %s</string>
+    <string name="title_post">Judul</string>
+    <string name="title_category">Kategori</string>
+    <string name="title_delete_location">Hapus lokasi</string>
+    <string name="title_add_content">Tulis konten...</string>
+    <string name="title_create_post">Membuat Postingan</string>
+    <string name="title_update_post">Memperbarui Postingan</string>
+    <string name="retry">Coba lagi</string>
 </resources>

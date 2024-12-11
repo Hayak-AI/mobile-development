@@ -6,6 +6,7 @@ import com.hayakai.data.local.room.CommentReportRoomDatabase
 import com.hayakai.data.local.room.CommunityPostRoomDatabase
 import com.hayakai.data.local.room.ContactRoomDatabase
 import com.hayakai.data.local.room.MapReportRoomDatabase
+import com.hayakai.data.local.room.NewsRoomDatabase
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.pref.dataStore
 import com.hayakai.data.remote.retrofit.ApiConfig
@@ -13,7 +14,9 @@ import com.hayakai.data.repository.AuthRepository
 import com.hayakai.data.repository.CommentRepository
 import com.hayakai.data.repository.CommunityPostRepository
 import com.hayakai.data.repository.ContactRepository
+import com.hayakai.data.repository.EmergencyRepository
 import com.hayakai.data.repository.MapReportRepository
+import com.hayakai.data.repository.NewsRepository
 import com.hayakai.data.repository.SettingsRepository
 import com.hayakai.data.repository.UserRepository
 
@@ -66,7 +69,26 @@ object Injection {
     fun provideCommunityPostRepository(context: Context): CommunityPostRepository {
         val communityPostDao = CommunityPostRoomDatabase.getDatabase(context).communityPostDao()
         val apiService = ApiConfig.getApiService()
+        val geminiApiService = ApiConfig.getApiServiceGemini()
         val userPreference = UserPreference.getInstance(context.dataStore)
-        return CommunityPostRepository.getInstance(communityPostDao, apiService, userPreference)
+        return CommunityPostRepository.getInstance(
+            communityPostDao,
+            apiService,
+            geminiApiService,
+            userPreference
+        )
+    }
+
+    fun provideEmergencyRepository(context: Context): EmergencyRepository {
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return EmergencyRepository.getInstance(apiService, userPreference)
+    }
+
+    fun provideNewsRepository(context: Context): NewsRepository {
+        val newsDao = NewsRoomDatabase.getDatabase(context).newsDao()
+        val apiService = ApiConfig.getApiService()
+        val userPreference = UserPreference.getInstance(context.dataStore)
+        return NewsRepository.getInstance(newsDao, apiService, userPreference)
     }
 }

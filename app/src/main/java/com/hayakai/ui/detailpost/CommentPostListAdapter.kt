@@ -3,16 +3,21 @@ package com.hayakai.ui.detailpost
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.request.crossfade
+import coil3.request.fallback
+import coil3.request.placeholder
+import com.hayakai.R
 import com.hayakai.data.local.entity.CommentPost
+import com.hayakai.data.remote.response.PostDataItemComment
 import com.hayakai.databinding.ItemCommentBinding
 
 class CommentPostListAdapter(
     private val onClick: (CommentPost) -> Unit
-) : ListAdapter<CommentPost, CommentPostListAdapter.ViewHolder>(DIFF_CALLBACK) {
+) : PagingDataAdapter<PostDataItemComment, CommentPostListAdapter.ViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemCommentBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -23,7 +28,7 @@ class CommentPostListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { holder.bind(it) }
     }
 
 
@@ -33,9 +38,25 @@ class CommentPostListAdapter(
         binding.root
     ) {
 
-        fun bind(commentPost: CommentPost) {
+        fun bind(postDataItemComment: PostDataItemComment) {
+            val commentPost = postDataItemComment.let {
+                CommentPost(
+                    it.commentId,
+                    it.postId,
+                    it.content,
+                    it.user.id,
+                    it.user.name,
+                    it.user.profilePhoto,
+                    it.byMe,
+                    it.createdAt
+                )
+            }
             binding.apply {
-                authorImage.load(commentPost.userImage)
+                authorImage.load(if (commentPost.userImage.isNullOrEmpty()) R.drawable.fallback_user else commentPost.userImage) {
+                    crossfade(true)
+                    placeholder(R.drawable.fallback_user)
+                    fallback(R.drawable.fallback_user)
+                }
                 author.text = commentPost.userName
                 textComment.text = commentPost.content
                 btnDelete.isVisible = commentPost.byMe
@@ -48,14 +69,17 @@ class CommentPostListAdapter(
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CommentPost>() {
-            override fun areItemsTheSame(oldItem: CommentPost, newItem: CommentPost): Boolean {
-                return oldItem.id == newItem.id
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<PostDataItemComment>() {
+            override fun areItemsTheSame(
+                oldItem: PostDataItemComment,
+                newItem: PostDataItemComment
+            ): Boolean {
+                return oldItem.commentId == newItem.commentId
             }
 
             override fun areContentsTheSame(
-                oldItem: CommentPost,
-                newItem: CommentPost
+                oldItem: PostDataItemComment,
+                newItem: PostDataItemComment
             ): Boolean {
                 return oldItem == newItem
             }

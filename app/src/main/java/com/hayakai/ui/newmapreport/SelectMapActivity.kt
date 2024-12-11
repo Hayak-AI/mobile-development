@@ -2,10 +2,10 @@ package com.hayakai.ui.newmapreport
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,18 +18,20 @@ import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MapColorScheme
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.hayakai.R
 import com.hayakai.data.local.model.LocationModel
 import com.hayakai.databinding.ActivitySelectMapBinding
+import com.hayakai.utils.isDarkMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInitializedCallback {
+class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInitializedCallback,
+    View.OnClickListener {
     private lateinit var binding: ActivitySelectMapBinding
     private lateinit var mMap: GoogleMap
 
@@ -65,6 +67,8 @@ class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInit
 
         supportActionBar?.hide()
 
+        setupAction()
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -82,6 +86,8 @@ class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInit
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        mMap.mapColorScheme = if (isDarkMode()) MapColorScheme.DARK else MapColorScheme.LIGHT
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isIndoorLevelPickerEnabled = true
@@ -130,7 +136,7 @@ class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInit
         }
 
         getMyLocation()
-        setMapStyle()
+
     }
 
     private fun getMyLocation() {
@@ -145,20 +151,16 @@ class SelectMapActivity : AppCompatActivity(), OnMapReadyCallback, OnMapsSdkInit
         }
     }
 
-    private fun setMapStyle() {
-        try {
-            val success =
-                mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                        this,
-                        R.raw.map_style
-                    )
-                )
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.")
+    private fun setupAction() {
+        binding.backButton.setOnClickListener(this)
+    }
+
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.back_button -> {
+                finish()
             }
-        } catch (exception: Resources.NotFoundException) {
-            Log.e(TAG, "Can't find style. Error: ", exception)
         }
     }
 

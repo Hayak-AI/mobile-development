@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class GetAllPostResponse(
 
     @field:SerializedName("data")
-    val data: List<PostItem>, // Mengganti nama 'data' menjadi 'postList'
+    val data: List<PostItem> = emptyList(), // Mengganti nama 'data' menjadi 'postList'
 
     @field:SerializedName("status")
     val status: String? = null // Mengganti 'status' menjadi 'responseStatus'
@@ -62,5 +62,8 @@ data class PostItem(
     val content: String, // Mengganti 'content' menjadi 'postContent'
 
     @field:SerializedName("by_me")
-    val byMe: Boolean
+    val byMe: Boolean,
+
+    @field:SerializedName("total_comments")
+    val totalComments: Int
 )

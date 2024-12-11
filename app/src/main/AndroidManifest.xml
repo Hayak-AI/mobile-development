@@ -2,9 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +29,16 @@
         android:theme="@style/Theme.HayakAI"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service
+            android:name=".ui.home.MyService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location|specialUse|microphone">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="hello world" />
+        </service>
+
         <activity
             android:name=".ui.editpost.EditPostActivity"
             android:exported="false" />
@@ -63,7 +85,7 @@
             android:name=".ui.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.createaccount.CreateAccountActivity"
+            android:name=".ui.register.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".ui.forgotpassword.ForgotPasswordActivity"
@@ -74,9 +96,17 @@
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="true">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".ui.splashscreen.SplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

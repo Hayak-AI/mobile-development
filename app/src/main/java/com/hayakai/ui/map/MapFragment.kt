@@ -1,9 +1,11 @@
 package com.hayakai.ui.map
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Resources
+import android.location.Geocoder
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +15,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.toBitmap
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
@@ -28,19 +39,25 @@ import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MapColorScheme
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.hayakai.R
 import com.hayakai.data.local.entity.MapReport
 import com.hayakai.databinding.FragmentMapBinding
 import com.hayakai.ui.common.SessionViewModel
+import com.hayakai.ui.home.MyService
 import com.hayakai.ui.mapreportpost.MapReportPostFragment
 import com.hayakai.ui.newmapreport.NewMapReportActivity
 import com.hayakai.ui.onboarding.OnboardingActivity
 import com.hayakai.ui.profile.ProfileActivity
 import com.hayakai.utils.MyResult
 import com.hayakai.utils.ViewModelFactory
+import com.hayakai.utils.isDarkMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
@@ -72,6 +89,43 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         }
 
     private var btnToggleMyReport = false
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+
+    private fun createLocationRequest() {
+        val priority = Priority.PRIORITY_HIGH_ACCURACY
+        val interval = TimeUnit.SECONDS.toMillis(30)
+        val maxWaitTime = TimeUnit.SECONDS.toMillis(1)
+        locationRequest = LocationRequest.Builder(
+            priority,
+            interval
+        ).apply {
+            setMaxUpdateDelayMillis(maxWaitTime)
+        }.build()
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+        val client = LocationServices.getSettingsClient(requireContext())
+        client.checkLocationSettings(builder.build()).addOnSuccessListener {
+            Log.d(MyService.TAG, "createLocationRequest: onSuccess")
+        }.addOnFailureListener {
+            Log.e(MyService.TAG, "createLocationRequest: onFailure")
+        }
+    }
+
+    private fun createLocationCallback() {
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                for (location in locationResult.locations) {
+                    Log.d(
+                        MyService.TAG,
+                        "onLocationResult: " + location.latitude + ", " + location.longitude
+                    )
+                }
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,6 +138,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 binding.btnListReport.text = "Laporan saya"
             }
         }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        createLocationRequest()
+        createLocationCallback()
 
     }
 
@@ -148,7 +206,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                     .data(evindeceUrl)
                     .target(
                         onStart = { placeholder ->
-                            // Handle the placeholder drawable.
+                            evidence.setImageResource(R.drawable.fallback_report)
                         },
                         onSuccess = { result ->
 
@@ -159,13 +217,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                             }
                         },
                         onError = { error ->
-                            // Handle the error drawable.
+                            evidence.setImageResource(R.drawable.fallback_report)
                         }
                     )
                     .build()
                 view.context.imageLoader.enqueue(request)
 
 
+            } else {
+                evidence.setImageResource(R.drawable.fallback_report)
             }
 
             val authorName = tag.userName
@@ -174,28 +234,34 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 tvAuthorName.text = authorName
             }
             val authorImage = tag.userImage
+
             val ivAuthorImage = view.findViewById<ImageView>(R.id.author_image)
-            if (authorImage.isNotBlank()) {
-                val request = ImageRequest.Builder(view.context)
-                    .allowHardware(false)
-                    .data(authorImage)
-                    .target(
-                        onStart = { placeholder ->
-                            // Handle the placeholder drawable.
-                        },
-                        onSuccess = { result ->
-                            ivAuthorImage.setImageBitmap(result.toBitmap())
-                            if (marker.isInfoWindowShown) {
-                                marker.hideInfoWindow()
-                                marker.showInfoWindow()
+            ivAuthorImage.setImageBitmap(null)
+            if (!authorImage.isNullOrEmpty()) {
+                if (authorImage.isNotBlank()) {
+                    val request = ImageRequest.Builder(view.context)
+                        .allowHardware(false)
+                        .data(authorImage)
+                        .target(
+                            onStart = { placeholder ->
+                                // Handle the placeholder drawable.
+                            },
+                            onSuccess = { result ->
+                                ivAuthorImage.setImageBitmap(result.toBitmap())
+                                if (marker.isInfoWindowShown) {
+                                    marker.hideInfoWindow()
+                                    marker.showInfoWindow()
+                                }
+                            },
+                            onError = { error ->
+                                ivAuthorImage.setImageResource(R.drawable.fallback_user)
                             }
-                        },
-                        onError = { error ->
-                            // Handle the error drawable.
-                        }
-                    )
-                    .build()
-                view.context.imageLoader.enqueue(request)
+                        )
+                        .build()
+                    view.context.imageLoader.enqueue(request)
+                }
+            } else {
+                ivAuthorImage.setImageResource(R.drawable.fallback_user)
             }
 
 
@@ -221,6 +287,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 is MyResult.Success -> {
                     mMap.clear()
                     result.data.forEach { mapReport ->
+                        print(mapReport)
                         if (btnToggleMyReport && !mapReport.byMe) {
                             return@forEach
                         }
@@ -250,9 +317,72 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 }
 
                 is MyResult.Error -> {
+                    println(result.error)
                     Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+        if (PermissionChecker.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED || PermissionChecker.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PermissionChecker.PERMISSION_GRANTED
+        ) {
+            Log.e(MyService.TAG, "Permission not granted")
+        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+        val geocoder = Geocoder(requireContext(), resources.configuration.locales[0])
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            lifecycleScope.launch {
+                try {
+                    val addresses =
+                        withContext(Dispatchers.IO) {
+                            geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                        }
+                    viewModel.getAllNews(addresses?.firstOrNull()?.locality ?: "Disini")
+                        .observe(viewLifecycleOwner) { news ->
+                            when (news) {
+                                is MyResult.Loading -> {
+                                    binding.loadingSafetyScore.visibility = View.VISIBLE
+                                    binding.tvSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.GONE
+                                }
+
+                                is MyResult.Success -> {
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
+                                    binding.tvSafetyScore.text =
+                                        getString(
+                                            R.string.title_score,
+                                            news.data.firstOrNull()?.safetyScore ?: 0
+                                        )
+                                    val adapter = NewsListAdapter()
+                                    adapter.submitList(news.data)
+                                    binding.recyclerView.adapter = adapter
+                                }
+
+                                is MyResult.Error -> {
+                                    binding.loadingSafetyScore.visibility = View.GONE
+                                    binding.tvSafetyScore.visibility = View.VISIBLE
+                                    Toast.makeText(requireContext(), news.error, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                        }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
         }
     }
 
@@ -284,12 +414,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         binding.btnReport.setOnClickListener(this)
         binding.btnListReport.setOnClickListener(this)
         binding.btnProfile.setOnClickListener(this)
+        binding.btnNews.setOnClickListener(this)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
         mMap.setInfoWindowAdapter(CustomInfoWindowAdapter())
+        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        mMap.mapColorScheme = if (isDarkMode()) MapColorScheme.DARK else MapColorScheme.LIGHT
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isIndoorLevelPickerEnabled = true
@@ -297,7 +430,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
         mMap.uiSettings.isMapToolbarEnabled = true
 
         getMyLocation()
-        setMapStyle()
 
         sessionViewModel.getSession().observe(viewLifecycleOwner) { session ->
             if (session.token.isEmpty()) {
@@ -326,29 +458,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     private fun getMyLocation() {
         if (ContextCompat.checkSelfPermission(
                 context?.applicationContext!!,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true
         } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-    }
-
-    private fun setMapStyle() {
-        try {
-            val success =
-                mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                        requireContext(),
-                        R.raw.map_style
-                    )
-                )
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.")
-            }
-        } catch (exception: Resources.NotFoundException) {
-            Log.e(TAG, "Can't find style. Error: ", exception)
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
@@ -356,11 +471,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     companion object {
         private const val TAG = "MapsFragment"
     }
+
+    var newsToggle = false
 
     override fun onClick(v: View?) {
         when (v?.id) {
@@ -383,6 +501,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
             R.id.btn_profile -> {
                 val intent = Intent(requireContext(), ProfileActivity::class.java)
                 startActivity(intent)
+            }
+
+            R.id.btn_news -> {
+                if (newsToggle) {
+                    binding.recyclerView.visibility = View.GONE
+                } else {
+                    binding.recyclerView.visibility = View.VISIBLE
+                }
+                newsToggle = !newsToggle
             }
         }
     }
