@@ -7,24 +7,30 @@
     tools:context=".ui.mapreportpost.MapReportPostFragment">
 
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/bottom_sheet"
         style="@style/Widget.Material3.BottomSheet.Modal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false"
+        android:orientation="vertical"
+        app:behavior_hideable="false"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:nestedScrollingEnabled="false">
 
-            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-                android:id="@+id/drag_handle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/image"
@@ -35,7 +41,8 @@
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/drag_handle"
+
+                app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
                 tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -77,7 +84,7 @@
                 android:textColor="@color/md_theme_onPrimary"
                 android:textSize="8sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/drag_handle"
+                app:layout_constraintTop_toTopOf="@+id/image"
                 tools:ignore="SmallSp"
                 tools:text="Terverifikasi" />
 
@@ -93,7 +100,7 @@
                 app:icon="@drawable/baseline_delete_forever_24"
                 app:iconSize="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
+                app:layout_constraintTop_toTopOf="@+id/image" />
 
             <TextView
                 android:id="@+id/name"
@@ -118,25 +125,23 @@
                 app:layout_constraintTop_toBottomOf="@+id/name"
                 tools:text="Kawanan Begal Sadis di Medan Ditangkap, Satu Pelaku Ditembak Mati" />
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swiperefresh"
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/comments"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="16dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constrainedHeight="true"
                 app:layout_constraintBottom_toTopOf="@+id/til_create_comment"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description">
+                app:layout_constraintTop_toBottomOf="@+id/description"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:ignore="RtlSymmetry"
+                tools:listitem="@layout/item_comment" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/comments"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:ignore="RtlSymmetry"
-                    tools:listitem="@layout/item_comment" />
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/loading_layout"
@@ -201,6 +206,9 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
+
+
+    </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

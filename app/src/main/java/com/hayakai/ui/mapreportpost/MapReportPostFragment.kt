@@ -141,26 +141,19 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
         // Behavior of the bottom sheet
         val behavior = BottomSheetBehavior.from(binding.bottomSheet)
 
-
-//
-//        binding.dragHandle.setOnDragListener { _, _ ->
-//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            Log.d(TAG, "onViewCreated: Drag Handle Clicked")
-//            false
-//        }
         behavior.apply {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                        dismiss()
+                    }
 
-//            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-//                override fun onStateChanged(bottomSheet: View, newState: Int) {
-//                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-//                        dismiss()
-//                    }
-//
-//                }
-//
-//                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//                }
-//            })
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                }
+            })
         }
 
         setupAction()
