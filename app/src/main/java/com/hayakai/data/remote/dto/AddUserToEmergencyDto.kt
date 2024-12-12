@@ -1,7 +1,6 @@
 package com.hayakai.data.remote.dto
 
 class AddUserToEmergencyDto(
-    val description: String = "",
     val location: LocationEmergency,
 )
 

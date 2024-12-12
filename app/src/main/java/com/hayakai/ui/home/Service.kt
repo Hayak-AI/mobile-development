@@ -180,9 +180,8 @@ class MyService : Service() {
                                     serviceScope.launch {
                                         sendEmergency(
                                             AddUserToEmergencyDto(
-                                                description = "Pengguna dalam bahaya",
                                                 location = LocationEmergency(
-                                                    name = "Lokasi pengguna",
+                                                    name = "Tempat kejadian",
                                                     latitude = location.latitude,
                                                     longitude = location.longitude
                                                 )
