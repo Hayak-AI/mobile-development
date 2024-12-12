@@ -129,7 +129,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        println(savedInstanceState)
         if (savedInstanceState != null) {
             btnToggleMyReport = savedInstanceState.getBoolean("btnToggleMyReport")
             if (btnToggleMyReport) {
@@ -287,7 +286,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 is MyResult.Success -> {
                     mMap.clear()
                     result.data.forEach { mapReport ->
-                        print(mapReport)
                         if (btnToggleMyReport && !mapReport.byMe) {
                             return@forEach
                         }
@@ -317,7 +315,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 }
 
                 is MyResult.Error -> {
-                    println(result.error)
                     Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -451,7 +448,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, View.OnClickListener,
                 putString("longitude", it.position.longitude.toString())
                 putParcelable(MapReportPostFragment.TAG, it.tag as MapReport)
             }
-            mapReportPostFragment.show(childFragmentManager, MapReportPostFragment.TAG)
+            mapReportPostFragment.show(
+                requireActivity().supportFragmentManager,
+                MapReportPostFragment.TAG
+            )
         }
     }
 

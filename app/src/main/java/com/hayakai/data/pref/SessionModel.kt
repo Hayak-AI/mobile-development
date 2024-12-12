@@ -20,3 +20,9 @@ data class SettingsModel(
     val voiceDetection: Boolean,
     val voiceSensitivity: String
 ) : Parcelable
+
+
+data class SafetyScore(
+    val score: Int,
+    val timestamp: Long
+)
