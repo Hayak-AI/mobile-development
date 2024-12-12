@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -114,11 +113,11 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
                 adapter.submitData(lifecycle, it)
             }
 
-        binding.swiperefresh.setOnRefreshListener {
-            binding.comments.removeAllViewsInLayout()
-            adapter.refresh()
-            binding.swiperefresh.isRefreshing = false
-        }
+//        binding.swiperefresh.setOnRefreshListener {
+//            binding.comments.removeAllViewsInLayout()
+//            adapter.refresh()
+//            binding.swiperefresh.isRefreshing = false
+//        }
         binding.retryButton.setOnClickListener {
             adapter.retry()
         }
@@ -131,7 +130,7 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
                 } else {
                     binding.loadingLayout.visibility = View.GONE
                 }
-                binding.swiperefresh.isRefreshing = loadStates.refresh is LoadState.Loading
+//                binding.swiperefresh.isRefreshing = loadStates.refresh is LoadState.Loading
             }
         }
     }
@@ -139,32 +138,29 @@ class MapReportPostFragment : BottomSheetDialogFragment(), View.OnClickListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val bottomSheet: FrameLayout =
-            dialog?.findViewById(com.google.android.material.R.id.design_bottom_sheet)!!
-
-        // Height of the view
-        bottomSheet.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-
         // Behavior of the bottom sheet
-        val behavior = BottomSheetBehavior.from(bottomSheet)
-        binding.dragHandle.setOnDragListener { _, _ ->
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            true
-        }
+        val behavior = BottomSheetBehavior.from(binding.bottomSheet)
+
+
+//
+//        binding.dragHandle.setOnDragListener { _, _ ->
+//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//            Log.d(TAG, "onViewCreated: Drag Handle Clicked")
+//            false
+//        }
         behavior.apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
 
-            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                        dismiss()
-                    }
-
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                }
-            })
+//            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+//                override fun onStateChanged(bottomSheet: View, newState: Int) {
+//                    if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+//                        dismiss()
+//                    }
+//
+//                }
+//
+//                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//                }
+//            })
         }
 
         setupAction()

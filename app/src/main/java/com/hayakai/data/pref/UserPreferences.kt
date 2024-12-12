@@ -74,6 +74,22 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
+    suspend fun saveSafetyScore(safetyScore: SafetyScore) {
+        dataStore.edit { preferences ->
+            preferences[SAFETY_SCORE_KEY] = safetyScore.score.toString()
+            preferences[SAFETY_SCORE_TIMESTAMP_KEY] = safetyScore.timestamp.toString()
+        }
+    }
+
+    fun getSafetyScore(): Flow<SafetyScore> {
+        return dataStore.data.map { preferences ->
+            SafetyScore(
+                preferences[SAFETY_SCORE_KEY]?.toInt() ?: 0,
+                preferences[SAFETY_SCORE_TIMESTAMP_KEY]?.toLong() ?: 0
+            )
+        }
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: UserPreference? = null
@@ -88,6 +104,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val DARK_MODE_KEY = stringPreferencesKey("dark_mode")
         private val VOICE_DETECTION_KEY = stringPreferencesKey("voice_detection")
         private val VOICE_SENSITIVITY_KEY = stringPreferencesKey("voice_sensitivity")
+
+        private val SAFETY_SCORE_KEY = stringPreferencesKey("safety_score")
+        private val SAFETY_SCORE_TIMESTAMP_KEY = stringPreferencesKey("safety_score_timestamp")
 
 
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {

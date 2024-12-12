@@ -8,6 +8,10 @@
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CircleImageView.AllowAllTime" parent="">
+        <item name="cornerSize">8dp</item>
+    </style>
+
     <style name="MaterialAlertDialog.DeleteConfirmation" parent="MaterialAlertDialog.Material3">
         <item name="buttonBarPositiveButtonStyle">@style/Widget.DeleteConfirmation.PositiveButton
         </item>
