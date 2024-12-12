@@ -6,6 +6,7 @@ import androidx.lifecycle.map
 import com.google.gson.Gson
 import com.hayakai.data.local.dao.NewsDao
 import com.hayakai.data.local.entity.News
+import com.hayakai.data.pref.SafetyScore
 import com.hayakai.data.pref.UserPreference
 import com.hayakai.data.remote.response.ErrorResponse
 import com.hayakai.data.remote.retrofit.ApiService
@@ -24,6 +25,14 @@ class NewsRepository(
     fun getAllNews(location: String): LiveData<MyResult<List<News>>> = liveData {
         emit(MyResult.Loading)
         try {
+            val date = System.currentTimeMillis()
+            val safetyScore = userPreference.getSafetyScore().first().timestamp
+            if (date - safetyScore < 60000 * 2 && newsDao.getNewsCount().first() > 0) {
+                val localData: LiveData<MyResult<List<News>>> =
+                    newsDao.getAllNews().map { MyResult.Success(it) }
+                emitSource(localData)
+                return@liveData
+            }
             val response =
                 apiService.getNews(
                     location,
@@ -39,6 +48,7 @@ class NewsRepository(
                     image = it.pagemap?.cseThumbnail?.firstOrNull()?.src ?: ""
                 )
             }
+            userPreference.saveSafetyScore(SafetyScore(response.data.safetyScore, date))
             newsDao.deleteAll()
             newsDao.insertAll(newsList)
         } catch (e: HttpException) {

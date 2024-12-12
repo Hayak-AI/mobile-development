@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.hayakai.data.local.entity.News
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NewsDao {
@@ -24,4 +25,7 @@ interface NewsDao {
 
     @Delete
     suspend fun delete(news: News)
+
+    @Query("SELECT COUNT(*) FROM news")
+    fun getNewsCount(): Flow<Int>
 }

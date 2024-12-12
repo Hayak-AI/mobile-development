@@ -3,7 +3,6 @@ package com.hayakai.ui.home
 import android.Manifest
 import android.content.Intent
 import android.location.Geocoder
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -11,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -291,40 +289,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            when {
-                permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-                    // Permission is granted
-                }
-
-                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-                    // Permission is granted
-                }
-
-
-                else -> {
-                    // Permission is denied
-                }
-            }
-        }
-
-
-    private fun requestPermission() {
-        val perms = mutableListOf<String>(
-            Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.RECORD_AUDIO
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            perms.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            perms.add(Manifest.permission.POST_NOTIFICATIONS)
-        }
-
-        requestPermissionLauncher.launch(perms.toTypedArray())
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -335,7 +299,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val root: View = binding.root
 
         setupAction()
-        requestPermission()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         createLocationRequest()
         createLocationCallback()
